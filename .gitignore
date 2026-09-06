@@ -1,0 +1,16 @@
+# Ma'lumotlar bazasi, shifrlash kaliti va zaxira nusxalar — hech qachon repozitoriyga tushmasin
+data/
+
+# Bog'liqliklar va tizim fayllari
+node_modules/
+*.log
+.env
+.env.*
+
+.DS_Store
+Thumbs.db
+desktop.ini
+
+.vscode/
+.idea/
+*.swp

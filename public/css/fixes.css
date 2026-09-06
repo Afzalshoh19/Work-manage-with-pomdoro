@@ -1,0 +1,56 @@
+/* ═══════════ Vazifani tahrirlash oynasi ═══════════ */
+.modal-wide { max-width: 560px; width: calc(100vw - 40px); }
+.edit-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 13px;
+  margin: 18px 0 4px;
+}
+.edit-grid .wide { grid-column: 1 / -1; }
+.edit-grid textarea { min-height: 62px; }
+.modal h3 { font-size: 16px; }
+
+/* ═══════════ Bo'sh holat (onboarding) ═══════════ */
+.empty-actions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+.kbd {
+  display: inline-block; padding: 1px 6px; border-radius: 5px; font-size: 11px;
+  background: var(--card-2); border: 1px solid var(--line-2); color: var(--txt-2);
+  font-family: ui-monospace, Consolas, monospace;
+}
+
+/* ═══════════ Bildirishnoma haqida eslatma ═══════════ */
+.notice {
+  display: flex; align-items: center; gap: 9px; margin-top: 14px;
+  background: color-mix(in srgb, var(--amber) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--amber) 32%, transparent);
+  border-radius: 10px; padding: 9px 12px; font-size: 11.5px; color: var(--txt-2);
+  text-align: left;
+}
+.notice button {
+  margin-left: auto; border: 0; background: transparent; color: var(--amber);
+  cursor: pointer; font: inherit; font-size: 11.5px; font-weight: 600; white-space: nowrap;
+}
+
+/* ═══════════ Mobil: barcha tablar sig'sin ═══════════ */
+@media (max-width: 860px) {
+  .tabs { width: 100%; order: 3; }
+  .tab { flex: 1; justify-content: center; padding: 8px 6px; font-size: 12px; gap: 5px; }
+}
+@media (max-width: 620px) {
+  .tab-ico { font-size: 15px; }
+  .tab-label { display: none; }
+  .tab.is-active .tab-label { display: inline; }
+  .tab { padding: 9px 8px; }
+  .edit-grid { grid-template-columns: 1fr; }
+  .brand small { display: none; }
+  .conn span:last-child { display: none; }
+  .user-name { max-width: 92px; }
+  .menu { right: 10px; left: 10px; min-width: auto; }
+}
+
+/* ═══════════ Kichik yaxshilanishlar ═══════════ */
+.t-title { word-break: break-word; }
+.chip.time { white-space: nowrap; }
+.report-preview iframe { min-height: 420px; }
+.dl-card:focus-visible, .btn:focus-visible, .tab:focus-visible, .t-btn:focus-visible,
+.pill:focus-visible, .icon-btn:focus-visible, .user-btn:focus-visible {
+  outline: 2px solid var(--accent); outline-offset: 2px;
+}

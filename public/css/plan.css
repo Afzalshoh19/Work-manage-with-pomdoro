@@ -1,0 +1,336 @@
+/* ═══════════ Kun rejimi — faqat ko'rsatish, tahrirlash o'ngdagi tugmadan ═══════════ */
+.day-setup {
+  display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+}
+.ds-view { display: flex; gap: 10px; flex-wrap: wrap; flex: 1; min-width: 0; }
+.dv-item {
+  display: flex; flex-direction: column; gap: 3px;
+  background: var(--bg-2); border: 1px solid var(--line);
+  border-radius: 10px; padding: 9px 13px; min-width: 96px;
+}
+.dv-item > span { font-size: 10.5px; color: var(--txt-3); white-space: nowrap; }
+.dv-item > b { font-size: 13.5px; font-weight: 620; font-variant-numeric: tabular-nums; }
+.dv-item.dv-wide > b { color: var(--blue); }
+.dv-item .dv-note {
+  font-style: normal; font-size: 10px; color: var(--amber); margin-top: 1px; white-space: nowrap;
+}
+.dv-item.dv-off { border-color: color-mix(in srgb, var(--amber) 30%, var(--line)); }
+.dv-item.dv-off > b { color: var(--txt-2); }
+
+/* Tahrirlash tugmasi — kartochkalar qatorining o'ng chekkasida */
+.ds-actions {
+  display: flex; gap: 8px; flex-wrap: wrap; align-items: center;
+  margin-left: auto; flex-shrink: 0;
+}
+.day-setup.is-custom { border-color: color-mix(in srgb, var(--amber) 26%, var(--line)); }
+
+/* ═══════════ Pomodoro oynasi ═══════════ */
+.pomo-presets {
+  display: flex; gap: 7px; align-items: center; flex-wrap: wrap;
+  margin-top: 14px; font-size: 11.5px; color: var(--txt-3);
+}
+.pomo-presets button {
+  border: 1px solid var(--line); background: var(--bg-2); color: var(--txt-2);
+  border-radius: 8px; padding: 5px 11px; cursor: pointer; font: inherit; font-size: 11.5px; transition: .13s;
+}
+.pomo-presets button:hover { border-color: var(--accent); color: var(--accent); }
+.pomo-preview {
+  margin-top: 14px; padding-top: 13px; border-top: 1px solid var(--line);
+}
+.seq { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; margin-bottom: 9px; }
+.seq span {
+  min-width: 34px; text-align: center; padding: 5px 8px; border-radius: 7px;
+  font-size: 11.5px; font-weight: 600; font-variant-numeric: tabular-nums;
+}
+.seq em { color: var(--txt-3); font-style: normal; font-size: 11px; }
+.seq-w { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); }
+.seq-s { background: color-mix(in srgb, var(--green) 16%, transparent); color: var(--green); }
+.seq-l { background: color-mix(in srgb, var(--blue) 16%, transparent); color: var(--blue); }
+
+/* ═══════════ Avtomatik boshlash sanog'i ═══════════ */
+.auto-next {
+  display: flex; align-items: center; gap: 9px; margin-top: 14px;
+  background: color-mix(in srgb, var(--mode) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--mode) 38%, transparent);
+  border-radius: 10px; padding: 10px 13px; font-size: 12px; color: var(--txt-2); text-align: left;
+}
+.auto-next b { color: var(--mode); font-variant-numeric: tabular-nums; }
+.auto-next button {
+  margin-left: auto; border: 0; background: transparent; color: var(--txt-3);
+  cursor: pointer; font: inherit; font-size: 11.5px; text-decoration: underline; white-space: nowrap;
+}
+.auto-next button:hover { color: var(--txt); }
+
+/* ═══════════ Vazifa holatlari ═══════════ */
+.chip.status { font-weight: 600; }
+.chip.status.reja      { color: var(--txt-3); }
+.chip.status.jarayonda { color: var(--blue);  border-color: color-mix(in srgb, var(--blue) 40%, transparent); }
+.chip.status.qabulga   { color: var(--amber); border-color: color-mix(in srgb, var(--amber) 45%, transparent);
+                         background: color-mix(in srgb, var(--amber) 10%, transparent); }
+.chip.status.bajarildi { color: var(--green); border-color: color-mix(in srgb, var(--green) 40%, transparent); }
+
+.task.st-qabulga { border-left-color: var(--amber); }
+.task.st-jarayonda { border-left-color: var(--blue); }
+.t-accept {
+  background: color-mix(in srgb, var(--green) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--green) 42%, transparent);
+  color: var(--green); white-space: nowrap;
+}
+.t-accept:hover { background: var(--green); color: #fff; border-color: var(--green); }
+.t-btn.reopen:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
+
+/* ═══════════ Ko'p kunlik reja ═══════════ */
+.modal-xl { max-width: 1000px; width: calc(100vw - 40px); max-height: 92vh; display: flex; flex-direction: column; }
+.wp-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; }
+.wp-head h3 { font-size: 16px; }
+.wp-head p { margin: 4px 0 0; }
+.wp-range {
+  display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  margin: 16px 0 14px; padding-bottom: 14px; border-bottom: 1px solid var(--line);
+}
+.wp-range input[type="date"] { width: 150px; }
+
+.wp-days {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  gap: 9px; overflow-y: auto; flex: 1; padding: 2px;
+}
+.wp-day {
+  background: var(--card-2); border: 1px solid var(--line); border-radius: 11px;
+  padding: 11px 12px; cursor: pointer; transition: .14s; user-select: none;
+}
+.wp-day:hover { border-color: var(--line-2); }
+.wp-day.on { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 8%, var(--card-2)); }
+.wp-day.off { opacity: .5; }
+.wp-day.over { border-color: var(--amber); }
+.wp-day-head { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 9px; }
+.wp-day-head input { margin-top: 2px; pointer-events: none; }
+.wp-day-head b { display: block; font-size: 12.5px; }
+.wp-day-head span { font-size: 10.5px; color: var(--txt-3); }
+.wp-bar { height: 5px; background: var(--bg-2); border-radius: 99px; overflow: hidden; }
+.wp-bar > i { display: block; height: 100%; background: var(--accent); border-radius: 99px; transition: width .25s; }
+.wp-day.over .wp-bar > i { background: var(--amber); }
+.wp-load { font-size: 11px; color: var(--txt-3); margin: 6px 0 8px; font-variant-numeric: tabular-nums; }
+.wp-load em { color: var(--accent); font-style: normal; font-weight: 600; }
+.wp-warn { color: var(--amber); margin-left: 5px; }
+.wp-tasks { display: flex; flex-direction: column; gap: 4px; }
+.wp-task {
+  display: flex; gap: 6px; justify-content: space-between; align-items: baseline;
+  font-size: 10.5px; color: var(--txt-2); background: var(--bg-2);
+  border-radius: 6px; padding: 4px 7px;
+}
+.wp-task span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.wp-task b { color: var(--txt-3); font-size: 10px; white-space: nowrap; }
+.wp-task.done { opacity: .55; text-decoration: line-through; }
+.wp-empty, .wp-more { font-size: 10.5px; color: var(--txt-3); padding: 2px 3px; }
+
+.wp-form { margin-top: 16px; padding-top: 15px; border-top: 1px solid var(--line); }
+.wp-form-row { display: grid; grid-template-columns: 1fr 128px 148px 128px; gap: 10px; align-items: end; }
+.wp-form-row > input[type="text"] { padding: 11px 13px; font-size: 14px; }
+.wp-form-actions { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+
+@media (max-width: 720px) {
+  .wp-form-row { grid-template-columns: 1fr 1fr; }
+  .wp-days { grid-template-columns: repeat(auto-fill, minmax(118px, 1fr)); }
+  .ds-view { gap: 7px; }
+  .dv-item { min-width: 84px; padding: 8px 10px; }
+}
+
+/* ═══════════ Xulosa kartochkalari ═══════════ */
+.summary {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);   /* 6 kartochka = 3 qator */
+  gap: 10px;
+  margin-bottom: 18px;
+}
+/* Zaxira (konteyner so'rovlarini qo'llab-quvvatlamaydigan brauzerlar uchun) */
+@media (min-width: 560px) { .summary { grid-template-columns: repeat(3, 1fr); } }
+
+/* Ustunlar soni kartochkalar joylashgan blok kengligiga qarab tanlanadi —
+   oyna kengligiga emas. Shunda 6 ta karta joy yetganda bitta qatorda turadi. */
+.plan-card { container-type: inline-size; container-name: plan; }
+
+.sum-item {
+  position: relative;
+  background: var(--card-2);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 13px 14px 12px;
+  overflow: hidden;
+  transition: border-color .15s, transform .15s;
+}
+.sum-item::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--tone, var(--line-2));
+  opacity: .85;
+}
+.sum-item:hover { border-color: var(--line-2); transform: translateY(-1px); }
+
+.sum-item .si-ico {
+  position: absolute; top: 11px; right: 12px;
+  font-size: 14px; opacity: .38; line-height: 1;
+}
+.sum-item b {
+  display: block;
+  font-size: 21px; font-weight: 640; line-height: 1.15;
+  font-variant-numeric: tabular-nums; letter-spacing: -.02em;
+  white-space: nowrap;
+  color: var(--tone, var(--txt));
+}
+.sum-item b small {
+  font-size: 13px; font-weight: 550; color: var(--txt-3); margin-left: 1px;
+}
+.sum-item b i {
+  font-style: normal; margin: 0 4px; color: var(--txt-3); font-size: 15px;
+}
+.sum-item .si-label {
+  display: block; font-size: 11.5px; color: var(--txt-2); font-weight: 550; margin-top: 5px;
+}
+.sum-item .si-sub {
+  display: block; font-size: 10.5px; color: var(--txt-3); margin-top: 3px; line-height: 1.45;
+}
+.sum-item b { max-width: calc(100% - 22px); overflow: hidden; text-overflow: ellipsis; }
+
+.sum-item.accent { --tone: var(--accent); }
+.sum-item.green  { --tone: var(--green); }
+.sum-item.blue   { --tone: var(--blue); }
+.sum-item.purple { --tone: var(--purple); }
+.sum-item.warn   { --tone: var(--amber); }
+.sum-item.warn   { border-color: color-mix(in srgb, var(--amber) 32%, var(--line)); }
+
+/* "Kun jadvali" kartasi biroz kengroq bo'lsin — vaqt bir qatorda tursin */
+.sum-item.blue b { font-size: 17px; }
+
+/* Holat nuqtalari */
+.si-dots { display: flex; gap: 8px; flex-wrap: wrap; }
+.si-dots i { font-style: normal; font-size: 10.5px; font-weight: 600; white-space: nowrap; }
+.d-reja      { color: var(--txt-3); }
+.d-jarayonda { color: var(--blue); }
+.d-qabulga   { color: var(--amber); }
+.d-bajarildi { color: var(--green); }
+
+/* Progress qatori */
+.sum-bar {
+  grid-column: 1 / -1;
+  background: var(--card-2); border: 1px solid var(--line);
+  border-radius: 12px; padding: 11px 14px 12px;
+}
+.sum-bar-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 8px; font-size: 11.5px; color: var(--txt-3);
+}
+.sum-bar-head b { font-size: 13px; color: var(--accent); font-variant-numeric: tabular-nums; }
+.sum-bar .bar { margin-top: 0; height: 7px; }
+
+@media (max-width: 620px) {
+  .sum-item { padding: 11px 12px 10px; }
+  /* Tor ekranda qiymat kesilmasin — ikkinchi qatorga o'tsin */
+  .sum-item b { font-size: 17px; white-space: normal; line-height: 1.22; max-width: 100%; }
+  .sum-item.blue b { font-size: 14.5px; }
+  .sum-item .si-ico { top: 9px; right: 9px; font-size: 12px; }
+}
+
+/* Ikki qatorli qiymat (Kun jadvali kartasi) */
+.sum-item b.si-2line {
+  display: flex; flex-direction: column;
+  white-space: normal; max-width: 100%;
+  font-size: 17px; line-height: 1.25;
+  margin-top: -1px;
+}
+.sum-item b.si-2line > span { display: block; white-space: nowrap; }
+.sum-item b.si-2line i {
+  margin: 0 4px 0 0; font-size: 13px; opacity: .75;
+}
+
+
+/* ═══════════ Ustunlar soni: kartochkalar bloki kengligiga qarab ═══════════
+   Bu qoidalar fayl oxirida turishi shart — yuqoridagi .sum-item qoidalarini
+   qayta yozishi kerak.                                                      */
+@container plan (min-width: 470px) {
+  .summary { grid-template-columns: repeat(3, 1fr); }
+}
+@container plan (min-width: 820px) {
+  .summary { grid-template-columns: repeat(6, 1fr); }
+
+  /* Tor kartochkada matn kesilmasin: ixcham o'lcham + qatorga bo'linish */
+  .sum-item { padding: 12px 11px 11px; }
+  .sum-item b {
+    font-size: 16.5px; line-height: 1.22;
+    white-space: normal; overflow: visible; text-overflow: clip;
+    max-width: calc(100% - 18px);
+  }
+  .sum-item b small { font-size: 11.5px; }
+  .sum-item b.si-2line { font-size: 15px; }
+  .sum-item .si-ico { top: 9px; right: 9px; font-size: 12px; }
+  .sum-item .si-label { font-size: 11px; margin-top: 4px; }
+  .sum-item .si-sub { font-size: 10px; }
+  .si-dots { gap: 6px; }
+}
+
+/* ═══════════ Vazifa qo'shish — yig'iladigan blok ═══════════ */
+.add-wrap {
+  background: var(--card-2); border: 1px solid var(--line);
+  border-radius: 12px; margin-bottom: 16px; overflow: hidden;
+  transition: border-color .15s;
+}
+.add-wrap[open] { border-color: var(--line-2); }
+
+.add-head {
+  display: flex; align-items: center; gap: 11px;
+  padding: 12px 15px; cursor: pointer; user-select: none;
+  list-style: none; transition: background .13s;
+}
+.add-head::-webkit-details-marker { display: none; }
+.add-head:hover { background: color-mix(in srgb, var(--accent) 6%, transparent); }
+
+.ah-ico {
+  width: 26px; height: 26px; border-radius: 8px; flex-shrink: 0;
+  display: grid; place-items: center; font-size: 17px; font-weight: 500; line-height: 1;
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 38%, transparent);
+  color: var(--accent);
+  transition: transform .18s;
+}
+.ah-title { font-size: 13.5px; font-weight: 600; white-space: nowrap; }
+.ah-hint {
+  font-size: 11.5px; color: var(--txt-3);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.ah-chev {
+  margin-left: auto; color: var(--txt-3); font-size: 11px; flex-shrink: 0;
+  transition: transform .18s;
+}
+.add-wrap[open] .ah-chev { transform: rotate(180deg); }
+.add-wrap[open] .ah-ico { transform: rotate(45deg); }
+.add-wrap[open] .ah-hint { display: none; }
+
+/* Ichkaridagi forma endi o'z ramkasiz — blokning bir qismi */
+.add-wrap .add-form {
+  background: transparent; border: 0; border-top: 1px solid var(--line);
+  border-radius: 0; margin-bottom: 0; padding: 14px 15px 15px;
+}
+
+@media (max-width: 620px) {
+  .ah-hint { display: none; }
+}
+
+/* ═══════════ Yig'iladigan bloklar: silliq o'tish ═══════════ */
+/* Balandlik JS orqali animatsiya qilinadi; bu yerda faqat
+   sarlavhadagi belgilar va ramka rangi yumshoq o'zgaradi. */
+.add-head .ah-ico,
+.add-head .ah-chev { transition: transform .26s cubic-bezier(.32,.72,0,1), color .15s; }
+.add-wrap { transition: border-color .2s, background .2s; }
+.add-wrap[open] .ah-title { color: var(--accent); }
+
+.timeline-wrap summary,
+.integ-head { transition: color .15s; }
+.timeline-wrap summary::marker { color: var(--txt-3); }
+
+/* Animatsiya paytida ichki blok kesilmasin */
+.add-wrap .add-form,
+.timeline-wrap .timeline,
+.integ .integ-body { will-change: height, opacity, transform; }
+
+@media (prefers-reduced-motion: reduce) {
+  .add-head .ah-ico, .add-head .ah-chev, .add-wrap { transition: none; }
+}

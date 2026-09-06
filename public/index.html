@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pomodoro — Ish jarayoni boshqaruvi</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍅</text></svg>">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/extra.css">
+<link rel="stylesheet" href="/css/fixes.css">
+<link rel="stylesheet" href="/css/schedule.css">
+<link rel="stylesheet" href="/css/plan.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-logo">🍅</span>
+    <div>
+      <strong>Pomodoro</strong>
+      <small>Ish jarayoni boshqaruvi</small>
+    </div>
+  </div>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab is-active" data-view="today"><span class="tab-ico">⏱</span> <span class="tab-label">Bugun</span></button>
+    <button class="tab" data-view="stats"><span class="tab-ico">📊</span> <span class="tab-label">Statistika</span></button>
+    <button class="tab" data-view="report"><span class="tab-ico">📄</span> <span class="tab-label">Hisobot</span></button>
+    <button class="tab" data-view="history"><span class="tab-ico">🗂</span> <span class="tab-label">Tarix</span></button>
+    <button class="tab" data-view="settings"><span class="tab-ico">⚙️</span> <span class="tab-label">Sozlamalar</span></button>
+  </nav>
+
+  <div class="topbar-right">
+    <span class="conn" id="conn" title="Server holati"><i></i><span>Ulanmoqda…</span></span>
+    <button class="icon-btn" id="themeToggle" title="Mavzuni almashtirish">🌙</button>
+    <button class="user-btn" id="userBtn">
+      <span class="avatar" id="userAvatar">🍅</span>
+      <span class="user-name" id="userName">…</span>
+      <span style="color:var(--txt-3);font-size:10px">▾</span>
+    </button>
+  </div>
+</header>
+
+<div class="menu" id="userMenu" hidden>
+  <div class="menu-head">
+    <b id="menuName">—</b>
+    <span id="menuEmail">—</span>
+  </div>
+  <button data-act="profile">👤 Profilim</button>
+  <button data-act="report">📄 Kunlik hisobot</button>
+  <button data-act="integrations">🔗 Integratsiyalar</button>
+  <hr>
+  <button data-act="logout" class="danger">🚪 Chiqish</button>
+</div>
+
+<main class="wrap">
+
+  <!-- ══════════════ BUGUN ══════════════ -->
+  <section class="view is-active" id="view-today">
+    <div class="layout">
+
+      <!-- Taymer -->
+      <div class="card timer-card">
+        <div class="mode-pills" id="modePills">
+          <button class="pill is-active" data-mode="work">Ish</button>
+          <button class="pill" data-mode="short">Qisqa tanaffus</button>
+          <button class="pill" data-mode="long">Uzun tanaffus</button>
+        </div>
+
+        <div class="dial">
+          <svg viewBox="0 0 240 240" class="ring">
+            <circle class="ring-bg" cx="120" cy="120" r="106"></circle>
+            <circle class="ring-fg" id="ringFg" cx="120" cy="120" r="106"
+                    stroke-dasharray="666.02" stroke-dashoffset="0"></circle>
+          </svg>
+          <div class="dial-center">
+            <div class="clock" id="clock">25:00</div>
+            <div class="dial-sub" id="dialSub">Boshlashga tayyor</div>
+          </div>
+        </div>
+
+        <div class="cycle-dots" id="cycleDots"></div>
+
+        <div class="active-task" id="activeTask">
+          <span class="at-label">Faol vazifa</span>
+          <span class="at-title" id="activeTaskTitle">Tanlanmagan</span>
+        </div>
+
+        <div class="controls">
+          <button class="btn btn-primary btn-lg" id="btnMain">▶ Boshlash</button>
+          <button class="btn btn-ghost" id="btnSkip" title="Joriy bosqichni tugatib, keyingisiga o'tish">⏭ O'tkazish</button>
+          <button class="btn btn-ghost" id="btnStop" title="Taymerni bekor qilish">⏹ To'xtatish</button>
+        </div>
+
+        <div class="today-mini" id="todayMini"></div>
+
+        <div class="auto-next" id="autoNext" hidden></div>
+
+        <div class="notice" id="notifNotice" hidden></div>
+      </div>
+
+      <!-- Kun tartibi -->
+      <div class="card plan-card">
+        <div class="card-head">
+          <div class="date-nav">
+            <button class="icon-btn" id="datePrev" title="Oldingi kun">‹</button>
+            <input type="date" id="datePicker">
+            <button class="icon-btn" id="dateNext" title="Keyingi kun">›</button>
+            <button class="btn btn-mini" id="dateToday">Bugun</button>
+          </div>
+          <div class="head-actions">
+            <button class="btn btn-mini btn-ghost" id="btnCopyYesterday" title="Kechagi rejani shu kunga nusxalash">⧉ Kechagidan</button>
+            <button class="btn btn-mini btn-ghost" id="btnCarry" title="Bajarilmaganlarni ertaga ko'chirish">→ Ertaga</button>
+            <button class="btn btn-mini" id="btnWeekPlan" title="Bir necha kunga birdaniga reja tuzish">📅 Ko'p kunlik reja</button>
+          </div>
+        </div>
+
+        <!-- Shu kunning ish rejimi: qiymatlar faqat ko'rsatiladi, tahrirlash o'ngdagi tugmadan -->
+        <div class="day-setup" id="daySetup">
+          <div class="ds-view" id="dsView"></div>
+          <div class="ds-actions">
+            <button class="btn btn-mini" id="dsEdit">⚙️ Pomodoroni to'g'rlash</button>
+            <button class="btn btn-mini btn-ghost" id="dsReset" hidden title="Shu kun uchun kiritilgan o'zgarishlarni bekor qilib, profildagi qiymatlarga qaytarish">↺ Standart</button>
+          </div>
+        </div>
+
+        <details class="add-wrap" id="addWrap">
+          <summary class="add-head">
+            <span class="ah-ico">+</span>
+            <span class="ah-title">Yangi vazifa qo'shish</span>
+            <span class="ah-hint">Nomi, pomodoro soni, kategoriya va muhimlik</span>
+            <span class="ah-chev">▾</span>
+          </summary>
+        <form class="add-form" id="addForm">
+          <input type="text" id="taskTitle" placeholder="Vazifa nomi — masalan: Oylik hisobotni tayyorlash" maxlength="200" required>
+          <div class="add-row">
+            <label class="field pomo-field">
+              <span>Pomodoro</span>
+              <div class="stepper">
+                <button type="button" class="step" data-step="-1">−</button>
+                <input type="number" id="taskPomos" value="2" min="1" max="30">
+                <button type="button" class="step" data-step="1">+</button>
+              </div>
+            </label>
+            <label class="field">
+              <span>Kategoriya</span>
+              <select id="taskCategory">
+                <option value="ish">Ish</option>
+                <option value="oqish">O'qish</option>
+                <option value="loyiha">Loyiha</option>
+                <option value="uy">Uy ishlari</option>
+                <option value="sport">Sport</option>
+                <option value="boshqa">Boshqa</option>
+              </select>
+            </label>
+            <label class="field">
+              <span>Muhimlik</span>
+              <select id="taskPriority">
+                <option value="yuqori">Yuqori</option>
+                <option value="orta" selected>O'rta</option>
+                <option value="past">Past</option>
+              </select>
+            </label>
+            <label class="field est-field">
+              <span>Taxminiy vaqt</span>
+              <output id="taskEstimate">50 daq</output>
+            </label>
+            <button class="btn btn-primary" type="submit">+ Qo'shish</button>
+          </div>
+        </form>
+        </details>
+
+        <div class="summary" id="summary"></div>
+
+        <div class="list-head">
+          <h3>Kun tartibi</h3>
+          <span class="hint">Tartibni o'zgartirish uchun ushlab suring</span>
+        </div>
+        <ul class="task-list" id="taskList"></ul>
+
+        <details class="timeline-wrap" id="timelineWrap">
+          <summary>Kun jadvali (vaqt bo'yicha taqsimot)</summary>
+          <div class="timeline" id="timeline"></div>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ STATISTIKA ══════════════ -->
+  <section class="view" id="view-stats">
+    <div class="card">
+      <div class="card-head">
+        <h2>Statistika</h2>
+        <div class="seg" id="statsRange">
+          <button class="is-active" data-days="7">7 kun</button>
+          <button data-days="30">30 kun</button>
+          <button data-days="90">90 kun</button>
+        </div>
+      </div>
+      <div class="kpi-grid" id="kpiGrid"></div>
+    </div>
+
+    <div class="card">
+      <h3 class="sec-title">Kunlik pomodorolar</h3>
+      <div class="chart" id="chartDaily"></div>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <h3 class="sec-title">Kategoriyalar bo'yicha</h3>
+        <div id="chartCategory"></div>
+      </div>
+      <div class="card">
+        <h3 class="sec-title">Eng samarali soatlar</h3>
+        <div class="chart chart-sm" id="chartHourly"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="sec-title">Eng ko'p vaqt ketgan vazifalar</h3>
+      <div id="topTasks"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════ HISOBOT ══════════════ -->
+  <section class="view" id="view-report">
+    <div class="card">
+      <div class="card-head">
+        <h2>Hisobot</h2>
+        <span class="hint">Hisobotni yuklab oling yoki Notion / Confluence'ga yuboring</span>
+      </div>
+
+      <div class="report-bar">
+        <label class="field"><span>Davr</span>
+          <select id="repType">
+            <option value="daily">Kunlik</option>
+            <option value="weekly">Haftalik</option>
+            <option value="monthly">Oylik</option>
+          </select>
+        </label>
+        <label class="field"><span>Sana</span><input type="date" id="repDate"></label>
+        <button class="btn btn-mini" id="repRefresh">Yangilash</button>
+      </div>
+
+      <div class="kpi-grid" id="repKpi" style="margin-top:16px"></div>
+      <div id="repHighlights" style="margin-top:14px"></div>
+
+      <h3 class="sec-title" style="margin-top:22px">Yuklab olish</h3>
+      <div class="dl-grid">
+        <button class="dl-card" data-fmt="print"><span class="dl-ico">🖨</span><span><b>PDF / Chop etish</b><span>Brauzerda ochiladi</span></span></button>
+        <button class="dl-card" data-fmt="html"><span class="dl-ico">🌐</span><span><b>HTML fayl</b><span>Bezatilgan hisobot</span></span></button>
+        <button class="dl-card" data-fmt="md"><span class="dl-ico">📝</span><span><b>Markdown</b><span>Notion / Confluence uchun</span></span></button>
+        <button class="dl-card" data-fmt="csv"><span class="dl-ico">📊</span><span><b>CSV</b><span>Excel uchun</span></span></button>
+        <button class="dl-card" data-fmt="json"><span class="dl-ico">{ }</span><span><b>JSON</b><span>Boshqa tizimlar uchun</span></span></button>
+      </div>
+
+      <h3 class="sec-title" style="margin-top:22px">Tashqi tizimga yuborish</h3>
+      <div class="split-actions">
+        <button class="btn btn-ghost btn-mini" id="repToNotion">⬆ Notion'ga yuborish</button>
+        <button class="btn btn-ghost btn-mini" id="repToConfluence">⬆ Confluence'ga yuborish</button>
+        <span class="hint" id="repExportState"></span>
+      </div>
+
+      <div class="report-preview">
+        <iframe id="repFrame" title="Hisobot ko'rinishi"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ PROFIL ══════════════ -->
+  <section class="view" id="view-profile">
+    <div class="card">
+      <div class="profile-head">
+        <span class="avatar lg" id="profAvatar">🍅</span>
+        <div>
+          <h2 id="profName">—</h2>
+          <div class="muted" id="profMeta">—</div>
+        </div>
+      </div>
+
+      <div class="settings-grid">
+        <label class="field"><span>Ism familiya</span><input type="text" id="profNameInput" maxlength="80"></label>
+        <label class="field"><span>Lavozim</span><input type="text" id="profJob" maxlength="100" placeholder="masalan: HR menejer"></label>
+        <label class="field"><span>Tashkilot</span><input type="text" id="profCompany" maxlength="100" placeholder="Kompaniya nomi"></label>
+        <label class="field"><span>Email</span><input type="text" id="profEmail" disabled></label>
+      </div>
+
+      <h3 class="sec-title" style="margin-top:20px">Avatar</h3>
+      <div class="avatar-grid" id="avatarGrid"></div>
+      <h3 class="sec-title" style="margin-top:18px">Rang</h3>
+      <div class="avatar-grid" id="colorGrid"></div>
+
+      <div class="row-actions">
+        <button class="btn btn-primary btn-mini" id="profSave">Saqlash</button>
+      </div>
+
+      <div class="stat-strip" id="profStats"></div>
+    </div>
+
+    <div class="card">
+      <h2 class="sec-title">⏱ Pomodoro sozlamalari</h2>
+      <p class="hint" style="margin:-8px 0 14px">Bu qiymatlar <b>barcha yangi kunlar uchun standart</b>.
+         Alohida bir kunni «Bugun» bo'limidagi «Pomodoroni to'g'rlash» tugmasi orqali o'zgartirasiz.</p>
+      <div class="settings-grid">
+        <label class="field"><span>Pomodoro davomiyligi (daq)</span><input type="number" id="setWork" min="1" max="180"></label>
+        <label class="field"><span>Qisqa tanaffus (daq)</span><input type="number" id="setShort" min="0" max="60"></label>
+        <label class="field"><span>Uzun tanaffus (daq)</span><input type="number" id="setLong" min="0" max="120"></label>
+        <label class="field"><span>Uzun tanaffus har nechta pomodorodan keyin</span><input type="number" id="setInterval" min="2" max="12"></label>
+        <label class="field"><span>Kunlik maqsad (pomodoro)</span><input type="number" id="setGoal" min="1" max="30"></label>
+      </div>
+      <div class="preset-row">
+        <span>Tayyor shablonlar:</span>
+        <button class="btn btn-mini btn-ghost" data-preset="25,5,15,4">Klassik 25/5/15</button>
+        <button class="btn btn-mini btn-ghost" data-preset="50,10,30,2">Chuqur ish 50/10/30</button>
+        <button class="btn btn-mini btn-ghost" data-preset="90,20,30,2">Ultradian 90/20</button>
+        <button class="btn btn-mini btn-ghost" data-preset="15,3,10,4">Qisqa 15/3/10</button>
+      </div>
+
+      <h3 class="sec-title" style="margin-top:20px">Avtomatik sikl</h3>
+      <label class="switch-row"><input type="checkbox" id="setAutoBreak"><span>Pomodoro tugagach tanaffus avtomatik boshlansin</span></label>
+      <label class="switch-row"><input type="checkbox" id="setAutoWork"><span>Tanaffus tugagach keyingi pomodoro avtomatik boshlansin</span></label>
+    </div>
+
+    <div class="card">
+      <h2 class="sec-title">🗓 Haftalik ish jadvali</h2>
+      <p class="hint" style="margin:-8px 0 14px">Har bir kun uchun ish vaqtini belgilang. Kun tartibi jadvali shu vaqtlar asosida quriladi.</p>
+      <div id="weekGrid"></div>
+      <div class="row-actions">
+        <button class="btn btn-primary btn-mini" id="weekSave">Jadvalni saqlash</button>
+        <span class="hint" id="weekState"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="sec-title">Xavfsizlik</h2>
+      <div class="settings-grid">
+        <label class="field"><span>Joriy parol</span><input type="password" id="pwCurrent" autocomplete="current-password"></label>
+        <label class="field"><span>Yangi parol</span><input type="password" id="pwNew" autocomplete="new-password" placeholder="Kamida 8 belgi, harf va raqam"></label>
+        <label class="field"><span>Yangi parolni takrorlang</span><input type="password" id="pwNew2" autocomplete="new-password"></label>
+      </div>
+      <div class="row-actions">
+        <button class="btn btn-mini" id="pwSave">Parolni yangilash</button>
+        <span class="hint" id="pwHint"></span>
+      </div>
+
+      <h3 class="sec-title" style="margin-top:20px">Faol seanslar</h3>
+      <div id="authSessions"></div>
+    </div>
+
+    <div class="card danger-card">
+      <h2 class="sec-title">Hisobni o'chirish</h2>
+      <p class="hint">Hisob va unga tegishli barcha vazifa, sessiya hamda hisobotlar butunlay o'chiriladi.</p>
+      <div class="row-actions">
+        <label class="field" id="delPasswordWrap" style="min-width:220px">
+          <span>Tasdiqlash uchun parolingiz</span>
+          <input type="password" id="delPassword" autocomplete="current-password" placeholder="••••••••">
+        </label>
+        <button class="btn btn-mini btn-danger" id="btnDeleteAccount">Hisobimni o'chirish</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════ TARIX ══════════════ -->
+  <section class="view" id="view-history">
+    <div class="card">
+      <div class="card-head">
+        <h2>Tarix</h2>
+        <div class="head-actions">
+          <label class="field inline"><span>Dan</span><input type="date" id="histFrom"></label>
+          <label class="field inline"><span>Gacha</span><input type="date" id="histTo"></label>
+          <button class="btn btn-mini" id="histLoad">Ko'rish</button>
+        </div>
+      </div>
+      <div class="export-bar">
+        <button class="btn btn-ghost btn-mini" id="expJson">⬇ JSON yuklab olish</button>
+        <button class="btn btn-ghost btn-mini" id="expCsv">⬇ CSV (Excel)</button>
+        <label class="btn btn-ghost btn-mini file-btn">⬆ Import qilish
+          <input type="file" id="impFile" accept=".json,application/json" hidden>
+        </label>
+      </div>
+      <div id="historyList"></div>
+    </div>
+  </section>
+
+  <!-- ══════════════ SOZLAMALAR ══════════════ -->
+  <section class="view" id="view-settings">
+    <div class="card">
+      <h2 class="sec-title">⏱ Taymer va ish vaqti</h2>
+      <p class="hint" style="margin:-8px 0 4px">Pomodoro davomiyligi, tanaffuslar, avtomatik sikl va haftalik ish jadvali
+         <b>Profil</b> bo'limiga ko'chirildi.</p>
+      <div class="row-actions">
+        <button class="btn btn-mini" id="gotoProfileSettings">👤 Profilga o'tish</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2 class="sec-title">Ovoz va bildirishnoma</h2>
+      <label class="switch-row"><input type="checkbox" id="setSound"><span>Ovozli signal</span></label>
+      <label class="field"><span>Ovoz balandligi</span><input type="range" id="setVolume" min="0" max="100"></label>
+      <label class="switch-row"><input type="checkbox" id="setNotif"><span>Brauzer bildirishnomalari</span></label>
+      <div class="row-actions">
+        <button class="btn btn-mini btn-ghost" id="testSound">🔔 Ovozni sinash</button>
+        <button class="btn btn-mini btn-ghost" id="askNotif">Bildirishnomaga ruxsat berish</button>
+        <span class="hint" id="notifState"></span>
+      </div>
+    </div>
+
+    <div class="card" id="integrationsCard">
+      <h2 class="sec-title">🔗 Integratsiyalar</h2>
+      <p class="hint" style="margin:-8px 0 14px">Kalitlar shifrlangan holda faqat shu kompyuterda saqlanadi.</p>
+
+      <!-- ─── Jira ─── -->
+      <details class="integ" id="integJira">
+        <summary class="integ-head">
+          <span class="integ-logo">🟦</span>
+          <span class="integ-name"><b>Jira</b><span>Vazifalarni JQL bo'yicha yuklab olish</span></span>
+          <span class="badge off" id="jiraBadge">O'chirilgan</span>
+        </summary>
+        <div class="integ-body">
+          <div class="help">
+            <b>Sozlash:</b>
+            <ol>
+              <li>Atlassian API token yarating — <a href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" rel="noopener">id.atlassian.com</a></li>
+              <li>Manzil: <code>https://kompaniya.atlassian.net</code></li>
+              <li>Email — Jira hisobingiz emaili, token — yuqorida yaratilgani</li>
+            </ol>
+          </div>
+          <div class="integ-grid">
+            <label class="field"><span>Jira manzili</span><input type="text" id="jiraUrl" placeholder="https://kompaniya.atlassian.net"></label>
+            <label class="field"><span>Email</span><input type="email" id="jiraEmail" placeholder="ism@kompaniya.uz"></label>
+            <label class="field"><span>API token</span><input type="password" id="jiraToken" placeholder="Saqlangan tokenni o'zgartirish uchun yozing"></label>
+            <label class="field"><span>Pomodoro davomiyligi (daq)</span><input type="number" id="jiraPerPomo" min="5" max="120"></label>
+            <label class="field"><span>Baho bo'lmasa (pomodoro)</span><input type="number" id="jiraDefault" min="1" max="20"></label>
+          </div>
+          <label class="field"><span>JQL so'rovi</span>
+            <textarea id="jiraJql" placeholder="assignee = currentUser() AND statusCategory != Done ORDER BY priority DESC"></textarea>
+          </label>
+          <div class="split-actions">
+            <label class="switch-row" style="padding:0"><input type="checkbox" id="jiraEnabled"><span>Yoqilgan</span></label>
+            <button class="btn btn-mini" id="jiraSave">Saqlash</button>
+            <button class="btn btn-mini btn-ghost" id="jiraTest">Ulanishni tekshirish</button>
+            <button class="btn btn-mini btn-ghost" id="jiraLoad">Vazifalarni ko'rish</button>
+            <span class="hint" id="jiraState"></span>
+          </div>
+          <div id="jiraIssues"></div>
+        </div>
+      </details>
+
+      <!-- ─── Notion ─── -->
+      <details class="integ" id="integNotion">
+        <summary class="integ-head">
+          <span class="integ-logo">⬛</span>
+          <span class="integ-name"><b>Notion</b><span>Hisobotni Notion sahifasi sifatida yuborish</span></span>
+          <span class="badge off" id="notionBadge">O'chirilgan</span>
+        </summary>
+        <div class="integ-body">
+          <div class="help">
+            <b>Sozlash:</b>
+            <ol>
+              <li>Integratsiya yarating — <a href="https://www.notion.so/my-integrations" target="_blank" rel="noopener">notion.so/my-integrations</a>, "Internal Integration Secret"ni nusxalang</li>
+              <li>Hisobot saqlanadigan Notion sahifasini oching → <code>•••</code> → <b>Connections</b> → integratsiyangizni qo'shing</li>
+              <li>O'sha sahifaning havolasini quyidagi maydonga qo'ying</li>
+            </ol>
+          </div>
+          <div class="integ-grid">
+            <label class="field"><span>Integratsiya tokeni</span><input type="password" id="notionToken" placeholder="secret_… yoki ntn_…"></label>
+            <label class="field"><span>Ota sahifa havolasi / ID</span><input type="text" id="notionPage" placeholder="https://notion.so/Hisobotlar-2f1a…"></label>
+            <label class="field"><span>Yoki baza (database) ID</span><input type="text" id="notionDb" placeholder="ixtiyoriy"></label>
+          </div>
+          <div class="split-actions">
+            <label class="switch-row" style="padding:0"><input type="checkbox" id="notionEnabled"><span>Yoqilgan</span></label>
+            <button class="btn btn-mini" id="notionSave">Saqlash</button>
+            <button class="btn btn-mini btn-ghost" id="notionTest">Ulanishni tekshirish</button>
+            <span class="hint" id="notionState"></span>
+          </div>
+        </div>
+      </details>
+
+      <!-- ─── Confluence ─── -->
+      <details class="integ" id="integConfluence">
+        <summary class="integ-head">
+          <span class="integ-logo">🟪</span>
+          <span class="integ-name"><b>Confluence</b><span>Hisobotni Confluence sahifasi sifatida yuborish</span></span>
+          <span class="badge off" id="confBadge">O'chirilgan</span>
+        </summary>
+        <div class="integ-body">
+          <div class="help">
+            <b>Sozlash:</b>
+            <ol>
+              <li>Atlassian API token — <a href="https://id.atlassian.com/manage-profile/security/api-tokens" target="_blank" rel="noopener">id.atlassian.com</a></li>
+              <li>Manzil: <code>https://kompaniya.atlassian.net/wiki</code></li>
+              <li>Space Key — Confluence'da space sozlamalarida ko'rinadi (masalan <code>HR</code>)</li>
+            </ol>
+          </div>
+          <div class="integ-grid">
+            <label class="field"><span>Confluence manzili</span><input type="text" id="confUrl" placeholder="https://kompaniya.atlassian.net/wiki"></label>
+            <label class="field"><span>Email</span><input type="email" id="confEmail" placeholder="ism@kompaniya.uz"></label>
+            <label class="field"><span>API token</span><input type="password" id="confToken" placeholder="Saqlangan tokenni o'zgartirish uchun yozing"></label>
+            <label class="field"><span>Space Key</span><input type="text" id="confSpace" placeholder="HR"></label>
+            <label class="field"><span>Ota sahifa ID (ixtiyoriy)</span><input type="text" id="confParent" placeholder="123456789"></label>
+          </div>
+          <div class="split-actions">
+            <label class="switch-row" style="padding:0"><input type="checkbox" id="confEnabled"><span>Yoqilgan</span></label>
+            <button class="btn btn-mini" id="confSave">Saqlash</button>
+            <button class="btn btn-mini btn-ghost" id="confTest">Ulanishni tekshirish</button>
+            <span class="hint" id="confState"></span>
+          </div>
+        </div>
+      </details>
+
+      <!-- ─── Umumiy import ─── -->
+      <details class="integ" id="integGeneric">
+        <summary class="integ-head">
+          <span class="integ-logo">📥</span>
+          <span class="integ-name"><b>Boshqa tizimlar</b><span>Trello, Asana, Todoist, ClickUp — CSV orqali import</span></span>
+          <span class="badge off">CSV / JSON</span>
+        </summary>
+        <div class="integ-body">
+          <div class="help">
+            Task menejeringizdan vazifalarni CSV holida eksport qiling va quyiga qo'ying yoki faylni tanlang.
+            Tizim <code>title</code> / <code>name</code> / <code>task</code> ustunini vazifa nomi,
+            <code>estimate</code> / <code>duration</code> ustunini vaqt bahosi sifatida taniydi.
+          </div>
+          <label class="field"><span>CSV matni</span>
+            <textarea id="genCsv" placeholder="title,estimate,priority&#10;Hisobotni tayyorlash,2h,High&#10;Yig'ilishga tayyorgarlik,45m,Medium"></textarea>
+          </label>
+          <div class="integ-grid">
+            <label class="field"><span>Manba nomi</span><input type="text" id="genSource" placeholder="trello" value="import"></label>
+            <label class="field"><span>Sana</span><input type="date" id="genDate"></label>
+            <label class="field"><span>Pomodoro davomiyligi (daq)</span><input type="number" id="genPerPomo" value="25" min="5" max="120"></label>
+          </div>
+          <div class="split-actions">
+            <label class="btn btn-mini btn-ghost file-btn">📁 CSV fayl tanlash
+              <input type="file" id="genFile" accept=".csv,text/csv" hidden>
+            </label>
+            <button class="btn btn-mini" id="genImport">Import qilish</button>
+            <span class="hint" id="genState"></span>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div class="card" id="oauthCard" hidden>
+      <h2 class="sec-title">🔑 Kirish usullari (tizim egasi uchun)</h2>
+      <p class="hint" style="margin:-8px 0 14px">Google va GitHub orqali kirishni yoqish uchun o'z OAuth ilovangiz ma'lumotlarini kiriting.</p>
+
+      <details class="integ">
+        <summary class="integ-head">
+          <span class="integ-logo">🔵</span>
+          <span class="integ-name"><b>Google</b><span>Google hisobi bilan kirish</span></span>
+          <span class="badge off" id="googleBadge">O'chirilgan</span>
+        </summary>
+        <div class="integ-body">
+          <div class="help">
+            <ol>
+              <li><a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">console.cloud.google.com</a> → Credentials → Create OAuth client ID → Web application</li>
+              <li><b>Authorized redirect URI</b> maydoniga quyidagini qo'ying:<br><code id="googleRedirect">http://127.0.0.1:4123/api/auth/callback/google</code></li>
+            </ol>
+          </div>
+          <div class="integ-grid">
+            <label class="field"><span>Client ID</span><input type="text" id="googleId" placeholder="…apps.googleusercontent.com"></label>
+            <label class="field"><span>Client Secret</span><input type="password" id="googleSecret" placeholder="GOCSPX-…"></label>
+          </div>
+          <div class="split-actions">
+            <label class="switch-row" style="padding:0"><input type="checkbox" id="googleEnabled"><span>Yoqilgan</span></label>
+            <button class="btn btn-mini" id="googleSave">Saqlash</button>
+            <span class="hint" id="googleState"></span>
+          </div>
+        </div>
+      </details>
+
+      <details class="integ">
+        <summary class="integ-head">
+          <span class="integ-logo">⬛</span>
+          <span class="integ-name"><b>GitHub</b><span>GitHub hisobi bilan kirish</span></span>
+          <span class="badge off" id="githubBadge">O'chirilgan</span>
+        </summary>
+        <div class="integ-body">
+          <div class="help">
+            <ol>
+              <li><a href="https://github.com/settings/developers" target="_blank" rel="noopener">github.com/settings/developers</a> → New OAuth App</li>
+              <li><b>Authorization callback URL</b>:<br><code id="githubRedirect">http://127.0.0.1:4123/api/auth/callback/github</code></li>
+            </ol>
+          </div>
+          <div class="integ-grid">
+            <label class="field"><span>Client ID</span><input type="text" id="githubId" placeholder="Iv1.…"></label>
+            <label class="field"><span>Client Secret</span><input type="password" id="githubSecret"></label>
+          </div>
+          <div class="split-actions">
+            <label class="switch-row" style="padding:0"><input type="checkbox" id="githubEnabled"><span>Yoqilgan</span></label>
+            <button class="btn btn-mini" id="githubSave">Saqlash</button>
+            <span class="hint" id="githubState"></span>
+          </div>
+        </div>
+      </details>
+    </div>
+
+    <div class="card danger-card">
+      <h2 class="sec-title">Ma'lumotlar</h2>
+      <p class="hint">Barcha ma'lumotlar <code>data/db.json</code> faylida saqlanadi va har kuni avtomatik zaxiralanadi.</p>
+      <div class="row-actions">
+        <button class="btn btn-mini btn-ghost" id="btnResetSettings">Sozlamalarni tiklash</button>
+        <button class="btn btn-mini btn-danger" id="btnClearSessions">Sessiyalar tarixini tozalash</button>
+        <button class="btn btn-mini btn-danger" id="btnClearAll">Hammasini o'chirish</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="toasts" id="toasts"></div>
+
+<div class="overlay" id="overlay" hidden>
+  <div class="modal">
+    <h3 id="modalTitle">Tasdiqlang</h3>
+    <p id="modalText"></p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="modalNo">Bekor qilish</button>
+      <button class="btn btn-danger" id="modalYes">Ha, davom etish</button>
+    </div>
+  </div>
+</div>
+
+<!-- Pomodoroni to'g'rlash -->
+<div class="overlay" id="pomoOverlay" hidden>
+  <form class="modal modal-wide" id="pomoForm">
+    <h3>⚙️ Pomodoroni to'g'rlash</h3>
+    <p class="hint" id="pomoScope">Bu qiymatlar faqat shu kunga qo'llanadi.</p>
+    <div class="edit-grid">
+      <label class="field"><span>Pomodoro davomiyligi</span>
+        <div class="ds-num"><input type="number" id="pmWork" min="1" max="180" required><em>daqiqa</em></div></label>
+      <label class="field"><span>Qisqa tanaffus</span>
+        <div class="ds-num"><input type="number" id="pmShort" min="0" max="60" required><em>daqiqa</em></div></label>
+      <label class="field"><span>Uzun tanaffus</span>
+        <div class="ds-num"><input type="number" id="pmLong" min="0" max="120" required><em>daqiqa</em></div></label>
+      <label class="field"><span>Uzun tanaffus har</span>
+        <div class="ds-num"><input type="number" id="pmInterval" min="2" max="12" required><em>pomodorodan keyin</em></div></label>
+    </div>
+
+    <div class="pomo-presets">
+      <span>Tayyor shablonlar:</span>
+      <button type="button" data-pomo="25,5,15,4">Klassik 25/5/15</button>
+      <button type="button" data-pomo="50,10,30,2">Chuqur ish 50/10/30</button>
+      <button type="button" data-pomo="90,20,30,2">Ultradian 90/20</button>
+      <button type="button" data-pomo="15,3,10,4">Qisqa 15/3/10</button>
+    </div>
+
+    <div class="pomo-preview" id="pomoPreview"></div>
+
+    <div class="modal-actions">
+      <button class="btn btn-ghost" type="button" id="pmCancel">Bekor qilish</button>
+      <button class="btn btn-primary" type="submit">Saqlash</button>
+    </div>
+  </form>
+</div>
+
+<!-- Ko'p kunlik reja -->
+<div class="overlay" id="weekPlanOverlay" hidden>
+  <div class="modal modal-xl">
+    <div class="wp-head">
+      <div>
+        <h3>📅 Ko'p kunlik reja</h3>
+        <p class="hint">Vazifani bir necha kunga birdaniga qo'shing. Kunlar yuklamasi darhol ko'rinadi.</p>
+      </div>
+      <button class="icon-btn" id="wpClose" title="Yopish">✕</button>
+    </div>
+
+    <div class="wp-range">
+      <label class="field inline"><span>Dan</span><input type="date" id="wpFrom"></label>
+      <label class="field inline"><span>Gacha</span><input type="date" id="wpTo"></label>
+      <button class="btn btn-mini btn-ghost" id="wpThisWeek">Shu hafta</button>
+      <button class="btn btn-mini btn-ghost" id="wpNextWeek">Keyingi hafta</button>
+      <span class="hint" id="wpRangeInfo"></span>
+    </div>
+
+    <div class="wp-days" id="wpDays"></div>
+
+    <form class="wp-form" id="wpForm">
+      <div class="wp-form-row">
+        <input type="text" id="wpTitle" placeholder="Vazifa nomi — masalan: Kunlik hisobotni tekshirish" maxlength="200" required>
+        <label class="field"><span>Pomodoro</span>
+          <div class="stepper">
+            <button type="button" class="step" data-wpstep="-1">−</button>
+            <input type="number" id="wpPomos" value="2" min="1" max="30">
+            <button type="button" class="step" data-wpstep="1">+</button>
+          </div></label>
+        <label class="field"><span>Kategoriya</span>
+          <select id="wpCategory">
+            <option value="ish">Ish</option>
+            <option value="oqish">O'qish</option>
+            <option value="loyiha">Loyiha</option>
+            <option value="uy">Uy ishlari</option>
+            <option value="sport">Sport</option>
+            <option value="boshqa">Boshqa</option>
+          </select></label>
+        <label class="field"><span>Muhimlik</span>
+          <select id="wpPriority">
+            <option value="yuqori">Yuqori</option>
+            <option value="orta" selected>O'rta</option>
+            <option value="past">Past</option>
+          </select></label>
+      </div>
+      <div class="wp-form-actions">
+        <span class="hint" id="wpSelInfo">Kunlarni yuqoridan tanlang</span>
+        <button class="btn btn-primary btn-mini" type="submit">+ Tanlangan kunlarga qo'shish</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Birinchi kirishda: haftalik ish jadvalini sozlash -->
+<div class="overlay" id="onboardOverlay" hidden>
+  <div class="modal modal-wide onboard">
+    <div class="onboard-head">
+      <span class="onboard-ico">🗓</span>
+      <div>
+        <h3>Ish jadvalingizni belgilang</h3>
+        <p class="hint">Haftaning qaysi kunlari va nechidan nechigacha ishlaysiz? Kun tartibi jadvali shu asosda quriladi.
+           Keyinchalik Profil bo'limidan o'zgartirishingiz mumkin.</p>
+      </div>
+    </div>
+    <div id="onboardGrid"></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" id="onboardSkip">Keyinroq</button>
+      <button class="btn btn-primary" id="onboardSave">Saqlash va boshlash</button>
+    </div>
+  </div>
+</div>
+
+<!-- Vazifani tahrirlash -->
+<div class="overlay" id="taskOverlay" hidden>
+  <form class="modal modal-wide" id="taskEditForm">
+    <h3>Vazifani tahrirlash</h3>
+    <div class="edit-grid">
+      <label class="field wide"><span>Vazifa nomi</span>
+        <input type="text" id="edTitle" maxlength="200" required></label>
+      <label class="field">
+        <span>Pomodoro</span>
+        <div class="stepper">
+          <button type="button" class="step" data-edstep="-1">−</button>
+          <input type="number" id="edPomos" min="1" max="30">
+          <button type="button" class="step" data-edstep="1">+</button>
+        </div>
+      </label>
+      <label class="field"><span>Taxminiy vaqt</span><output id="edEstimate">—</output></label>
+      <label class="field"><span>Kategoriya</span>
+        <select id="edCategory">
+          <option value="ish">Ish</option>
+          <option value="oqish">O'qish</option>
+          <option value="loyiha">Loyiha</option>
+          <option value="uy">Uy ishlari</option>
+          <option value="sport">Sport</option>
+          <option value="boshqa">Boshqa</option>
+        </select></label>
+      <label class="field"><span>Muhimlik</span>
+        <select id="edPriority">
+          <option value="yuqori">Yuqori</option>
+          <option value="orta">O'rta</option>
+          <option value="past">Past</option>
+        </select></label>
+      <label class="field wide"><span>Izoh</span>
+        <textarea id="edNote" maxlength="1000" placeholder="Ixtiyoriy izoh…"></textarea></label>
+    </div>
+    <p class="hint" id="edSourceInfo" hidden></p>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" type="button" id="edCancel">Bekor qilish</button>
+      <button class="btn btn-primary" type="submit">Saqlash</button>
+    </div>
+  </form>
+</div>
+
+<script type="module" src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+/* ═══════════ Kun rejimi paneli ═══════════ */
+.day-setup {
+  background: var(--card-2); border: 1px solid var(--line);
+  border-radius: 12px; padding: 12px 14px; margin-bottom: 14px;
+}
+.ds-row { display: flex; gap: 16px; align-items: flex-end; flex-wrap: wrap; }
+.ds-item { display: flex; flex-direction: column; gap: 5px; }
+.ds-item > span { font-size: 11px; color: var(--txt-3); font-weight: 500; white-space: nowrap; }
+.ds-times { display: flex; align-items: center; gap: 6px; }
+.ds-times input { width: 104px; }
+.ds-times em { color: var(--txt-3); font-style: normal; }
+.ds-num { display: flex; align-items: center; gap: 6px; }
+.ds-num input { width: 62px; text-align: center; }
+.ds-num em { font-style: normal; font-size: 11px; color: var(--txt-3); white-space: nowrap; }
+.ds-window { padding-right: 16px; border-right: 1px solid var(--line); }
+
+.ds-status {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-top: 11px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 12px;
+}
+.ds-status .pill-stat {
+  padding: 3px 10px; border-radius: 99px; font-size: 11.5px; font-weight: 550;
+  background: var(--bg-2); border: 1px solid var(--line); color: var(--txt-2);
+}
+.ds-status .pill-stat.good { color: var(--green); border-color: color-mix(in srgb, var(--green) 40%, transparent); }
+.ds-status .pill-stat.warn { color: var(--amber); border-color: color-mix(in srgb, var(--amber) 40%, transparent); }
+.ds-status .pill-stat.bad  { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+.ds-status .pill-stat.info { color: var(--blue); border-color: color-mix(in srgb, var(--blue) 35%, transparent); }
+
+.task.is-overflow { border-left-color: var(--amber); }
+.chip.time.out { color: var(--amber); border-color: color-mix(in srgb, var(--amber) 45%, transparent); }
+.tl-row.out .tl-bar { opacity: .55; outline: 1px dashed color-mix(in srgb, var(--amber) 55%, transparent); }
+
+/* ═══════════ Haftalik jadval ═══════════ */
+.week-grid { display: flex; flex-direction: column; gap: 8px; }
+.week-row {
+  display: grid; grid-template-columns: 30px 118px 1fr; gap: 12px; align-items: center;
+  background: var(--card-2); border: 1px solid var(--line); border-radius: 10px; padding: 9px 13px;
+  transition: .15s;
+}
+.week-row.off { opacity: .5; }
+.week-row.off .week-times { pointer-events: none; }
+.week-day { font-size: 13px; font-weight: 550; }
+.week-times { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.week-times input { width: 108px; }
+.week-times em { color: var(--txt-3); font-style: normal; font-size: 12px; }
+.week-hours { margin-left: auto; font-size: 11.5px; color: var(--txt-3); white-space: nowrap; }
+.week-off-label { font-size: 11.5px; color: var(--txt-3); }
+
+/* ═══════════ Sozlash oynasi ═══════════ */
+.onboard { max-width: 620px; }
+.onboard-head { display: flex; gap: 14px; align-items: flex-start; margin-bottom: 18px; }
+.onboard-ico {
+  width: 44px; height: 44px; border-radius: 12px; display: grid; place-items: center;
+  font-size: 22px; background: color-mix(in srgb, var(--accent) 15%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent); flex-shrink: 0;
+}
+.onboard-head p { margin: 5px 0 0; }
+.onboard #onboardGrid { max-height: 46vh; overflow-y: auto; padding-right: 4px; }
+
+@media (max-width: 620px) {
+  .ds-window { border-right: 0; padding-right: 0; }
+  .ds-row { gap: 12px; }
+  .week-row { grid-template-columns: 26px 1fr; row-gap: 8px; }
+  .week-day { grid-column: 2; }
+  .week-times { grid-column: 1 / -1; }
+}
+
+/* ═══════════ Jadval muharriri: rejimlar ═══════════ */
+.sched-tabs {
+  display: inline-flex; gap: 3px; background: var(--bg-2); border: 1px solid var(--line);
+  padding: 3px; border-radius: 10px; margin-bottom: 16px;
+}
+.sched-tab {
+  border: 0; background: transparent; color: var(--txt-2); cursor: pointer;
+  padding: 7px 16px; border-radius: 8px; font: inherit; font-size: 12.5px; font-weight: 550; transition: .15s;
+}
+.sched-tab:hover { color: var(--txt); }
+.sched-tab.is-active { background: var(--accent); color: #fff; }
+
+.sched-main { display: flex; gap: 26px; align-items: flex-end; flex-wrap: wrap; }
+.day-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip-day {
+  min-width: 42px; padding: 8px 10px; border-radius: 9px; cursor: pointer;
+  background: var(--bg-2); border: 1px solid var(--line); color: var(--txt-3);
+  font: inherit; font-size: 12.5px; font-weight: 600; transition: .13s;
+}
+.chip-day:hover { border-color: var(--line-2); color: var(--txt-2); }
+.chip-day.on {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 50%, transparent);
+  color: var(--accent);
+}
+.sched-presets {
+  display: flex; gap: 7px; align-items: center; flex-wrap: wrap;
+  margin-top: 14px; font-size: 11.5px; color: var(--txt-3);
+}
+.sched-presets button {
+  border: 1px solid var(--line); background: var(--bg-2); color: var(--txt-2);
+  border-radius: 8px; padding: 5px 11px; cursor: pointer; font: inherit; font-size: 11.5px; transition: .13s;
+}
+.sched-presets button:hover { border-color: var(--accent); color: var(--accent); }
+.sched-summary {
+  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line);
+}
+.sched-summary .pill-stat {
+  padding: 3px 10px; border-radius: 99px; font-size: 11.5px; font-weight: 550;
+  background: var(--bg-2); border: 1px solid var(--line); color: var(--txt-2);
+}
+.sched-summary .pill-stat.good { color: var(--green); border-color: color-mix(in srgb, var(--green) 40%, transparent); }
+.sched-summary .pill-stat.info { color: var(--blue); border-color: color-mix(in srgb, var(--blue) 35%, transparent); }
+.sched-summary .pill-stat.bad  { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+
+@media (max-width: 620px) {
+  .sched-main { gap: 14px; }
+  .chip-day { min-width: 38px; padding: 8px 7px; }
+}

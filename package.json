@@ -1,0 +1,13 @@
+{
+  "name": "pomodoro-ish-boshqaruv",
+  "version": "1.0.0",
+  "description": "Pomodoro timeri + kun tartibi rejalashtirish tizimi (frontend + backend)",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "engines": { "node": ">=18" },
+  "private": true
+}

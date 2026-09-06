@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kirish — Pomodoro</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍅</text></svg>">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/extra.css">
+<link rel="stylesheet" href="/css/fixes.css">
+<link rel="stylesheet" href="/css/schedule.css">
+<link rel="stylesheet" href="/css/plan.css">
+</head>
+<body class="auth-body">
+
+<div class="auth-wrap">
+
+  <!-- Chap taraf: taqdimot -->
+  <aside class="auth-side">
+    <div class="auth-brand"><span>🍅</span> Pomodoro</div>
+    <h1>Ish vaqtingizni<br>boshqaring</h1>
+    <p class="auth-lead">Kun tartibini tuzing, har bir vazifaga ketadigan vaqtni pomodoro usulida rejalashtiring
+       va tanaffuslarni tizim o'zi hisoblasin.</p>
+    <ul class="auth-feats">
+      <li><b>⏱</b><div><strong>Aqlli jadval</strong><span>Vazifa va pomodorolar asosida kun jadvali avtomatik quriladi</span></div></li>
+      <li><b>📊</b><div><strong>Statistika va hisobot</strong><span>Kunlik hisobotni PDF, Markdown yoki CSV holida yuklab oling</span></div></li>
+      <li><b>🔗</b><div><strong>Integratsiyalar</strong><span>Jira'dan vazifa yuklang, hisobotni Notion yoki Confluence'ga yuboring</span></div></li>
+      <li><b>🔒</b><div><strong>Ma'lumot sizda qoladi</strong><span>Barcha ma'lumotlar o'z kompyuteringizdagi serverda saqlanadi</span></div></li>
+    </ul>
+  </aside>
+
+  <!-- O'ng taraf: forma -->
+  <main class="auth-main">
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab is-active" data-mode="login">Kirish</button>
+        <button class="auth-tab" data-mode="register">Ro'yxatdan o'tish</button>
+      </div>
+
+      <div class="auth-alert" id="alert" hidden></div>
+
+      <div class="oauth-block" id="oauthBlock" hidden>
+        <button class="oauth-btn" id="btnGoogle" hidden>
+          <svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true">
+            <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.6 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.3 13.2 17.6 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.6-.15-3.15-.42-4.65H24v9.02h12.94c-.56 2.9-2.2 5.36-4.7 7.02l7.6 5.9c4.44-4.1 7.14-10.14 7.14-17.29z"/>
+            <path fill="#FBBC05" d="M10.4 28.7c-.5-1.5-.8-3.05-.8-4.7s.3-3.2.8-4.7l-7.8-6.1C.9 16.5 0 20.1 0 24s.9 7.5 2.6 10.8l7.8-6.1z"/>
+            <path fill="#34A853" d="M24 48c6.5 0 11.9-2.15 15.9-5.83l-7.6-5.9c-2.1 1.42-4.8 2.26-8.3 2.26-6.4 0-11.7-3.7-13.6-9.8l-7.8 6.1C6.5 42.6 14.6 48 24 48z"/>
+          </svg>
+          Google bilan davom etish
+        </button>
+        <button class="oauth-btn" id="btnGithub" hidden>
+          <svg viewBox="0 0 16 16" width="18" height="18" fill="currentColor" aria-hidden="true">
+            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+          </svg>
+          GitHub bilan davom etish
+        </button>
+        <div class="or"><span>yoki</span></div>
+      </div>
+
+      <!-- Kirish -->
+      <form class="auth-form is-active" id="formLogin">
+        <label class="field"><span>Email</span>
+          <input type="email" id="loginEmail" autocomplete="username" placeholder="ism@kompaniya.uz" required></label>
+        <label class="field"><span>Parol</span>
+          <input type="password" id="loginPassword" autocomplete="current-password" placeholder="••••••••" required></label>
+        <button class="btn btn-primary btn-block" type="submit">Kirish</button>
+      </form>
+
+      <!-- Ro'yxatdan o'tish -->
+      <form class="auth-form" id="formRegister">
+        <label class="field"><span>Ism familiya</span>
+          <input type="text" id="regName" autocomplete="name" placeholder="Ism Familiya" required></label>
+        <label class="field"><span>Email</span>
+          <input type="email" id="regEmail" autocomplete="username" placeholder="ism@kompaniya.uz" required></label>
+        <label class="field"><span>Parol</span>
+          <input type="password" id="regPassword" autocomplete="new-password" placeholder="Kamida 8 belgi, harf va raqam" required></label>
+        <div class="pw-meter"><i id="pwBar"></i></div>
+        <label class="field"><span>Parolni takrorlang</span>
+          <input type="password" id="regPassword2" autocomplete="new-password" placeholder="••••••••" required></label>
+        <button class="btn btn-primary btn-block" type="submit">Hisob yaratish</button>
+        <p class="auth-note" id="firstUserNote" hidden>Siz birinchi foydalanuvchisiz — hisobingiz tizim egasi bo'ladi.</p>
+      </form>
+
+      <p class="auth-foot">Ma'lumotlaringiz shu kompyuterdagi serverda saqlanadi.</p>
+    </div>
+  </main>
+</div>
+
+<script type="module" src="/js/login.js"></script>
+</body>
+</html>
