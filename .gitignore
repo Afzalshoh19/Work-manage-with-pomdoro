@@ -14,3 +14,7 @@ desktop.ini
 .vscode/
 .idea/
 *.swp
+
+# Yig'ish natijalari — build.mjs ularni qayta yaratadi
+dist/
+*.zip

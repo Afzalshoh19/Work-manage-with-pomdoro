@@ -2,7 +2,7 @@
 import { getDb, persist, DEFAULT_INTEGRATIONS, userWorkSchedule, WEEKDAYS, defaultWorkSchedule } from '../lib/db.js';
 import { checkLunch } from './tasks.js';
 import { encryptSecret, decryptSecret, maskSecret, verifyPassword } from '../lib/crypto.js';
-import { publicUser, destroyAllSessions } from '../lib/auth.js';
+import { publicUser, destroyAllSessions, clearCookie } from '../lib/auth.js';
 import { str, clamp } from '../lib/util.js';
 
 const AVATARS = ['🍅', '🚀', '🎯', '⚡', '🌟', '🦊', '🐼', '🦉', '🌊', '🔥', '🌱', '🎨', '📚', '💼', '🧠', '☕'];
@@ -74,7 +74,7 @@ export function deleteAccount({ user, body }) {
   db.users = db.users.filter(u => u.id !== user.id);
   destroyAllSessions(user.id);
   persist();
-  return { ok: true, __cookie: 'pmd_sid=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0' };
+  return { ok: true, __cookie: clearCookie() };
 }
 
 /* ═══════════ Integratsiya sozlamalari ═══════════ */
