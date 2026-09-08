@@ -1,5 +1,6 @@
 /** Foydalanuvchi profili va integratsiya sozlamalari */
 import { getDb, persist, DEFAULT_INTEGRATIONS, userWorkSchedule, WEEKDAYS, defaultWorkSchedule } from '../lib/db.js';
+import { checkLunch } from './tasks.js';
 import { encryptSecret, decryptSecret, maskSecret, verifyPassword } from '../lib/crypto.js';
 import { publicUser, destroyAllSessions } from '../lib/auth.js';
 import { str, clamp } from '../lib/util.js';
@@ -200,7 +201,17 @@ export function saveWorkSchedule({ user, body }) {
     }
     const enabled = !!raw.enabled;
     if (enabled) enabledCount++;
-    out[d.key] = { enabled, start, end };
+
+    // Tushlik — shu kunning ish vaqti ichida bo'lishi shart
+    const lunchEnabled = raw.lunchEnabled !== false;
+    const lunchStart = pad(str(raw.lunchStart, 5) || '13:00');
+    const lunchEnd = pad(str(raw.lunchEnd, 5) || '14:00');
+    if (enabled && lunchEnabled) {
+      const err = checkLunch(lunchStart, lunchEnd, start, end);
+      if (err) return { error: `${d.name}: ${err}`, status: 400 };
+    }
+
+    out[d.key] = { enabled, start, end, lunchEnabled, lunchStart, lunchEnd };
   }
   if (!enabledCount) return { error: 'Kamida bitta ish kuni belgilanishi kerak', status: 400 };
 

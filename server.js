@@ -74,6 +74,9 @@ const routes = [
   ['POST',   '/api/plan/bulk',           Tasks.bulkAddTasks],
   ['GET',    '/api/tasks/statuses',      Tasks.statusList],
   ['POST',   '/api/plan/copy',           Tasks.copyPlan],
+  ['POST',   '/api/tasks/copy',          Tasks.copyTasks],
+  ['POST',   '/api/tasks/:id/log',       Tasks.logPomodoros],
+  ['GET',    '/api/tasks/reasons',       Tasks.correctionReasons],
   ['POST',   '/api/plan/carry',          Tasks.carryOver],
 
   // Taymer
@@ -192,7 +195,11 @@ function serveStatic(req, res, pathname) {
       'Cache-Control': ext === '.html' ? 'no-store, must-revalidate' : 'no-cache',
       ETag: etag
     });
-    fs.createReadStream(filePath).pipe(res);
+    // Fayl o'qishda xato bo'lsa (o'chirilgan, band) 'error' hodisasi ushlanmasa server qulaydi
+    const stream = fs.createReadStream(filePath);
+    stream.on('error', () => res.destroy());
+    res.on('close', () => stream.destroy());
+    stream.pipe(res);
   });
 }
 
@@ -208,7 +215,16 @@ function originAllowed(req) {
 }
 
 /* ---------------- Server ---------------- */
-const server = http.createServer(async (req, res) => {
+const server = http.createServer((req, res) => {
+  res.on('error', () => { /* mijoz ulanishni uzdi — server to'xtamasin */ });
+  handleRequest(req, res).catch((err) => {
+    console.error('  So\'rovda kutilmagan xato:', (err && err.message) || err);
+    if (res.headersSent) return res.destroy();
+    try { json(res, 500, { error: 'Server xatosi' }); } catch { res.destroy(); }
+  });
+});
+
+async function handleRequest(req, res) {
   const url = new URL(req.url, 'http://' + (req.headers.host || 'localhost'));
   const pathname = url.pathname;
 
@@ -260,7 +276,11 @@ const server = http.createServer(async (req, res) => {
       });
       return res.end(raw);
     }
-    if (result && result.error) return json(res, result.status || 400, { error: result.error });
+    // Xato kodini ham uzatamiz — mijoz uni ajratib ishlata olsin (masalan TASK_LOCKED)
+    if (result && result.error) {
+      return json(res, result.status || 400,
+        result.code ? { error: result.error, code: result.code } : { error: result.error });
+    }
 
     const cookie = result?.__cookie;
     if (cookie) delete result.__cookie;
@@ -269,11 +289,17 @@ const server = http.createServer(async (req, res) => {
     console.error('[api]', req.method, pathname, '-', err.message);
     return json(res, 500, { error: err.message || 'Server xatosi' });
   }
-});
+}
 
 const db = load();
-dailyBackup();
-setInterval(dailyBackup, 60 * 60 * 1000).unref();
+safeBackup();
+setInterval(safeBackup, 60 * 60 * 1000).unref();
+
+/** Zaxira nusxada xato bo'lsa ham server to'xtamasligi kerak */
+function safeBackup() {
+  try { dailyBackup(); }
+  catch (err) { console.error('  Zaxira nusxa xatosi:', (err && err.message) || err); }
+}
 
 server.listen(PORT, HOST, () => {
   console.log('');
@@ -296,4 +322,18 @@ server.on('error', (err) => {
   throw err;
 });
 
-process.on('SIGINT', () => { console.log('\n  Server toxtatildi.'); process.exit(0); });
+// Ushlanmagan xato Node'ni butunlay o'chirib yuboradi — logga yozamiz, lekin ishlashda davom etamiz
+process.on('uncaughtException', (err) => {
+  console.error('  Ushlanmagan xato:', (err && err.stack) || err);
+});
+process.on('unhandledRejection', (reason) => {
+  console.error('  Ushlanmagan promise xatosi:', (reason && reason.stack) || reason);
+});
+
+function shutdown(signal) {
+  console.log('\n  Server toxtatildi (' + signal + ').');
+  server.close(() => process.exit(0));
+  setTimeout(() => process.exit(0), 3000).unref();
+}
+process.on('SIGINT', () => shutdown('SIGINT'));
+process.on('SIGTERM', () => shutdown('SIGTERM'));

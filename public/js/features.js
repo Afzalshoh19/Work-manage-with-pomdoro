@@ -1,5 +1,5 @@
 /** Profil, hisobotlar va integratsiyalar — app.js dan chaqiriladi */
-import { api } from './api.js';
+import { api, downloadFile } from './api.js';
 
 let C = null;   // umumiy kontekst (app.js beradi)
 const $ = (id) => document.getElementById(id);
@@ -136,7 +136,76 @@ export async function loadReport() {
   $('repHighlights').innerHTML = `<div class="help"><b>${C.esc(report.period.label)}</b><ul style="margin:8px 0 0;padding-left:18px">`
     + report.highlights.map(h => `<li>${C.esc(h)}</li>`).join('') + '</ul></div>';
 
+  renderCorrections(report);
   $('repFrame').src = api.reportViewUrl(reportOpts());
+}
+
+/**
+ * Hisobotni to'g'rlash paneli: davrdagi har bir vazifa yonida «To'g'rlash»
+ * tugmasi va allaqachon kiritilgan tuzatishlar sababi bilan ko'rinadi.
+ */
+function renderCorrections(report) {
+  const el = $('repCorrect');
+  if (!report.tasks.length) {
+    el.innerHTML = '<div class="empty-mini">Bu davrda vazifa kiritilmagan — to\'g\'rlash uchun avval vazifa qo\'shing.</div>';
+    return;
+  }
+
+  const kopKun = report.period.from !== report.period.to;
+
+  const rows = report.tasks.map(t => {
+    const tuz = t.corrections || [];
+    const qulf = t.status === 'bajarildi';
+    const belgi = t.manualPomodoros
+      ? `<span class="corr-badge" title="Qo'lda kiritilgan">✍ ${t.manualPomodoros}</span>`
+      : '';
+    return `<div class="corr-row ${qulf ? 'is-locked' : ''}" data-id="${t.id}">
+      <div class="corr-main">
+        <span class="corr-title">${C.esc(t.title)}</span>
+        <div class="corr-meta">
+          ${kopKun ? `<span class="chip">${C.esc(C.fmtDateLong(t.date))}</span>` : ''}
+          <span class="chip">${t.completedPomodoros}/${t.plannedPomodoros} 🍅</span>
+          <span>${C.fmtDuration(t.focusMinutes)}</span>
+          ${belgi}
+          ${qulf ? '<span class="corr-lock">🔒 Bajarilgan — qulflangan</span>' : ''}
+        </div>
+        ${tuz.length ? `<ul class="corr-list">${tuz.map(c =>
+          `<li><b>+${c.pomodoros} 🍅</b> · ${C.esc(c.reasonLabel)}${c.reasonNote ? ` — ${C.esc(c.reasonNote)}` : ''}</li>`
+        ).join('')}</ul>` : ''}
+      </div>
+      ${qulf
+        ? `<button class="btn btn-mini btn-ghost corr-reopen" data-id="${t.id}"
+             title="To'g'rlash uchun avval vazifani qayta oching">↩ Qayta ochish</button>`
+        : `<button class="btn btn-mini corr-btn" data-id="${t.id}">✍ To'g'rlash</button>`}
+    </div>`;
+  }).join('');
+
+  const jami = report.summary.manualPomodoros
+    ? `<div class="corr-sum">Bu davrda <b>${report.summary.manualPomodoros}</b> ta pomodoro qo'lda to'g'rlangan
+       (${report.summary.correctionCount} ta tuzatish) · taymer bilan <b>${report.summary.trackedPomodoros}</b> ta.</div>`
+    : '';
+
+  el.innerHTML = jami + `<div class="corr-grid">${rows}</div>`;
+
+  el.querySelectorAll('.corr-btn').forEach(b => b.addEventListener('click', () => {
+    const t = report.tasks.find(x => x.id === b.dataset.id);
+    if (t) C.openLogTask(t, loadReport);
+  }));
+
+  el.querySelectorAll('.corr-reopen').forEach(b => b.addEventListener('click', async () => {
+    const t = report.tasks.find(x => x.id === b.dataset.id);
+    if (!t) return;
+    b.disabled = true;
+    try {
+      await C.guard(() => api.updateTask(t.id, {
+        status: t.completedPomodoros >= t.plannedPomodoros ? 'qabulga'
+          : t.completedPomodoros ? 'jarayonda' : 'reja'
+      }));
+      await loadReport();
+      await C.loadPlan();
+      C.toast(`«${t.title}» qayta ochildi — endi to'g'rlash mumkin`, 'ok');
+    } catch { b.disabled = false; }
+  }));
 }
 
 function bindReport() {
@@ -144,15 +213,22 @@ function bindReport() {
   $('repDate').addEventListener('change', loadReport);
   $('repRefresh').addEventListener('click', loadReport);
 
-  document.querySelectorAll('.dl-card').forEach(b => b.addEventListener('click', () => {
+  document.querySelectorAll('.dl-card').forEach(b => b.addEventListener('click', async () => {
     const fmt = b.dataset.fmt;
     if (fmt === 'print') {
       const w = window.open(api.reportViewUrl(reportOpts()), '_blank');
       if (!w) C.toast('Brauzer yangi oynani bloklab qo\'ydi', 'err');
       return;
     }
-    window.location.href = api.reportUrl({ ...reportOpts(), format: fmt });
-    C.toast('Yuklab olinmoqda…', 'ok');
+    b.disabled = true;
+    try {
+      const name = await downloadFile(api.reportUrl({ ...reportOpts(), format: fmt }));
+      C.toast(`Yuklab olindi: ${name}`, 'ok');
+    } catch (err) {
+      C.toast('Yuklab olinmadi — ' + err.message, 'err');
+    } finally {
+      b.disabled = false;
+    }
   }));
 
   const sendTo = async (target, label) => {

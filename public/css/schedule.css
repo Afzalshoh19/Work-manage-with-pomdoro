@@ -116,3 +116,55 @@
   .sched-main { gap: 14px; }
   .chip-day { min-width: 38px; padding: 8px 7px; }
 }
+
+/* ═══════════ Tushlik ═══════════ */
+
+/* Haftalik jadval qatoridagi tushlik maydonlari */
+.week-row { grid-template-columns: 30px 118px minmax(0, 1fr) auto; }
+.week-lunch {
+  display: flex; align-items: center; gap: 6px;
+  padding-left: 12px; border-left: 1px dashed var(--line);
+}
+.week-lunch input[type="time"] { width: 96px; }
+.week-lunch label { font-size: 13px; cursor: pointer; user-select: none; }
+.week-lunch em { color: var(--txt-3); font-style: normal; font-size: 12px; }
+.week-lunch input:disabled { opacity: .4; }
+.week-row.off .week-lunch { pointer-events: none; }
+.week-row.bad-lunch {
+  border-color: color-mix(in srgb, var(--amber) 55%, transparent);
+  background: color-mix(in srgb, var(--amber) 8%, var(--card-2));
+}
+.week-row.bad-lunch .week-hours { color: var(--amber); }
+
+/* «Umumiy» rejimdagi tushlik sarlavhasi */
+.ds-item > span > input[type="checkbox"] { vertical-align: -1px; margin-right: 4px; }
+.ds-item > span > label { cursor: pointer; }
+
+/* Kun jadvalidagi yangi blok turlari */
+.tl-bar.lunch {
+  background: repeating-linear-gradient(45deg,
+    color-mix(in srgb, var(--amber) 42%, #000) 0 9px,
+    color-mix(in srgb, var(--amber) 30%, #000) 9px 18px);
+}
+.tl-bar.pause {
+  background: color-mix(in srgb, var(--txt-3) 30%, #000);
+  border: 1px dashed color-mix(in srgb, var(--txt-3) 55%, transparent);
+}
+
+/* Vazifadagi pauza va haqiqiy vaqt belgilari */
+.chip.pause {
+  color: var(--txt-3);
+  border-color: color-mix(in srgb, var(--txt-3) 40%, transparent);
+}
+.chip.time.pinned {
+  color: var(--green);
+  border-color: color-mix(in srgb, var(--green) 45%, transparent);
+}
+
+@media (max-width: 860px) {
+  .week-row { grid-template-columns: 26px 1fr; row-gap: 8px; }
+  .week-lunch {
+    grid-column: 1 / -1; padding-left: 0; border-left: 0;
+    padding-top: 8px; border-top: 1px dashed var(--line);
+  }
+}

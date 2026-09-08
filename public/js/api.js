@@ -18,6 +18,44 @@ async function request(method, url, body) {
   return data;
 }
 
+/**
+ * Faylni ishonchli yuklab olish.
+ * `location.href` bilan yuklash brauzerlarda jimgina bekor bo'lishi mumkin va
+ * xatoni ko'rsatmaydi. Shuning uchun faylni fetch bilan olamiz va blob orqali
+ * saqlaymiz — muvaffaqiyatsiz bo'lsa aniq xato qaytadi.
+ */
+export async function downloadFile(url) {
+  const res = await fetch(url, { headers: { Accept: '*/*' } });
+  if (res.status === 401) throw new AuthError('Avval tizimga kiring');
+  if (!res.ok) {
+    let msg = `Server xatosi (${res.status})`;
+    try { msg = (await res.json()).error || msg; } catch { /* JSON emas */ }
+    throw new Error(msg);
+  }
+
+  // Fayl nomini serverdan olamiz, bo'lmasa manzildan yasaymiz
+  let name = '';
+  const cd = res.headers.get('content-disposition') || '';
+  const m = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(cd);
+  if (m) { try { name = decodeURIComponent(m[1]); } catch { name = m[1]; } }
+  if (!name) name = 'hisobot-' + new Date().toISOString().slice(0, 10);
+
+  const blob = await res.blob();
+  if (!blob.size) throw new Error('Fayl bo\'sh qaytdi');
+
+  const href = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = href;
+  a.download = name;
+  a.rel = 'noopener';
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  // Blobni darhol tozalash yuklashni uzib qo'yishi mumkin — biroz kutamiz
+  setTimeout(() => { URL.revokeObjectURL(href); a.remove(); }, 15000);
+  return name;
+}
+
 const qs = (obj) => {
   const p = new URLSearchParams();
   for (const [k, v] of Object.entries(obj || {})) if (v !== undefined && v !== null && v !== '') p.set(k, v);
@@ -47,6 +85,9 @@ export const api = {
   deleteTask:    (id)           => request('DELETE', '/api/tasks/' + id),
   reorder:       (ids)          => request('POST', '/api/tasks/reorder', { ids }),
   copyPlan:      (from, to)     => request('POST', '/api/plan/copy', { from, to }),
+  copyTasks:     (ids, to)      => request('POST', '/api/tasks/copy', { ids, to }),
+  logPomodoros:  (id, payload)  => request('POST', '/api/tasks/' + id + '/log', payload),
+  correctionReasons: ()         => request('GET', '/api/tasks/reasons'),
   carryOver:     (from, to)     => request('POST', '/api/plan/carry', { from, to }),
   setDaySetup:   (payload)      => request('PUT', '/api/plan/window', payload),
   planRange:     (from, to)     => request('GET', '/api/plan/range' + qs({ from, to })),

@@ -334,3 +334,84 @@
 @media (prefers-reduced-motion: reduce) {
   .add-head .ah-ico, .add-head .ah-chev, .add-wrap { transition: none; }
 }
+
+/* ═══════════ Vazifani boshqa kunga nusxalash ═══════════ */
+.copy-quick {
+  display: flex; gap: 7px; flex-wrap: wrap; margin: 14px 0 4px;
+}
+.copy-quick button {
+  border: 1px solid var(--line); background: var(--bg-2); color: var(--txt-2);
+  border-radius: 8px; padding: 6px 12px; cursor: pointer; font: inherit; font-size: 12px; transition: .13s;
+}
+.copy-quick button:hover { border-color: var(--accent); color: var(--accent); }
+#copyForm .field { margin-top: 10px; }
+#copyPreview { margin-top: 10px; min-height: 17px; }
+.warn-text { color: var(--amber); }
+
+/* Nusxalash tugmasi vazifa qatorida */
+.t-btn.copy:hover { color: var(--blue); border-color: color-mix(in srgb, var(--blue) 45%, transparent); }
+
+/* Kun rejimi kartochkalari bitta qatorga sig'ishi uchun ixchamlashtirish */
+.ds-view { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; }
+.dv-item { min-width: 0; flex: 0 0 auto; padding: 9px 11px; }
+.dv-item > b { white-space: nowrap; }
+
+@media (max-width: 720px) {
+  .ds-view { flex-wrap: wrap; overflow-x: visible; }
+}
+
+/* Qo'lda yozish oynasi */
+.log-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 14px; }
+#logPreview { margin-top: 12px; min-height: 17px; color: var(--txt-2); }
+.t-btn.log:hover { color: var(--green); border-color: color-mix(in srgb, var(--green) 45%, transparent); }
+@media (max-width: 520px) { .log-grid { grid-template-columns: 1fr; } }
+
+/* ═══════════ Hisobotni to'g'rlash paneli ═══════════ */
+.corr-sum {
+  font-size: 12.5px; color: var(--txt-2); margin-bottom: 10px;
+  padding: 9px 12px; border-radius: 9px;
+  background: color-mix(in srgb, var(--amber) 9%, var(--card-2));
+  border: 1px solid color-mix(in srgb, var(--amber) 25%, var(--line));
+}
+.corr-grid { display: flex; flex-direction: column; gap: 8px; }
+.corr-row {
+  display: flex; gap: 12px; align-items: flex-start;
+  background: var(--card-2); border: 1px solid var(--line);
+  border-radius: 10px; padding: 10px 13px;
+}
+.corr-main { flex: 1; min-width: 0; }
+.corr-title { font-size: 13.5px; font-weight: 560; }
+.corr-meta {
+  display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+  margin-top: 5px; font-size: 11.5px; color: var(--txt-3);
+}
+.corr-badge {
+  color: var(--amber); font-weight: 600;
+  border: 1px solid color-mix(in srgb, var(--amber) 40%, transparent);
+  border-radius: 99px; padding: 1px 8px;
+}
+.corr-list {
+  margin: 8px 0 0; padding-left: 16px;
+  font-size: 11.5px; color: var(--txt-2); line-height: 1.7;
+}
+.corr-list b { color: var(--amber); }
+.corr-btn { flex-shrink: 0; }
+.empty-mini {
+  font-size: 12.5px; color: var(--txt-3); padding: 14px;
+  border: 1px dashed var(--line); border-radius: 10px; text-align: center;
+}
+
+@media (max-width: 560px) {
+  .corr-row { flex-direction: column; }
+  .corr-btn { width: 100%; }
+}
+
+/* Bajarilgan vazifa qulflangan */
+.corr-row.is-locked { opacity: .72; }
+.corr-lock {
+  color: var(--green); font-size: 11px;
+  border: 1px solid color-mix(in srgb, var(--green) 35%, transparent);
+  border-radius: 99px; padding: 1px 8px;
+}
+.t-btn.is-locked { cursor: not-allowed; opacity: .45; }
+.t-btn.is-locked:hover { color: inherit; border-color: inherit; }

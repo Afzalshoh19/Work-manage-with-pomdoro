@@ -1,4 +1,4 @@
-import { api, AuthError } from './api.js';
+import { api, AuthError, downloadFile } from './api.js';
 import { playAlarm, playTick, notify, notifyPermission, askNotifyPermission, unlockAudio } from './sound.js';
 import { dailyChart, hourlyChart, categoryBars, topTasksList, CAT_COLORS, CAT_LABELS } from './charts.js';
 import { initFeatures, loadProfile, loadReport, loadIntegrations, loadOauthSettings } from './features.js';
@@ -118,6 +118,198 @@ function openTaskEditor(task) {
 function closeTaskEditor() {
   $('taskOverlay').hidden = true;
   editingId = null;
+}
+
+/* ══════════════════ Hisobotni to'g'rlash ══════════════════ */
+let loggingTask = null;
+let logAfter = null;
+
+/** To'g'rlash sabablari serverdan bir marta olinadi */
+let correctionReasons = null;
+async function ensureReasons() {
+  if (correctionReasons) return correctionReasons;
+  try {
+    correctionReasons = (await api.correctionReasons()).reasons;
+  } catch {
+    correctionReasons = [{ key: 'boshqa', label: 'Boshqa sabab' }];
+  }
+  $('logReason').innerHTML = '<option value="" disabled selected>Sababni tanlang…</option>'
+    + correctionReasons.map(r => `<option value="${r.key}">${esc(r.label)}</option>`).join('');
+  return correctionReasons;
+}
+
+/**
+ * @param {Object}   task    { id, title, date, plannedPomodoros, completedPomodoros }
+ * @param {Function} [after] muvaffaqiyatli yozilgach chaqiriladi (hisobotni yangilash uchun)
+ */
+async function openLogTask(task, after) {
+  if (!task) return;
+  loggingTask = task;
+  logAfter = typeof after === 'function' ? after : null;
+  await ensureReasons();
+
+  const qoldi = Math.max(0, task.plannedPomodoros - task.completedPomodoros);
+  const kun = task.date && task.date !== S.date ? ` (${fmtDateLong(task.date)})` : '';
+  $('logWhat').innerHTML = `<b>${esc(task.title)}</b>${kun} — hozir `
+    + `${task.completedPomodoros}/${task.plannedPomodoros} 🍅 yozilgan`
+    + (qoldi ? `, ${qoldi} ta qoldi.` : '.')
+    + ' Taymersiz bajarilgan ishni shu yerdan qo\'shing — hisobotda sababi bilan ko\'rinadi.';
+
+  $('logCount').value = Math.min(Math.max(1, qoldi || 1), 20);
+  $('logMinutes').value = modeMinutes('work');
+  $('logStart').value = '';
+  $('logReason').value = '';
+  $('logReasonNote').value = '';
+  logReasonChanged();
+  logPreview();
+  $('logOverlay').hidden = false;
+  setTimeout(() => $('logCount').focus(), 40);
+}
+
+/** «Boshqa sabab» tanlansa izoh majburiy bo'ladi */
+function logReasonChanged() {
+  const other = $('logReason').value === 'boshqa';
+  $('logReasonNote').required = other;
+  $('logNoteLabel').textContent = other ? 'Izoh (majburiy)' : 'Izoh (ixtiyoriy)';
+  $('logReasonNote').placeholder = other ? 'Sababni yozing' : 'Qo\'shimcha tushuntirish';
+}
+
+function closeLogTask() {
+  $('logOverlay').hidden = true;
+  loggingTask = null;
+  logAfter = null;
+}
+
+function logPreview() {
+  const n = Math.max(1, +$('logCount').value || 1);
+  const m = Math.max(1, +$('logMinutes').value || 25);
+  const start = $('logStart').value;
+  const jami = fmtDuration(n * m);
+  let vaqt = 'hozirdan orqaga hisoblanadi';
+  if (start) {
+    const [h, mi] = start.split(':').map(Number);
+    const end = new Date(0, 0, 0, h, mi + n * m);
+    vaqt = `${start} – ${String(end.getHours()).padStart(2, '0')}:${String(end.getMinutes()).padStart(2, '0')}`;
+  }
+  $('logPreview').textContent = `${n} × ${m} daq = ${jami} · ${vaqt}`;
+}
+
+function bindLogTask() {
+  $('logCancel').addEventListener('click', closeLogTask);
+  $('logOverlay').addEventListener('click', e => { if (e.target === $('logOverlay')) closeLogTask(); });
+  for (const id of ['logCount', 'logMinutes', 'logStart']) {
+    $(id).addEventListener('input', logPreview);
+  }
+  $('logReason').addEventListener('change', logReasonChanged);
+
+  $('logForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!loggingTask) return;
+    const start = $('logStart').value;
+    const payload = {
+      pomodoros: +$('logCount').value,
+      minutes: +$('logMinutes').value,
+      reason: $('logReason').value,
+      reasonNote: $('logReasonNote').value.trim()
+    };
+    const kun = loggingTask.date || S.date;
+    if (start) payload.startedAt = new Date(`${kun}T${start}:00`).toISOString();
+    const planned = loggingTask.plannedPomodoros;
+    const done = logAfter;
+    try {
+      const r = await guard(() => api.logPomodoros(loggingTask.id, payload));
+      closeLogTask();
+      if (kun === S.date) await loadPlan();
+      if (document.querySelector('#view-stats.is-active')) loadStats();
+      if (done) await done();
+      toast(`${r.logged} ta pomodoro qo'shildi (${r.reasonLabel}) — «${r.task.title}» ${r.task.completedPomodoros}/${planned}`, 'ok');
+    } catch { /* guard xabar berdi */ }
+  });
+}
+
+/* ══════════════════ Vazifani boshqa kunga nusxalash ══════════════════ */
+let copyingTask = null;
+
+/** Haftalik jadval bo'yicha keyingi ish kuni (dam olish kunlarini o'tkazib yuboradi) */
+async function nextWorkday(from) {
+  const start = shiftDate(from, 1);
+  try {
+    const r = await api.planRange(start, shiftDate(from, 14));
+    const d = r.days?.find(x => x.isWorkday);
+    if (d) return d.date;
+  } catch { /* aloqa yo'q — ertangi kunga qaytamiz */ }
+  return start;
+}
+
+function openCopyTask(task) {
+  if (!task) return;
+  copyingTask = task;
+  $('copyWhat').innerHTML = `<b>${esc(task.title)}</b> — ${task.plannedPomodoros} 🍅 `
+    + `(${fmtDuration(task.plannedPomodoros * dayWorkMinutes())}). `
+    + 'Asl vazifa shu kunda qoladi, nusxa toza holatda yaratiladi.';
+  $('copyDate').value = shiftDate(S.date, 1);
+  $('copyDate').min = todayStr();
+  copyPreview();
+  $('copyOverlay').hidden = false;
+  setTimeout(() => $('copyDate').focus(), 40);
+}
+
+function closeCopyTask() {
+  $('copyOverlay').hidden = true;
+  copyingTask = null;
+}
+
+/** Tanlangan kunning bandligini oldindan ko'rsatamiz */
+async function copyPreview() {
+  const to = $('copyDate').value;
+  const el = $('copyPreview');
+  if (!to || !copyingTask) return el.textContent = '';
+  el.textContent = 'Tekshirilmoqda…';
+  try {
+    const r = await api.planRange(to, to);
+    const d = r.days?.[0];
+    if (!d) return el.textContent = '';
+    if (!d.isWorkday) {
+      el.innerHTML = `<span class="warn-text">⚠ ${esc(d.weekdayName)} — dam olish kuni.</span> Vazifa baribir qo'shiladi.`;
+      return;
+    }
+    const after = d.totalPomodoros + copyingTask.plannedPomodoros;
+    const fits = after <= d.capacityPomodoros;
+    el.innerHTML = `${esc(d.weekdayName)}, ${d.startTime}–${d.endTime}`
+      + (d.lunch?.enabled ? ` · 🍽 ${d.lunch.start}–${d.lunch.end}` : '')
+      + ` · hozir ${d.totalPomodoros}/${d.capacityPomodoros} 🍅 → `
+      + (fits
+        ? `<b>${after}/${d.capacityPomodoros}</b> — sig'adi`
+        : `<span class="warn-text"><b>${after}/${d.capacityPomodoros}</b> — ish vaqtidan oshadi</span>`);
+  } catch {
+    el.textContent = '';
+  }
+}
+
+function bindCopyTask() {
+  $('copyCancel').addEventListener('click', closeCopyTask);
+  $('copyOverlay').addEventListener('click', e => { if (e.target === $('copyOverlay')) closeCopyTask(); });
+  $('copyDate').addEventListener('change', copyPreview);
+
+  $('copyQuick').addEventListener('click', async e => {
+    const b = e.target.closest('button');
+    if (!b) return;
+    $('copyDate').value = b.dataset.day ? shiftDate(S.date, +b.dataset.day) : await nextWorkday(S.date);
+    copyPreview();
+  });
+
+  $('copyForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    if (!copyingTask) return;
+    const to = $('copyDate').value;
+    const title = copyingTask.title;
+    try {
+      await guard(() => api.copyTasks([copyingTask.id], to));
+      closeCopyTask();
+      if (to === S.date) await loadPlan();
+      toast(`«${title}» ${fmtDateLong(to)} kuniga nusxalandi`, 'ok');
+    } catch { /* guard xabar berdi */ }
+  });
 }
 
 function editEstimate() {
@@ -349,11 +541,14 @@ function renderPlan() {
     })
   + card({
       ico: '⏱', value: fmtDuration(summary.workMinutes), label: 'Sof ish vaqti',
-      sub: summary.totalPomodoros ? `${summary.totalPomodoros} × ${summary.workMinutesUsed} daq` : 'Reja bo\'sh'
+      sub: summary.pauseMinutes
+        ? `${summary.totalPomodoros} × ${summary.workMinutesUsed} daq · ⏸ ${fmtDuration(summary.pauseMinutes)} pauza`
+        : summary.totalPomodoros ? `${summary.totalPomodoros} × ${summary.workMinutesUsed} daq` : 'Reja bo\'sh'
     })
   + card({
       tone: 'green', ico: '☕', value: fmtDuration(summary.breakMinutes), label: 'Tanaffuslar',
       sub: `${summary.shortBreaks} qisqa · ${summary.longBreaks} uzun`
+        + (summary.lunch?.enabled ? ` · 🍽 ${summary.lunch.start}` : '')
     })
   + card({
       tone: 'blue', ico: '📅', twoLine: true,
@@ -421,7 +616,10 @@ function renderPlan() {
             <span class="chip status ${st}">${STATUS[st].icon} ${STATUS[st].label}</span>
             <span class="chip cat">${esc(CAT_LABELS[t.category] || t.category)}</span>
             ${t.priority === 'yuqori' ? '<span class="chip pri-yuqori">Yuqori</span>' : ''}
-            ${t.startTime ? `<span class="chip time ${t.overflow ? 'out' : ''}" title="${t.overflow ? 'Ish vaqtidan tashqarida' : ''}">${tm(t.startTime, t.startDayOffset)}–${tm(t.endTime, t.endDayOffset)}</span>` : ''}
+            ${t.startTime ? `<span class="chip time ${t.overflow ? 'out' : ''} ${t.pinnedStart ? 'pinned' : ''}" title="${
+              t.pinnedStart ? 'Haqiqiy boshlanish vaqti bo\'yicha hisoblangan' : t.overflow ? 'Ish vaqtidan tashqarida' : 'Rejadagi vaqt'
+            }">${t.pinnedStart ? '▶ ' : ''}${tm(t.startTime, t.startDayOffset)}–${tm(t.endTime, t.endDayOffset)}</span>` : ''}
+            ${t.pausedMinutes > 0 ? `<span class="chip pause" title="Pauzada o'tgan vaqt — tugash vaqti shunga surildi">⏸ ${fmtDuration(t.pausedMinutes)}</span>` : ''}
             <span class="t-pomos" title="${t.completedPomodoros}/${t.plannedPomodoros} pomodoro">${dots}</span>
             <span>${t.completedPomodoros}/${t.plannedPomodoros}${extra} · ${fmtDuration(t.estimatedMinutes)}</span>
             ${t.note ? `<span title="${esc(t.note)}">📝</span>` : ''}
@@ -433,8 +631,12 @@ function renderPlan() {
             : st === 'bajarildi'
               ? '<button class="t-btn reopen" title="Qayta ochish">↩</button>'
               : ''}
-          <button class="t-btn play" title="Shu vazifa ustida ishlashni boshlash">▶</button>
-          <button class="t-btn edit" title="Tahrirlash">✎</button>
+          ${st === 'bajarildi' ? '' : `
+          <button class="t-btn play" title="Shu vazifa ustida ishlashni boshlash">▶</button>`}
+          <button class="t-btn copy" title="Boshqa kunga nusxalash">⧉</button>
+          ${st === 'bajarildi'
+            ? '<button class="t-btn edit is-locked" title="Bajarilgan vazifani tahrirlab bo\'lmaydi — avval ↩ bilan qayta oching" disabled>🔒</button>'
+            : '<button class="t-btn edit" title="Tahrirlash">✎</button>'}
           <button class="t-btn del" title="O'chirish">✕</button>
         </div>
       </li>`;
@@ -444,12 +646,23 @@ function renderPlan() {
   /* — Kun jadvali — */
   const blocks = [];
   for (const t of tasks) for (const b of t.blocks) blocks.push({ ...b, task: t.title });
+  // Vazifalar tushlikka yetib bormasa ham, tushlik jadvalda o'z o'rnida ko'rinsin
+  if (S.plan.lunchBlock) blocks.push({ ...S.plan.lunchBlock, task: '' });
+  blocks.sort((a, b) => (a.abs ?? 0) - (b.abs ?? 0));
+
+  const LABEL = {
+    long: 'Uzun tanaffus',
+    short: 'Qisqa tanaffus',
+    lunch: '🍽 Tushlik — vazifa belgilanmaydi',
+    pause: '⏸ Pauza — ishlanmagan vaqt'
+  };
+
   $('timeline').innerHTML = blocks.length
     ? blocks.map(b => `<div class="tl-row ${b.overflow ? 'out' : ''}">
         <span class="tl-time">${tm(b.from, b.fromDayOffset)} – ${tm(b.to, b.toDayOffset)}</span>
         <div class="tl-bar ${b.type}">${b.type === 'work'
           ? `#${b.n} · ${esc(b.task)}`
-          : (b.type === 'long' ? 'Uzun tanaffus' : 'Qisqa tanaffus') + ` · ${b.minutes} daq`}</div>
+          : `${LABEL[b.type]} · ${b.minutes} daq`}</div>
       </div>`).join('')
     : '<div class="empty">Jadval bo\'sh</div>';
 }
@@ -476,8 +689,13 @@ function applyTimerSnapshot(snap) {
     S.remaining = snap.timer.remainingSec;
     S.endAt = Date.now() + snap.timer.remainingSec * 1000;
     if (snap.timer.taskId) S.activeTaskId = snap.timer.taskId;
+    // Pauza hisoblagichi: serverdagi jamlangan qiymat + shu paytdan o'tgani
+    S.pausedBase = snap.timer.pausedSec || 0;
+    S.pausedSince = snap.timer.status === 'paused' ? Date.now() : null;
   } else {
     S.remaining = modeMinutes(S.pendingMode) * 60;
+    S.pausedBase = 0;
+    S.pausedSince = null;
   }
   S.completing = false;
   renderTimer();
@@ -500,9 +718,13 @@ function renderTimer() {
   $('ringFg').setAttribute('stroke-dasharray', C.toFixed(2));
   $('ringFg').setAttribute('stroke-dashoffset', (C * (1 - frac)).toFixed(2));
 
+  // Pauzada o'tgan vaqt jonli sanaladi — jadval shunga qarab suriladi
+  const pausedSec = (S.pausedBase || 0) + (S.pausedSince ? (Date.now() - S.pausedSince) / 1000 : 0);
   $('dialSub').textContent = !S.timer
     ? `${MODE_LABEL[mode]} · ${modeMinutes(mode)} daqiqa`
-    : (running ? MODE_LABEL[mode] + ' davom etmoqda' : MODE_LABEL[mode] + ' — pauzada');
+    : running
+      ? MODE_LABEL[mode] + ' davom etmoqda' + (pausedSec >= 60 ? ` · ⏸ ${fmtClock(pausedSec)} pauza` : '')
+      : `${MODE_LABEL[mode]} — pauzada ${fmtClock(pausedSec)}`;
 
   $('btnMain').textContent = !S.timer ? '▶ Boshlash' : (running ? '⏸ Pauza' : '▶ Davom etish');
   $('btnSkip').disabled = !S.timer;
@@ -675,6 +897,8 @@ async function startTimer(mode) {
   }));
   applyTimerSnapshot(res);
   S.lastTickMinute = -1;
+  // Ish boshlangani jadvalni o'zgartiradi: vazifa haqiqiy vaqtga bog'lanadi
+  if (mode === 'work') await loadPlan();
   renderActiveTask();
   toast(`${MODE_LABEL[mode]} boshlandi — ${modeMinutes(mode)} daqiqa`, 'ok');
 }
@@ -789,6 +1013,9 @@ async function saveSettings(patch) {
 
 /* ══════════════════ Hodisalar ══════════════════ */
 function bindEvents() {
+  bindCopyTask();
+  bindLogTask();
+
   /* Tablar */
   $('tabs').addEventListener('click', e => {
     const b = e.target.closest('.tab');
@@ -848,8 +1075,14 @@ function bindEvents() {
     unlockAudio();
     cancelAutoStart();
     if (!S.timer) return startTimer(S.pendingMode);
-    if (S.timer.status === 'running') applyTimerSnapshot(await guard(() => api.pause()));
-    else { applyTimerSnapshot(await guard(() => api.resume())); }
+    if (S.timer.status === 'running') {
+      applyTimerSnapshot(await guard(() => api.pause()));
+      toast('Pauza — bu vaqt hisobga olinadi va jadval suriladi');
+    } else {
+      applyTimerSnapshot(await guard(() => api.resume()));
+      // Pauzada o'tgan vaqt vazifa tugash vaqtini surdi — jadvalni yangilaymiz
+      await loadPlan();
+    }
   });
 
   $('btnSkip').addEventListener('click', async () => {
@@ -947,6 +1180,10 @@ function bindEvents() {
       await startTimer('work');
       return;
     }
+    if (e.target.closest('.copy')) {
+      openCopyTask(task);
+      return;
+    }
     if (e.target.closest('.t-accept')) {
       await guard(() => api.updateTask(id, { status: 'bajarildi' }));
       await loadPlan();
@@ -971,6 +1208,10 @@ function bindEvents() {
       return;
     }
     if (e.target.closest('.edit')) {
+      if (task.status === 'bajarildi') {
+        toast('Bajarilgan vazifani tahrirlab bo\'lmaydi — avval ↩ bilan qayta oching', 'err');
+        return;
+      }
       openTaskEditor(task);
     }
   });
@@ -1019,8 +1260,20 @@ function bindEvents() {
 
   /* Tarix */
   $('histLoad').addEventListener('click', loadHistory);
-  $('expJson').addEventListener('click', () => { window.location.href = api.exportUrl('json', $('histFrom').value, $('histTo').value); });
-  $('expCsv').addEventListener('click', () => { window.location.href = api.exportUrl('csv', $('histFrom').value, $('histTo').value); });
+  const exportHistory = async (btn, format) => {
+    btn.disabled = true;
+    try {
+      const name = await downloadFile(api.exportUrl(format, $('histFrom').value, $('histTo').value));
+      toast(`Yuklab olindi: ${name}`, 'ok');
+    } catch (err) {
+      if (err instanceof AuthError) return location.replace('/login.html');
+      toast('Yuklab olinmadi — ' + err.message, 'err');
+    } finally {
+      btn.disabled = false;
+    }
+  };
+  $('expJson').addEventListener('click', e => exportHistory(e.currentTarget, 'json'));
+  $('expCsv').addEventListener('click', e => exportHistory(e.currentTarget, 'csv'));
   $('impFile').addEventListener('change', async e => {
     const file = e.target.files[0];
     if (!file) return;
@@ -1143,6 +1396,14 @@ function bindEvents() {
       if (e.key === 'Escape') { e.preventDefault(); closeWeekPlan(); }
       return;
     }
+    if (!$('copyOverlay').hidden) {
+      if (e.key === 'Escape') { e.preventDefault(); closeCopyTask(); }
+      return;
+    }
+    if (!$('logOverlay').hidden) {
+      if (e.key === 'Escape') { e.preventDefault(); closeLogTask(); }
+      return;
+    }
     if (e.key === 'Escape') { $('userMenu').hidden = true; return; }
 
     // Matn maydonlarida yorliqlar ishlamaydi
@@ -1203,6 +1464,7 @@ async function init() {
     loadPlan,
     applyPlan,
     setView,
+    openLogTask,                 // hisobotni to'g'rlash oynasi
     setUser: (u) => { S.user = u; renderUser(); }
   };
   initFeatures(ctx);

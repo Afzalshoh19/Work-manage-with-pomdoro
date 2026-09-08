@@ -15,6 +15,35 @@ function elapsedOf(timer) {
   return Math.max(0, timer.elapsedSec + running);
 }
 
+/** Jamlangan pauza vaqti — davom etayotgan pauza ham qo'shiladi */
+function pausedOf(timer) {
+  if (!timer) return 0;
+  const ongoing = timer.status === 'paused' && timer.pauseStart ? (Date.now() - timer.pauseStart) / 1000 : 0;
+  return Math.max(0, (timer.pausedSec || 0) + ongoing);
+}
+
+/**
+ * Pauzani vazifaga yozadi: jami vaqt + qaysi pomodoroda bo'lgani.
+ * Indeks tufayli jadvalda pauza aynan o'sha pomodorodan keyin ko'rinadi.
+ */
+function creditPause(db, userId, timer, seconds) {
+  if (!(seconds > 0) || !timer.taskId) return false;
+  const task = db.tasks.find(t => t.id === timer.taskId && t.userId === userId);
+  if (!task) return false;
+
+  const idx = Math.max(0, timer.pomodoroIndex || 0);
+  if (!Array.isArray(task.pauses)) task.pauses = [];
+  const rec = task.pauses.find(p => p.index === idx);
+  if (rec) {
+    rec.seconds += seconds;
+    rec.count = (rec.count || 1) + 1;
+  } else {
+    task.pauses.push({ index: idx, seconds, count: 1, at: new Date().toISOString() });
+  }
+  task.pausedSeconds = task.pauses.reduce((a, p) => a + p.seconds, 0);
+  return true;
+}
+
 export function snapshot(userId) {
   const db = getDb();
   const t = db.timers[userId] || null;
@@ -33,6 +62,8 @@ export function snapshot(userId) {
       durationSec: t.durationSec,
       elapsedSec: Math.round(elapsed),
       remainingSec: Math.max(0, Math.round(t.durationSec - elapsed)),
+      pausedSec: Math.round(pausedOf(t)),
+      pauseCount: t.pauseCount || 0,
       startedAtIso: t.startedAtIso
     },
     serverTime: Date.now(),
@@ -60,14 +91,22 @@ export function startTimer({ body, user }) {
   const date = isDate(body.date) ? body.date : new Date().toISOString().slice(0, 10);
   rollCycleIfNewDay(user.id, date);
 
-  let taskId = null, taskTitle = '';
+  let taskId = null, taskTitle = '', pomodoroIndex = 0;
   if (mode === 'work' && body.taskId) {
     const task = db.tasks.find(t => t.id === body.taskId && t.userId === user.id);
+    // Bajarilgan vazifa ustida ishlashni boshlab bo'lmaydi — avval qayta ochilishi kerak
+    if (task && task.status === 'bajarildi') {
+      return { error: 'Bajarilgan vazifa ustida ishlab bo\'lmaydi. Avval «Qayta ochish» (↩) tugmasini bosing.', status: 409 };
+    }
     if (task) {
       taskId = task.id;
       taskTitle = task.title;
       // Ish boshlangani bilan vazifa "jarayonda" holatiga o'tadi
       if (task.status === 'reja' || !task.status) task.status = 'jarayonda';
+      // Birinchi marta ▶ bosilgan haqiqiy vaqt — jadval shunga qarab qayta hisoblanadi
+      if (!task.startedAt) task.startedAt = new Date().toISOString();
+      // Nechanchi pomodoro ustida ishlanyapti — pauza aynan shu blokdan keyin ko'rsatiladi
+      pomodoroIndex = Math.max(0, task.completedPomodoros || 0);
     }
   }
 
@@ -83,8 +122,13 @@ export function startTimer({ body, user }) {
     date,
     taskId,
     taskTitle,
+    pomodoroIndex,
     durationSec: Math.round(minutes * 60),
     elapsedSec: 0,
+    pausedSec: 0,
+    pauseStart: null,
+    pauseCount: 0,
+    pausedCommitted: 0,
     segmentStart: Date.now(),
     startedAtIso: new Date().toISOString(),
     status: 'running'
@@ -99,6 +143,8 @@ export function pauseTimer({ user }) {
   if (!t || t.status !== 'running') return { error: 'Ishlayotgan taymer yo\'q', status: 400 };
   t.elapsedSec = elapsedOf(t);
   t.status = 'paused';
+  t.pauseStart = Date.now();                 // pauza vaqti shu paytdan sanaladi
+  t.pauseCount = (t.pauseCount || 0) + 1;
   persist();
   return snapshot(user.id);
 }
@@ -107,6 +153,16 @@ export function resumeTimer({ user }) {
   const db = getDb();
   const t = db.timers[user.id];
   if (!t || t.status !== 'paused') return { error: 'Pauzadagi taymer yo\'q', status: 400 };
+  // Pauzada turgan vaqt jamlanadi va darhol vazifaga yoziladi —
+  // shunda jadval pomodoro tugashini kutmasdan suriladi
+  if (t.pauseStart) {
+    const seg = (Date.now() - t.pauseStart) / 1000;
+    t.pausedSec = (t.pausedSec || 0) + seg;
+    if (creditPause(db, user.id, t, seg)) {
+      t.pausedCommitted = (t.pausedCommitted || 0) + seg;     // ikki marta sanalmasin
+    }
+  }
+  t.pauseStart = null;
   t.segmentStart = Date.now();
   t.status = 'running';
   persist();
@@ -115,6 +171,7 @@ export function resumeTimer({ user }) {
 
 function recordSession(db, userId, timer, { completed }) {
   const elapsed = Math.round(elapsedOf(timer));
+  const paused = Math.round(pausedOf(timer));
   db.sessions.push({
     id: uid(),
     userId,
@@ -124,10 +181,14 @@ function recordSession(db, userId, timer, { completed }) {
     taskTitle: timer.taskTitle,
     plannedSec: timer.durationSec,
     actualSec: elapsed,
+    pausedSec: paused,
+    pauseCount: timer.pauseCount || 0,
     completed,
     startedAt: timer.startedAtIso,
     endedAt: new Date().toISOString()
   });
+  // Hali yozilmagan pauza qoldig'i (oxirgi pauzadan resume qilinmagan bo'lsa)
+  creditPause(db, userId, timer, Math.round(paused - (timer.pausedCommitted || 0)));
   return elapsed;
 }
 
@@ -181,10 +242,14 @@ export function stopTimer({ user }) {
   const timer = db.timers[user.id];
   if (!timer) return { error: 'Faol taymer yo\'q', status: 400 };
   const elapsed = Math.round(elapsedOf(timer));
+  const paused = Math.round(pausedOf(timer));
   if (timer.mode === 'work' && elapsed >= 60) {
     recordSession(db, user.id, timer, { completed: false });
     const task = db.tasks.find(t => t.id === timer.taskId && t.userId === user.id);
     if (task) task.focusSeconds = (task.focusSeconds || 0) + elapsed;
+  } else if (timer.mode === 'work') {
+    // Seans juda qisqa — lekin pauzada o'tgan vaqt haqiqatda ketgan
+    creditPause(db, user.id, timer, Math.round(paused - (timer.pausedCommitted || 0)));
   }
   delete db.timers[user.id];
   persist();

@@ -128,10 +128,13 @@ export function getHistory({ query, user }) {
       focusMinutes: Math.round(workDone.reduce((a, s) => a + s.actualSec, 0) / 60),
       breakMinutes: Math.round(sessions.filter(s => s.mode !== 'work' && s.completed).reduce((a, s) => a + s.actualSec, 0) / 60),
       interruptions: sessions.filter(s => s.mode === 'work' && !s.completed).length,
+      pauseMinutes: Math.round(sessions.reduce((a, s) => a + (s.pausedSec || 0), 0) / 60),
+      pauseCount: sessions.reduce((a, s) => a + (s.pauseCount || 0), 0),
       tasks: tasks.map(t => ({
         id: t.id, title: t.title, category: t.category,
         plannedPomodoros: t.plannedPomodoros, completedPomodoros: t.completedPomodoros,
-        done: t.done, focusMinutes: Math.round((t.focusSeconds || 0) / 60)
+        done: t.done, focusMinutes: Math.round((t.focusSeconds || 0) / 60),
+        pauseMinutes: Math.round((t.pausedSeconds || 0) / 60)
       }))
     };
   });

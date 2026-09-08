@@ -1,5 +1,6 @@
 import { getDb, persist, userSettings, DEFAULT_SETTINGS } from '../lib/db.js';
 import { clamp } from '../lib/util.js';
+import { checkLunch } from './tasks.js';
 
 export function getSettings({ user }) {
   return { settings: userSettings(user.id), defaults: DEFAULT_SETTINGS };
@@ -21,7 +22,15 @@ export function updateSettings({ user, body }) {
   if (b.dayEndTime !== undefined && /^\d{1,2}:\d{2}$/.test(String(b.dayEndTime))) {
     s.dayEndTime = String(b.dayEndTime).padStart(5, '0');
   }
-  for (const key of ['autoStartBreaks', 'autoStartWork', 'soundEnabled', 'notificationsEnabled', 'tickingEnabled']) {
+  if (b.lunchStart !== undefined || b.lunchEnd !== undefined) {
+    const ls = String(b.lunchStart ?? s.lunchStart).padStart(5, '0');
+    const le = String(b.lunchEnd ?? s.lunchEnd).padStart(5, '0');
+    const err = checkLunch(ls, le, s.dayStartTime, s.dayEndTime);
+    if (err) return { error: err, status: 400 };
+    s.lunchStart = ls;
+    s.lunchEnd = le;
+  }
+  for (const key of ['autoStartBreaks', 'autoStartWork', 'soundEnabled', 'notificationsEnabled', 'tickingEnabled', 'lunchEnabled']) {
     if (b[key] !== undefined) s[key] = !!b[key];
   }
   if (b.theme === 'dark' || b.theme === 'light') s.theme = b.theme;
