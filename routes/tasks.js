@@ -1,5 +1,6 @@
 import { getDb, persist, userSettings, daySetup, setDaySetup, TASK_STATUSES, STATUS_LABELS, userWorkSchedule } from '../lib/db.js';
 import { buildSchedule } from '../lib/plan.js';
+import { withActuals } from '../lib/actuals.js';
 import { uid, isDate, clamp, str, addDays } from '../lib/util.js';
 
 const CATEGORIES = ['ish', 'oqish', 'loyiha', 'uy', 'sport', 'boshqa'];
@@ -16,47 +17,9 @@ function dayTasks(userId, date) {
 }
 
 /**
- * Pauzalarni soniyadan daqiqaga o'tkazadi. Har birini alohida yaxlitlash
- * jamini buzadi (3 ta 40 soniya = 0 daqiqa), shuning uchun eng katta qoldiq
- * usuli bilan taqsimlaymiz — yig'indi umumiy daqiqaga aniq teng chiqadi.
- */
-function splitPauseMinutes(pauses, totalMinutes) {
-  const list = (pauses || []).filter(p => p && p.seconds > 0);
-  if (!list.length || totalMinutes <= 0) return [];
-
-  const totalSec = list.reduce((a, p) => a + p.seconds, 0);
-  const shares = list.map(p => {
-    const exact = (p.seconds / totalSec) * totalMinutes;
-    const whole = Math.floor(exact);
-    return { index: p.index ?? 0, count: p.count || 1, minutes: whole, rest: exact - whole };
-  });
-
-  let left = totalMinutes - shares.reduce((a, s) => a + s.minutes, 0);
-  for (const s of [...shares].sort((a, b) => b.rest - a.rest)) {
-    if (left <= 0) break;
-    s.minutes++;
-    left--;
-  }
-  return shares.map(({ index, count, minutes }) => ({ index, count, minutes }));
-}
-
-/**
  * Vazifani jadval hisoblagichiga tayyorlash: haqiqiy boshlanish vaqti va
  * jamlangan pauza qo'shiladi, shunda jadval rejadan emas — haqiqatdan quriladi.
  */
-function withActuals(task, date) {
-  const total = Math.round((task.pausedSeconds || 0) / 60);
-  const out = { ...task, pausedMinutes: total, pauseList: splitPauseMinutes(task.pauses, total) };
-  if (task.startedAt) {
-    const d = new Date(task.startedAt);
-    if (!Number.isNaN(d.getTime()) && d.toISOString().slice(0, 10) <= date) {
-      const mins = d.getHours() * 60 + d.getMinutes();
-      out.actualStartMinutes = mins;
-    }
-  }
-  return out;
-}
-
 export function getPlan({ query, user }) {
   const date = isDate(query.date) ? query.date : new Date().toISOString().slice(0, 10);
   const setup = daySetup(user.id, date);

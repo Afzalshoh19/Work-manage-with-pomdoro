@@ -617,13 +617,23 @@ function renderPlan() {
             <span class="chip cat">${esc(CAT_LABELS[t.category] || t.category)}</span>
             ${t.priority === 'yuqori' ? '<span class="chip pri-yuqori">Yuqori</span>' : ''}
             ${t.startTime ? `<span class="chip time ${t.overflow ? 'out' : ''} ${t.pinnedStart ? 'pinned' : ''}" title="${
-              t.pinnedStart ? 'Haqiqiy boshlanish vaqti bo\'yicha hisoblangan' : t.overflow ? 'Ish vaqtidan tashqarida' : 'Rejadagi vaqt'
+              t.donePomodoroCount
+                ? `Birinchi pomodoro boshlanishidan oxirgisining tugashigacha — ${fmtDuration(t.spanMinutes)}`
+                : t.overflow ? 'Ish vaqtidan tashqarida' : 'Rejadagi vaqt'
             }">${t.pinnedStart ? '▶ ' : ''}${tm(t.startTime, t.startDayOffset)}–${tm(t.endTime, t.endDayOffset)}</span>` : ''}
             ${t.pausedMinutes > 0 ? `<span class="chip pause" title="Pauzada o'tgan vaqt — tugash vaqti shunga surildi">⏸ ${fmtDuration(t.pausedMinutes)}</span>` : ''}
             <span class="t-pomos" title="${t.completedPomodoros}/${t.plannedPomodoros} pomodoro">${dots}</span>
-            <span>${t.completedPomodoros}/${t.plannedPomodoros}${extra} · ${fmtDuration(t.estimatedMinutes)}</span>
+            <span title="Pomodorolar davomiyliklari yig'indisi — oraliq cho'zilsa ham o'zgarmaydi">${t.completedPomodoros}/${t.plannedPomodoros}${extra} · ${fmtDuration(t.focusMinutes ?? t.estimatedMinutes)}</span>
             ${t.note ? `<span title="${esc(t.note)}">📝</span>` : ''}
           </div>
+          ${(t.pomodoros || []).length ? `<details class="t-pomo-times">
+            <summary>Pomodorolar vaqti</summary>
+            <ul>${t.pomodoros.map(p => `<li class="${p.actual ? 'is-actual' : 'is-plan'}">
+              <b>#${p.n}</b> ${tm(p.from, p.fromDayOffset)}–${tm(p.to, p.toDayOffset)}
+              <em>${p.minutes} daq</em>
+              <span>${p.actual ? (p.manual ? '✍ qo\'lda' : '⏱ taymer') : '○ reja'}</span>
+            </li>`).join('')}</ul>
+          </details>` : ''}
         </div>
         <div class="t-actions">
           ${st === 'qabulga'
