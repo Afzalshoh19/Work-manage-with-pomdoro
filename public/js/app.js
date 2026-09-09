@@ -691,14 +691,6 @@ function renderPlan() {
             <span title="Pomodorolar davomiyliklari yig'indisi — oraliq cho'zilsa ham o'zgarmaydi">${t.completedPomodoros}/${t.plannedPomodoros}${extra} · ${fmtDuration(t.focusMinutes ?? t.estimatedMinutes)}</span>
             ${t.note ? `<span title="${esc(t.note)}">📝</span>` : ''}
           </div>
-          ${(t.pomodoros || []).length ? `<details class="t-pomo-times">
-            <summary>Pomodorolar vaqti</summary>
-            <ul>${t.pomodoros.map(p => `<li class="${p.actual ? 'is-actual' : 'is-plan'}">
-              <b>#${p.n}</b> ${tm(p.from, p.fromDayOffset)}–${tm(p.to, p.toDayOffset)}
-              <em>${p.minutes} daq</em>
-              <span>${p.actual ? (p.manual ? '✍ qo\'lda' : '⏱ taymer') : '○ reja'}</span>
-            </li>`).join('')}</ul>
-          </details>` : ''}
         </div>
         <div class="t-actions">
           ${st === 'qabulga'

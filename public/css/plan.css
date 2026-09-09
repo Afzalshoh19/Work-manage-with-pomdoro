@@ -416,32 +416,6 @@
 .t-btn.is-locked { cursor: not-allowed; opacity: .45; }
 .t-btn.is-locked:hover { color: inherit; border-color: inherit; }
 
-/* ═══════════ Vazifadagi pomodoro vaqtlari ═══════════ */
-.t-pomo-times { margin-top: 7px; }
-.t-pomo-times > summary {
-  cursor: pointer; font-size: 11px; color: var(--txt-3);
-  list-style: none; display: inline-flex; align-items: center; gap: 4px;
-  padding: 2px 8px; border: 1px solid var(--line); border-radius: 99px;
-  transition: .13s; user-select: none;
-}
-.t-pomo-times > summary::-webkit-details-marker { display: none; }
-.t-pomo-times > summary::before { content: '▸'; font-size: 9px; }
-.t-pomo-times[open] > summary::before { content: '▾'; }
-.t-pomo-times > summary:hover { color: var(--txt-2); border-color: var(--line-2); }
-.t-pomo-times ul {
-  margin: 7px 0 0; padding: 0; list-style: none;
-  display: flex; flex-direction: column; gap: 3px;
-}
-.t-pomo-times li {
-  display: flex; gap: 8px; align-items: baseline;
-  font-size: 11.5px; color: var(--txt-2); font-variant-numeric: tabular-nums;
-}
-.t-pomo-times li b { color: var(--txt-3); font-weight: 600; min-width: 22px; }
-.t-pomo-times li em { font-style: normal; color: var(--txt-3); }
-.t-pomo-times li span { color: var(--txt-3); font-size: 10.5px; }
-.t-pomo-times li.is-actual b { color: var(--accent); }
-.t-pomo-times li.is-plan { opacity: .6; }
-
 /* ═══════════ Vazifani ko'rish oynasi ═══════════ */
 #viewModal { max-width: 640px; }
 .view-meta { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 14px; }
