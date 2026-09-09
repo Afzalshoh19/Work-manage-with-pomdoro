@@ -431,6 +431,7 @@ async function loadPlan() {
 function applyPlan(data) {
   S.plan = data;
   setConn(true);
+  restoreActiveTask();          // sahifa yangilanganda tanlov yo'qolmasin
   renderPlan();
   renderDaySetup(data);
   renderActiveTask();
@@ -544,6 +545,27 @@ function smoothDetails(details, { onOpen } = {}) {
 }
 
 /* ── Vazifa qo'shish bloki ── */
+/* Faol vazifa tanlovi sahifa yangilanganda ham saqlanadi */
+const ACTIVE_KEY = 'pmd_active_task';
+
+function setActiveTask(id) {
+  S.activeTaskId = id;
+  try {
+    if (id) localStorage.setItem(ACTIVE_KEY, S.date + '|' + id);
+    else localStorage.removeItem(ACTIVE_KEY);
+  } catch { /* localStorage yopiq bo'lishi mumkin */ }
+}
+
+/** Saqlangan tanlovni tiklaydi — faqat shu kunniki va vazifa hali mavjud bo'lsa */
+function restoreActiveTask() {
+  if (S.activeTaskId) return;
+  let raw = '';
+  try { raw = localStorage.getItem(ACTIVE_KEY) || ''; } catch { return; }
+  const [date, id] = raw.split('|');
+  if (date !== S.date || !id) return;
+  if (S.plan?.tasks.some(t => t.id === id)) S.activeTaskId = id;
+}
+
 const ADD_KEY = 'pmd_add_open';
 let addFold = null;
 
@@ -750,13 +772,14 @@ function modeMinutes(mode) {
 }
 
 function applyTimerSnapshot(snap) {
+  const prevActive = S.activeTaskId;
   S.timer = snap.timer;
   S.cycle = snap.cycle ?? 0;
   if (snap.timer) {
     S.pendingMode = snap.timer.mode;
     S.remaining = snap.timer.remainingSec;
     S.endAt = Date.now() + snap.timer.remainingSec * 1000;
-    if (snap.timer.taskId) S.activeTaskId = snap.timer.taskId;
+    if (snap.timer.taskId) setActiveTask(snap.timer.taskId);
     // Pauza hisoblagichi: serverdagi jamlangan qiymat + shu paytdan o'tgani
     S.pausedBase = snap.timer.pausedSec || 0;
     S.pausedSince = snap.timer.status === 'paused' ? Date.now() : null;
@@ -767,6 +790,11 @@ function applyTimerSnapshot(snap) {
   }
   S.completing = false;
   renderTimer();
+
+  // Taymerdagi vazifa ekranda ham ko'rinsin. Sahifa yangilanganda reja
+  // taymerdan oldin yuklanadi — bu yerda chizilmasa "Tanlanmagan" bo'lib qolardi.
+  if (S.plan && S.activeTaskId !== prevActive) renderPlan();
+  renderActiveTask();
 }
 
 function renderTimer() {
@@ -955,7 +983,7 @@ async function startTimer(mode) {
     // Faol vazifa tugagan yoki tanlanmagan bo'lsa — keyingisiga o'tamiz
     if (!active || active.done || active.completedPomodoros >= active.plannedPomodoros) {
       const next = nextPendingTask();
-      if (next) S.activeTaskId = next.id;
+      if (next) setActiveTask(next.id);
     }
   }
   const res = await guard(() => api.start({
@@ -1182,7 +1210,7 @@ function bindEvents() {
   const goDate = (d) => {
     S.date = d;
     $('datePicker').value = d;
-    if (!S.timer) S.activeTaskId = null;   // boshqa kunga o'tganda faol vazifa tozalanadi
+    if (!S.timer) setActiveTask(null);     // boshqa kunga o'tganda faol vazifa tozalanadi
     loadPlan();
   };
   $('datePicker').addEventListener('change', () => goDate($('datePicker').value || todayStr()));
@@ -1242,7 +1270,7 @@ function bindEvents() {
     const task = S.plan.tasks.find(t => t.id === id);
 
     if (e.target.closest('.play')) {
-      S.activeTaskId = id;
+      setActiveTask(id);
       renderActiveTask();
       renderPlan();
       if (S.timer) { toast('Faol vazifa keyingi pomodoroda qo\'llanadi'); return; }
@@ -1275,7 +1303,7 @@ function bindEvents() {
       const ok = await confirmBox('Vazifani o\'chirish', `"${task.title}" o'chirilsinmi?`, 'O\'chirish');
       if (!ok) return;
       await guard(() => api.deleteTask(id));
-      if (S.activeTaskId === id) S.activeTaskId = null;
+      if (S.activeTaskId === id) setActiveTask(null);
       await loadPlan();
       toast('Vazifa o\'chirildi');
       return;
