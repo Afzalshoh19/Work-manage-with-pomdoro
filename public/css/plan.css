@@ -453,7 +453,7 @@
 .src-timer { color: var(--green); }
 .src-manual { color: var(--amber); }
 .src-plan { color: var(--txt-3); }
-.t-btn.view:hover { color: var(--purple); border-color: color-mix(in srgb, var(--purple) 45%, transparent); }
+.t-btn.t-view:hover { color: var(--purple); border-color: color-mix(in srgb, var(--purple) 45%, transparent); }
 
 /* Bajarilgan vazifa ro'yxat oxirida — biroz xiraroq */
 .task.is-done { opacity: .74; }

@@ -722,7 +722,7 @@ function renderPlan() {
               : ''}
           ${st === 'bajarildi' ? '' : `
           <button class="t-btn play" title="Shu vazifa ustida ishlashni boshlash">▶</button>`}
-          <button class="t-btn view" title="Vazifani ko'rish — pomodorolar jurnali">👁</button>
+          <button class="t-btn t-view" title="Vazifani ko'rish — pomodorolar jurnali">👁</button>
           <button class="t-btn copy" title="Boshqa kunga nusxalash">⧉</button>
           ${st === 'bajarildi'
             ? '<button class="t-btn edit is-locked" title="Bajarilgan vazifani tahrirlab bo\'lmaydi — avval ↩ bilan qayta oching" disabled>🔒</button>'
@@ -1277,7 +1277,7 @@ function bindEvents() {
       await startTimer('work');
       return;
     }
-    if (e.target.closest('.view')) {
+    if (e.target.closest('.t-view')) {
       openTaskView(task);
       return;
     }
