@@ -441,3 +441,45 @@
 .t-pomo-times li span { color: var(--txt-3); font-size: 10.5px; }
 .t-pomo-times li.is-actual b { color: var(--accent); }
 .t-pomo-times li.is-plan { opacity: .6; }
+
+/* ═══════════ Vazifani ko'rish oynasi ═══════════ */
+#viewModal { max-width: 640px; }
+.view-meta { display: flex; gap: 6px; flex-wrap: wrap; margin: 4px 0 14px; }
+.view-stats {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 8px; margin-bottom: 12px;
+}
+.vs-item {
+  background: var(--card-2); border: 1px solid var(--line);
+  border-radius: 10px; padding: 9px 12px;
+  display: flex; flex-direction: column; gap: 2px;
+}
+.vs-item b { font-size: 15px; font-weight: 640; font-variant-numeric: tabular-nums; }
+.vs-item b small { font-size: 11.5px; color: var(--txt-3); font-weight: 500; }
+.vs-item b i { font-style: normal; color: var(--txt-3); margin: 0 3px; font-size: 12px; }
+.vs-item > span { font-size: 10.5px; color: var(--txt-3); }
+.vs-item em { font-style: normal; font-size: 10px; color: var(--txt-3); opacity: .8; }
+.view-note {
+  background: var(--bg-2); border: 1px solid var(--line); border-radius: 9px;
+  padding: 9px 12px; font-size: 12.5px; color: var(--txt-2); margin-bottom: 12px;
+}
+.view-sec { margin: 16px 0 8px; font-size: 12.5px; color: var(--txt-2); font-weight: 600; }
+
+.view-log { width: 100%; border-collapse: collapse; font-size: 12px; }
+.view-log th {
+  text-align: left; font-weight: 550; font-size: 10.5px; color: var(--txt-3);
+  padding: 5px 8px; border-bottom: 1px solid var(--line); white-space: nowrap;
+}
+.view-log td {
+  padding: 7px 8px; border-bottom: 1px solid var(--line);
+  font-variant-numeric: tabular-nums; color: var(--txt-2);
+}
+.view-log tbody tr:last-child td { border-bottom: 0; }
+.view-log tr.is-plan td { opacity: .55; }
+.src-timer { color: var(--green); }
+.src-manual { color: var(--amber); }
+.src-plan { color: var(--txt-3); }
+.t-btn.view:hover { color: var(--purple); border-color: color-mix(in srgb, var(--purple) 45%, transparent); }
+
+/* Bajarilgan vazifa ro'yxat oxirida — biroz xiraroq */
+.task.is-done { opacity: .74; }

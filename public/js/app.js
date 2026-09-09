@@ -120,6 +120,71 @@ function closeTaskEditor() {
   editingId = null;
 }
 
+/* ══════════════════ Vazifani ko'rish ══════════════════ */
+
+function openTaskView(task) {
+  if (!task) return;
+  const st = task.status || (task.done ? 'bajarildi' : 'reja');
+  const done = task.donePomodoroCount || 0;
+
+  $('viewTitle').textContent = task.title;
+
+  $('viewMeta').innerHTML =
+      `<span class="chip status ${st}">${STATUS[st].icon} ${STATUS[st].label}</span>`
+    + `<span class="chip cat">${esc(CAT_LABELS[task.category] || task.category)}</span>`
+    + `<span class="chip pri-${task.priority}">${PRI_LABEL[task.priority] || task.priority}</span>`
+    + `<span class="chip">${fmtDateLong(task.date || S.date)}</span>`
+    + (task.source ? `<span class="chip">${esc(task.source.type)}${task.source.key ? ' · ' + esc(task.source.key) : ''}</span>` : '');
+
+  const stat = (val, lbl, sub = '') =>
+    `<div class="vs-item"><b>${val}</b><span>${lbl}</span>${sub ? `<em>${sub}</em>` : ''}</div>`;
+
+  $('viewStats').innerHTML =
+      stat(`${task.completedPomodoros}<small>/${task.plannedPomodoros}</small>`, 'Pomodoro',
+           done ? `${done} tasi bajarilgan` : 'hali boshlanmagan')
+    + stat(fmtDuration(task.focusMinutes ?? task.estimatedMinutes), 'Pomodorolar vaqti',
+           `${task.plannedPomodoros} × ${S.plan?.setup?.workMinutes ?? 25} daq`)
+    + stat(task.startTime ? `${tm(task.startTime, task.startDayOffset)}<i>→</i>${tm(task.endTime, task.endDayOffset)}` : '—',
+           'Boshlanish – tugash', done ? 'haqiqiy vaqt' : 'rejadagi vaqt')
+    + stat(task.spanMinutes ? fmtDuration(task.spanMinutes) : '—', 'Umumiy oraliq',
+           'uzilishlar bilan birga')
+    + (task.pausedMinutes > 0
+        ? stat(fmtDuration(task.pausedMinutes), 'Pauza', `${task.pauseCount || 0} marta`)
+        : '');
+
+  $('viewNote').innerHTML = task.note
+    ? `<div class="view-note">📝 ${esc(task.note)}</div>` : '';
+
+  /* — Pomodorolar jurnali — */
+  const list = task.pomodoros || [];
+  $('viewLog').innerHTML = list.length
+    ? `<table class="view-log">
+        <thead><tr><th>#</th><th>Boshlandi</th><th>Tugadi</th><th>Davomiyligi</th><th>Manba</th></tr></thead>
+        <tbody>${list.map(p => `<tr class="${p.actual ? '' : 'is-plan'}">
+          <td>${p.n}</td>
+          <td>${tm(p.from, p.fromDayOffset)}</td>
+          <td>${tm(p.to, p.toDayOffset)}</td>
+          <td>${p.minutes} daq</td>
+          <td>${p.actual
+            ? (p.manual
+                ? `<span class="src-manual" title="${esc(p.reasonLabel)}">✍ Qo'lda${p.reasonLabel ? ' — ' + esc(p.reasonLabel) : ''}</span>`
+                : '<span class="src-timer">⏱ Taymer</span>')
+            : '<span class="src-plan">○ Reja</span>'}</td>
+        </tr>`).join('')}</tbody>
+      </table>`
+    : '<div class="empty-mini">Bu vazifaga hali pomodoro belgilanmagan.</div>';
+
+  $('viewOverlay').hidden = false;
+  setTimeout(() => $('viewClose').focus(), 40);
+}
+
+function closeTaskView() { $('viewOverlay').hidden = true; }
+
+function bindTaskView() {
+  $('viewClose').addEventListener('click', closeTaskView);
+  $('viewOverlay').addEventListener('click', e => { if (e.target === $('viewOverlay')) closeTaskView(); });
+}
+
 /* ══════════════════ Hisobotni to'g'rlash ══════════════════ */
 let loggingTask = null;
 let logAfter = null;
@@ -643,6 +708,7 @@ function renderPlan() {
               : ''}
           ${st === 'bajarildi' ? '' : `
           <button class="t-btn play" title="Shu vazifa ustida ishlashni boshlash">▶</button>`}
+          <button class="t-btn view" title="Vazifani ko'rish — pomodorolar jurnali">👁</button>
           <button class="t-btn copy" title="Boshqa kunga nusxalash">⧉</button>
           ${st === 'bajarildi'
             ? '<button class="t-btn edit is-locked" title="Bajarilgan vazifani tahrirlab bo\'lmaydi — avval ↩ bilan qayta oching" disabled>🔒</button>'
@@ -1023,6 +1089,7 @@ async function saveSettings(patch) {
 
 /* ══════════════════ Hodisalar ══════════════════ */
 function bindEvents() {
+  bindTaskView();
   bindCopyTask();
   bindLogTask();
 
@@ -1188,6 +1255,10 @@ function bindEvents() {
       renderPlan();
       if (S.timer) { toast('Faol vazifa keyingi pomodoroda qo\'llanadi'); return; }
       await startTimer('work');
+      return;
+    }
+    if (e.target.closest('.view')) {
+      openTaskView(task);
       return;
     }
     if (e.target.closest('.copy')) {
@@ -1404,6 +1475,10 @@ function bindEvents() {
     }
     if (!$('weekPlanOverlay').hidden) {
       if (e.key === 'Escape') { e.preventDefault(); closeWeekPlan(); }
+      return;
+    }
+    if (!$('viewOverlay').hidden) {
+      if (e.key === 'Escape') { e.preventDefault(); closeTaskView(); }
       return;
     }
     if (!$('copyOverlay').hidden) {

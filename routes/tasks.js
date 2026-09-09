@@ -10,10 +10,20 @@ function normCategory(c) {
   return CATEGORIES.includes(c) ? c : 'ish';
 }
 
+/**
+ * Kun vazifalari. Bajarilganlari ro'yxat oxiriga tushadi — kun davomida
+ * ko'z oldida faqat qolgan ishlar turadi. Vazifaning `order` maydoni
+ * o'zgarmaydi, faqat ko'rsatish tartibi shunday.
+ */
 function dayTasks(userId, date) {
   return getDb().tasks
     .filter(t => t.userId === userId && t.date === date)
-    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    .sort((a, b) => {
+      const ad = a.status === 'bajarildi' ? 1 : 0;
+      const bd = b.status === 'bajarildi' ? 1 : 0;
+      if (ad !== bd) return ad - bd;
+      return (a.order ?? 0) - (b.order ?? 0);
+    });
 }
 
 /**
