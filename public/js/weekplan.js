@@ -67,7 +67,7 @@ function renderDays() {
     const tasks = d.tasks.length
       ? d.tasks.slice(0, 4).map(t =>
           `<div class="wp-task ${t.status === 'bajarildi' ? 'done' : ''}" title="${C.esc(t.title)}">
-             <span>${C.esc(t.title)}</span><b>${t.plannedPomodoros}🍅</b>
+             <span>${C.esc(t.title)}</span><b>${t.plannedPomodoros} ta</b>
            </div>`).join('')
         + (d.tasks.length > 4 ? `<div class="wp-more">+${d.tasks.length - 4} ta yana</div>` : '')
       : '<div class="wp-empty">Bo\'sh</div>';
@@ -82,7 +82,7 @@ function renderDays() {
       </div>
       <div class="wp-bar"><i style="width:${pct}%"></i></div>
       <div class="wp-load">
-        ${used}${on && pomos ? ` <em>+${pomos}</em>` : ''} / ${cap} 🍅
+        ${used}${on && pomos ? ` <em>+${pomos}</em>` : ''} / ${cap} ta
         ${over && on ? '<span class="wp-warn">sig\'maydi</span>' : ''}
       </div>
       <div class="wp-tasks">${tasks}</div>
@@ -91,7 +91,7 @@ function renderDays() {
 
   const n = selected.size;
   $('wpSelInfo').textContent = n
-    ? `${n} kun tanlangan · har biriga ${pomos} 🍅 (${C.fmtDuration(pomos * (C.state.plan?.setup?.workMinutes || 25))})`
+    ? `${n} kun tanlangan · har biriga ${pomos} pomodoro (${C.fmtDuration(pomos * (C.state.plan?.setup?.workMinutes || 25))})`
     : 'Kunlarni yuqoridan tanlang';
 }
 

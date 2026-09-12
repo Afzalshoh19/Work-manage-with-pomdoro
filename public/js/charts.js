@@ -104,7 +104,7 @@ export function topTasksList(tasks) {
     const hrs = t.minutes >= 60 ? `${Math.floor(t.minutes / 60)} s ${t.minutes % 60} daq` : `${t.minutes} daq`;
     return `<div class="tt-row">
       <span>${esc(t.title)}</span>
-      <b>${t.pomodoros} 🍅</b>
+      <b>${t.pomodoros} pomodoro</b>
       <span class="hint">${hrs}</span>
     </div>`;
   }).join('');

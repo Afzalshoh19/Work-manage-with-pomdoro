@@ -129,7 +129,7 @@ export async function loadReport() {
     <div class="kpi b"><div class="kpi-val">${s.tasksDone}/${s.tasksTotal}</div>
       <div class="kpi-lbl">Bajarilgan vazifalar</div><div class="kpi-sub">${s.taskPercent}%</div></div>
     <div class="kpi p"><div class="kpi-val">${s.goalPercent}%</div>
-      <div class="kpi-lbl">Maqsad bajarilishi</div><div class="kpi-sub">Maqsad: ${s.goal} 🍅</div></div>
+      <div class="kpi-lbl">Maqsad bajarilishi</div><div class="kpi-sub">Maqsad: ${s.goal} pomodoro</div></div>
     ${s.deltaPercent !== null ? `<div class="kpi"><div class="kpi-val">${s.deltaPercent >= 0 ? '+' : ''}${s.deltaPercent}%</div>
       <div class="kpi-lbl">Oldingi davrga nisbatan</div><div class="kpi-sub">${s.prevPomodoros} → ${s.completedPomodoros}</div></div>` : ''}`;
 
@@ -164,13 +164,13 @@ function renderCorrections(report) {
         <span class="corr-title">${C.esc(t.title)}</span>
         <div class="corr-meta">
           ${kopKun ? `<span class="chip">${C.esc(C.fmtDateLong(t.date))}</span>` : ''}
-          <span class="chip">${t.completedPomodoros}/${t.plannedPomodoros} 🍅</span>
+          <span class="chip">${t.completedPomodoros}/${t.plannedPomodoros} pomodoro</span>
           <span>${C.fmtDuration(t.focusMinutes)}</span>
           ${belgi}
           ${qulf ? '<span class="corr-lock">🔒 Bajarilgan — qulflangan</span>' : ''}
         </div>
         ${tuz.length ? `<ul class="corr-list">${tuz.map(c =>
-          `<li><b>+${c.pomodoros} 🍅</b> · ${C.esc(c.reasonLabel)}${c.reasonNote ? ` — ${C.esc(c.reasonNote)}` : ''}</li>`
+          `<li><b>+${c.pomodoros} pomodoro</b> · ${C.esc(c.reasonLabel)}${c.reasonNote ? ` — ${C.esc(c.reasonNote)}` : ''}</li>`
         ).join('')}</ul>` : ''}
       </div>
       ${qulf
@@ -353,7 +353,7 @@ function bindIntegrations() {
                   ${i.estimateMinutes ? `<span class="chip time">${C.fmtDuration(i.estimateMinutes)}</span>` : '<span class="hint">baho yo\'q</span>'}
                 </div>
               </div>
-              <b>${i.plannedPomodoros} 🍅</b>
+              <b>${i.plannedPomodoros} ta</b>
             </label>`).join('')}
         </div>`;
 

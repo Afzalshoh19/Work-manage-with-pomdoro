@@ -494,3 +494,21 @@
 /* Amallar qatori: qo'shish va reja tuzish oldinda, ko'chirish amallari ajratilgan */
 .head-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .ha-sep { width: 1px; align-self: stretch; min-height: 22px; background: var(--line); margin: 0 2px; }
+
+/* Kartochka ikonkalari — SVG uchun o'lcham */
+.sum-item .si-ico svg { width: 16px; height: 16px; display: block; }
+.sum-item .si-ico { opacity: .45; }
+.sum-item.accent .si-ico { color: var(--accent); }
+.sum-item.green  .si-ico { color: var(--green); }
+.sum-item.blue   .si-ico { color: var(--blue); }
+.sum-item.purple .si-ico { color: var(--purple); }
+.sum-item.warn   .si-ico { color: var(--amber); opacity: .8; }
+
+/* ═══════════ Tugmalardagi SVG ikonkalar ═══════════ */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+.btn .bi, .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+.btn-lg svg { width: 17px; height: 17px; }
+.t-btn { display: inline-grid; place-items: center; }
+.t-btn svg { width: 15px; height: 15px; }
+.t-note { display: inline-flex; color: var(--txt-3); }
+.t-note svg { width: 13px; height: 13px; }

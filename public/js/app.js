@@ -216,7 +216,7 @@ async function openLogTask(task, after) {
   const qoldi = Math.max(0, task.plannedPomodoros - task.completedPomodoros);
   const kun = task.date && task.date !== S.date ? ` (${fmtDateLong(task.date)})` : '';
   $('logWhat').innerHTML = `<b>${esc(task.title)}</b>${kun} — hozir `
-    + `${task.completedPomodoros}/${task.plannedPomodoros} 🍅 yozilgan`
+    + `${task.completedPomodoros}/${task.plannedPomodoros} pomodoro yozilgan`
     + (qoldi ? `, ${qoldi} ta qoldi.` : '.')
     + ' Taymersiz bajarilgan ishni shu yerdan qo\'shing — hisobotda sababi bilan ko\'rinadi.';
 
@@ -309,7 +309,7 @@ async function nextWorkday(from) {
 function openCopyTask(task) {
   if (!task) return;
   copyingTask = task;
-  $('copyWhat').innerHTML = `<b>${esc(task.title)}</b> — ${task.plannedPomodoros} 🍅 `
+  $('copyWhat').innerHTML = `<b>${esc(task.title)}</b> — ${task.plannedPomodoros} pomodoro `
     + `(${fmtDuration(task.plannedPomodoros * dayWorkMinutes())}). `
     + 'Asl vazifa shu kunda qoladi, nusxa toza holatda yaratiladi.';
   $('copyDate').value = shiftDate(S.date, 1);
@@ -341,8 +341,8 @@ async function copyPreview() {
     const after = d.totalPomodoros + copyingTask.plannedPomodoros;
     const fits = after <= d.capacityPomodoros;
     el.innerHTML = `${esc(d.weekdayName)}, ${d.startTime}–${d.endTime}`
-      + (d.lunch?.enabled ? ` · 🍽 ${d.lunch.start}–${d.lunch.end}` : '')
-      + ` · hozir ${d.totalPomodoros}/${d.capacityPomodoros} 🍅 → `
+      + (d.lunch?.enabled ? ` · tushlik ${d.lunch.start}–${d.lunch.end}` : '')
+      + ` · hozir ${d.totalPomodoros}/${d.capacityPomodoros} ta → `
       + (fits
         ? `<b>${after}/${d.capacityPomodoros}</b> — sig'adi`
         : `<span class="warn-text"><b>${after}/${d.capacityPomodoros}</b> — ish vaqtidan oshadi</span>`);
@@ -607,6 +607,36 @@ function taskEstimateText() {
   $('taskEstimate').textContent = fmtDuration(n * dayWorkMinutes());
 }
 
+
+/* Kartochka ikonkalari — emoji o'rniga bir xil uslubdagi chizmalar */
+const SVG = {
+  pomodoro: '<circle cx="12" cy="13.5" r="7.5"/><path d="M12 10v3.5l2.5 1.5M8.5 3.5c1 1.2 2.2 1.8 3.5 1.8s2.5-.6 3.5-1.8"/>',
+  focus:    '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/>',
+  coffee:   '<path d="M4 9h13v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M17 10h1.8a2.2 2.2 0 1 1 0 4.4H17"/><path d="M7 2.5v2.2M11 2.5v2.2"/>',
+  calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  gauge:    '<path d="M4 18a9 9 0 1 1 16 0"/><path d="M12 18l4.5-5"/><circle cx="12" cy="18" r="1.3"/>',
+  warn:     '<path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4M12 17.2v.1"/>',
+  check:    '<path d="M20 6.5 9.5 17 4 11.5"/>',
+  play:     '<path d="M7 4.5v15l13-7.5z" fill="currentColor" stroke="none"/>',
+  pause:    '<rect x="7" y="5" width="3.5" height="14" rx="1" fill="currentColor" stroke="none"/><rect x="13.5" y="5" width="3.5" height="14" rx="1" fill="currentColor" stroke="none"/>',
+  eye:      '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
+  copy:     '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/>',
+  pencil:   '<path d="M15 4.5 19.5 9 8 20.5l-5 1 1-5z"/><path d="M13.5 6 18 10.5"/>',
+  trash:    '<path d="M4 7h16M10 4h4M9 7v11M15 7v11M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/>',
+  undo:     '<path d="M4 10h10a5 5 0 1 1 0 10H8"/><path d="M4 10 8 6M4 10l4 4"/>',
+  lock:     '<rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 1 1 8 0v3.5"/>',
+  tick:     '<path d="M20 6.5 9.5 17 4 11.5"/>',
+  skip:     '<path d="M5 5v14l10-7z" fill="currentColor" stroke="none"/><path d="M18 5v14"/>',
+  stopSq:   '<rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor" stroke="none"/>',
+  cog:      '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1v.3a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-2.8-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3.5 15a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.1-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.8-1.1V4a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.8h.1a2 2 0 1 1 0 4z"/>',
+  plus:     '<path d="M12 5v14M5 12h14"/>',
+  calDays:  '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M7.5 14h2M11 14h2M14.5 14h2M7.5 17.5h2M11 17.5h2"/>',
+  arrowR:   '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  note:     '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
+};
+const icon = (name) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
+  + 'stroke-linecap="round" stroke-linejoin="round">' + SVG[name] + '</svg>';
+
 function renderPlan() {
   const { tasks, summary } = S.plan;
 
@@ -627,37 +657,37 @@ function renderPlan() {
 
   $('summary').innerHTML =
     card({
-      tone: 'accent', ico: '🍅',
+      tone: 'accent', ico: icon('pomodoro'),
       value: summary.completedPomodoros, unit: `/${summary.totalPomodoros}`,
       label: 'Pomodoro',
       sub: summary.remainingPomodoros ? `${summary.remainingPomodoros} ta qoldi` : 'Reja to\'liq bajarildi'
     })
   + card({
-      ico: '⏱', value: fmtDuration(summary.workMinutes), label: 'Sof ish vaqti',
+      ico: icon('focus'), value: fmtDuration(summary.workMinutes), label: 'Sof ish vaqti',
       sub: summary.pauseMinutes
         ? `${summary.totalPomodoros} × ${summary.workMinutesUsed} daq · ⏸ ${fmtDuration(summary.pauseMinutes)} pauza`
         : summary.totalPomodoros ? `${summary.totalPomodoros} × ${summary.workMinutesUsed} daq` : 'Reja bo\'sh'
     })
   + card({
-      tone: 'green', ico: '☕', value: fmtDuration(summary.breakMinutes), label: 'Tanaffuslar',
+      tone: 'green', ico: icon('coffee'), value: fmtDuration(summary.breakMinutes), label: 'Tanaffuslar',
       sub: `${summary.shortBreaks} qisqa · ${summary.longBreaks} uzun`
-        + (summary.lunch?.enabled ? ` · 🍽 ${summary.lunch.start}` : '')
+        + (summary.lunch?.enabled ? ` · tushlik ${summary.lunch.start}` : '')
     })
   + card({
-      tone: 'blue', ico: '📅', twoLine: true,
+      tone: 'blue', ico: icon('calendar'), twoLine: true,
       value: `<span>${summary.dayStart}</span><span><i>→</i>${tm(summary.dayEnd, summary.dayEndOffset)}</span>`,
       label: 'Kun jadvali',
       sub: fmtDuration(summary.totalMinutes) + (summary.overnight ? ' · ertasi kunga o\'tadi' : '')
     })
   + card({
-      tone: summary.fits ? '' : 'warn', ico: summary.fits ? '📊' : '⚠️',
+      tone: summary.fits ? '' : 'warn', ico: icon(summary.fits ? 'gauge' : 'warn'),
       value: busy, unit: '%', label: 'Ish vaqti bandligi',
       sub: summary.fits
-        ? `Bo'sh: ${fmtDuration(summary.freeMinutes)} · sig'imi ${summary.capacityPomodoros} 🍅`
+        ? `Bo'sh: ${fmtDuration(summary.freeMinutes)} · sig'imi ${summary.capacityPomodoros} ta`
         : `${fmtDuration(summary.overflowMinutes)} oshdi · ${summary.extraPomodoros} ta sig'maydi`
     })
   + card({
-      tone: 'purple', ico: '✅',
+      tone: 'purple', ico: icon('check'),
       value: summary.doneTaskCount, unit: `/${summary.taskCount}`,
       label: 'Vazifalar bajarildi',
       sub: tasks.length
@@ -688,7 +718,7 @@ function renderPlan() {
     const isPast = S.date < todayStr();
     list.innerHTML = `<li class="empty"><b>📋</b>
       ${isPast ? 'Bu kunda vazifa kiritilmagan.' : 'Bu kun uchun hali vazifa qoʻshilmagan.'}<br>
-      Yuqoridagi maydonga vazifa nomini yozing va unga necha 🍅 kerakligini belgilang —
+      Yuqoridagi tugma orqali vazifa nomini yozing va unga nechta pomodoro kerakligini belgilang —
       tizim jadval va tanaffuslarni o'zi hisoblaydi.
       <div class="empty-actions">
         <button class="btn btn-mini btn-ghost" id="emptyFocus">+ Birinchi vazifani qo'shish</button>
@@ -722,23 +752,23 @@ function renderPlan() {
             ${t.pausedMinutes > 0 ? `<span class="chip pause" title="Pauzada o'tgan vaqt — tugash vaqti shunga surildi">⏸ ${fmtDuration(t.pausedMinutes)}</span>` : ''}
             <span class="t-pomos" title="${t.completedPomodoros}/${t.plannedPomodoros} pomodoro">${dots}</span>
             <span title="Pomodorolar davomiyliklari yig'indisi — oraliq cho'zilsa ham o'zgarmaydi">${t.completedPomodoros}/${t.plannedPomodoros}${extra} · ${fmtDuration(t.focusMinutes ?? t.estimatedMinutes)}</span>
-            ${t.note ? `<span title="${esc(t.note)}">📝</span>` : ''}
+            ${t.note ? `<span class="t-note" title="${esc(t.note)}">${icon('note')}</span>` : ''}
           </div>
         </div>
         <div class="t-actions">
           ${st === 'qabulga'
-            ? '<button class="btn btn-mini t-accept" title="Vazifani bajarildi deb tasdiqlash">✔ Bajarildi</button>'
+            ? `<button class="btn btn-mini t-accept" title="Vazifani bajarildi deb tasdiqlash">${icon('tick')} Bajarildi</button>`
             : st === 'bajarildi'
-              ? '<button class="t-btn reopen" title="Qayta ochish">↩</button>'
+              ? `<button class="t-btn reopen" title="Qayta ochish">${icon('undo')}</button>`
               : ''}
           ${st === 'bajarildi' ? '' : `
-          <button class="t-btn play" title="Shu vazifa ustida ishlashni boshlash">▶</button>`}
-          <button class="t-btn t-view" title="Vazifani ko'rish — pomodorolar jurnali">👁</button>
-          <button class="t-btn copy" title="Boshqa kunga nusxalash">⧉</button>
+          <button class="t-btn play" title="Shu vazifa ustida ishlashni boshlash">${icon('play')}</button>`}
+          <button class="t-btn t-view" title="Vazifani ko'rish — pomodorolar jurnali">${icon('eye')}</button>
+          <button class="t-btn copy" title="Boshqa kunga nusxalash">${icon('copy')}</button>
           ${st === 'bajarildi'
-            ? '<button class="t-btn edit is-locked" title="Bajarilgan vazifani tahrirlab bo\'lmaydi — avval ↩ bilan qayta oching" disabled>🔒</button>'
-            : '<button class="t-btn edit" title="Tahrirlash">✎</button>'}
-          <button class="t-btn del" title="O'chirish">✕</button>
+            ? `<button class="t-btn edit is-locked" title="Bajarilgan vazifani tahrirlab bo'lmaydi — avval qayta oching" disabled>${icon('lock')}</button>`
+            : `<button class="t-btn edit" title="Tahrirlash">${icon('pencil')}</button>`}
+          <button class="t-btn del" title="O'chirish">${icon('trash')}</button>
         </div>
       </li>`;
     }).join('');
@@ -754,7 +784,7 @@ function renderPlan() {
   const LABEL = {
     long: 'Uzun tanaffus',
     short: 'Qisqa tanaffus',
-    lunch: '🍽 Tushlik — vazifa belgilanmaydi',
+    lunch: 'Tushlik — vazifa belgilanmaydi',
     pause: '⏸ Pauza — ishlanmagan vaqt'
   };
 
@@ -833,7 +863,9 @@ function renderTimer() {
       ? MODE_LABEL[mode] + ' davom etmoqda' + (pausedSec >= 60 ? ` · ⏸ ${fmtClock(pausedSec)} pauza` : '')
       : `${MODE_LABEL[mode]} — pauzada ${fmtClock(pausedSec)}`;
 
-  $('btnMain').textContent = !S.timer ? '▶ Boshlash' : (running ? '⏸ Pauza' : '▶ Davom etish');
+  $('btnMain').innerHTML = !S.timer
+    ? `${icon('play')} Boshlash`
+    : running ? `${icon('pause')} Pauza` : `${icon('play')} Davom etish`;
   $('btnSkip').disabled = !S.timer;
   $('btnStop').disabled = !S.timer;
 
@@ -881,7 +913,7 @@ function renderTodayMini() {
   if (!s) return;
   const goal = S.settings.dailyGoal;
   $('todayMini').innerHTML = `
-    <div class="mini"><b>${s.completedPomodoros}</b><span>Bugungi 🍅</span></div>
+    <div class="mini"><b>${s.completedPomodoros}</b><span>Bugungi pomodoro</span></div>
     <div class="mini"><b>${s.remainingPomodoros}</b><span>Qoldi</span></div>
     <div class="mini"><b>${Math.round((s.completedPomodoros / Math.max(1, goal)) * 100)}%</b><span>Maqsad (${goal})</span></div>`;
 }
@@ -1049,14 +1081,14 @@ async function loadHistory() {
   }
   const data = await guard(() => api.history($('histFrom').value, $('histTo').value));
   if (!data.days.length) {
-    $('historyList').innerHTML = '<div class="empty"><b>🗂</b>Bu oraliqda ma\'lumot yo\'q</div>';
+    $('historyList').innerHTML = '<div class="empty">Bu oraliqda ma\'lumot yo\'q</div>';
     return;
   }
   $('historyList').innerHTML = data.days.map((d, i) => `
     <details class="hday" ${i === 0 ? 'open' : ''}>
       <summary>
         <span class="hday-date">${fmtDateLong(d.date)}</span>
-        <span class="hday-stat">🍅 <b>${d.pomodoros}</b></span>
+        <span class="hday-stat" title="Pomodoro"><b>${d.pomodoros}</b> pomodoro</span>
         <span class="hday-stat">Fokus: <b>${fmtDuration(d.focusMinutes)}</b></span>
         <span class="hday-stat">Tanaffus: <b>${fmtDuration(d.breakMinutes)}</b></span>
         ${d.interruptions ? `<span class="hday-stat">Uzilish: <b>${d.interruptions}</b></span>` : ''}
@@ -1067,7 +1099,7 @@ async function loadHistory() {
           <div class="hrow">
             <span>${t.done ? '<span class="ok-mark">✔</span>' : '<span class="no-mark">○</span>'} ${esc(t.title)}
               <span class="chip cat" style="--cat:${CAT_COLORS[t.category] || CAT_COLORS.boshqa}">${esc(CAT_LABELS[t.category] || t.category)}</span></span>
-            <span class="hint">${t.completedPomodoros}/${t.plannedPomodoros} 🍅</span>
+            <span class="hint">${t.completedPomodoros}/${t.plannedPomodoros} pomodoro</span>
             <span class="hint">${fmtDuration(t.focusMinutes)}</span>
           </div>`).join('') : '<div class="hint" style="padding:10px 0">Vazifa kiritilmagan</div>'}
       </div>

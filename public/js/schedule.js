@@ -43,7 +43,7 @@ export function renderDaySetup(plan) {
   $('dsView').innerHTML =
       item('Ish vaqti', `${s.startTime} – ${s.endTime}`, {
         cls: 'dv-wide' + (s.isWorkday ? '' : ' dv-off'),
-        note: s.isWorkday ? '' : '🌙 Dam olish kuni',
+        note: s.isWorkday ? '' : 'Dam olish kuni',
         title: s.isWorkday ? '' : `${s.weekdayName} — haftalik jadvalda dam olish kuni`
       })
     + item('Tushlik', s.lunchEnabled ? `${s.lunchStart} – ${s.lunchEnd}` : 'Belgilanmagan', {
@@ -55,7 +55,7 @@ export function renderDaySetup(plan) {
     + item('Pomodoro', `${s.workMinutes} daq`)
     + item('Qisqa tanaffus', `${s.shortBreakMinutes} daq`)
     + item('Uzun tanaffus', `${s.longBreakMinutes} daq`)
-    + item('Uzun tanaffus har', `${s.longBreakInterval} 🍅`, {
+    + item('Uzun tanaffus har', `${s.longBreakInterval} pomodoro`, {
         title: `Har ${s.longBreakInterval} pomodorodan keyin uzun tanaffus`
       });
 
@@ -204,7 +204,7 @@ function editorHtml(p, schedule) {
       </div>
       <div class="week-lunch">
         <input type="checkbox" ${lOn ? 'checked' : ''} id="${p}lc${d.key}" title="Tushlik hisobga olinsinmi">
-        <label for="${p}lc${d.key}">🍽</label>
+        <label for="${p}lc${d.key}">Tushlik</label>
         <input type="time" step="300" value="${norm(row.lunchStart || '13:00')}" id="${p}ls${d.key}" ${lOn ? '' : 'disabled'}>
         <em>–</em>
         <input type="time" step="300" value="${norm(row.lunchEnd || '14:00')}" id="${p}le${d.key}" ${lOn ? '' : 'disabled'}>
@@ -318,7 +318,7 @@ function refreshSimpleSummary(p) {
   el.innerHTML =
     `<span class="pill-stat info">${on.length} ish kuni</span>`
     + `<span class="pill-stat">Kuniga ${C.fmtDuration(perDay)}</span>`
-    + (lOn ? `<span class="pill-stat">🍽 ${C.fmtDuration(lunchMin)} tushlik</span>` : '')
+    + (lOn ? `<span class="pill-stat">${C.fmtDuration(lunchMin)} tushlik</span>` : '')
     + `<span class="pill-stat good">Haftasiga ${C.fmtDuration(perDay * on.length)}</span>`
     + `<span class="hint">${C.esc(names.join(', '))}</span>`;
 }
