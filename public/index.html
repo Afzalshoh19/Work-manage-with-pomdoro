@@ -311,8 +311,77 @@
         <span class="hint" id="pwHint"></span>
       </div>
 
-      <h3 class="sec-title" style="margin-top:20px">Faol seanslar</h3>
+      <h3 class="sec-title" style="margin-top:22px">Ikki bosqichli tasdiqlash</h3>
+      <p class="hint">Parolga qo'shimcha himoya: kirishda telefoningizdagi ilova bergan 6 xonali kod ham so'raladi.
+         Google Authenticator, Microsoft Authenticator, Authy, 1Password — hammasi ishlaydi.</p>
+
+      <div class="twofa-state" id="twofaState">
+        <span class="twofa-badge" id="twofaBadge">—</span>
+        <span class="hint" id="twofaInfo"></span>
+      </div>
+
+      <!-- O'chiq holat -->
+      <div class="row-actions" id="twofaOff" hidden>
+        <button class="btn btn-mini btn-primary" id="twofaStart">Sozlashni boshlash</button>
+      </div>
+
+      <!-- Sozlash: kalit va tasdiqlash -->
+      <div class="twofa-setup" id="twofaSetup" hidden>
+        <ol class="twofa-steps">
+          <li>Authenticator ilovasini oching va <b>«Kalitni qo'lda kiritish»</b> (Enter a setup key) ni tanlang.</li>
+          <li>Hisob nomi: <code id="twofaAccount">—</code></li>
+          <li>Kalit:
+            <div class="twofa-key">
+              <code id="twofaSecret">—</code>
+              <button type="button" class="btn btn-mini btn-ghost" id="twofaCopy">Nusxalash</button>
+            </div>
+          </li>
+          <li>Ilovada chiqqan 6 xonali kodni quyiga kiriting.</li>
+        </ol>
+        <div class="row-actions">
+          <label class="field" style="min-width:150px">
+            <span>Ilovadagi kod</span>
+            <input type="text" id="twofaSetupCode" inputmode="numeric" maxlength="6" placeholder="000000" class="code-input">
+          </label>
+          <button class="btn btn-mini btn-primary" id="twofaEnable">Yoqish</button>
+          <button class="btn btn-mini btn-ghost" id="twofaCancel">Bekor qilish</button>
+        </div>
+        <p class="hint" id="twofaSetupHint"></p>
+      </div>
+
+      <!-- Yoqilgan holat -->
+      <div id="twofaOn" hidden>
+        <div class="row-actions">
+          <label class="field" style="min-width:180px">
+            <span>Tasdiqlash uchun parolingiz</span>
+            <input type="password" id="twofaPassword" autocomplete="current-password" placeholder="••••••••">
+          </label>
+          <button class="btn btn-mini" id="twofaNewCodes">Zaxira kodlarni yangilash</button>
+          <button class="btn btn-mini btn-danger" id="twofaDisable">O'chirish</button>
+        </div>
+      </div>
+
+      <!-- Zaxira kodlar (bir marta ko'rsatiladi) -->
+      <div class="backup-box" id="backupBox" hidden>
+        <h4>Zaxira kodlar</h4>
+        <p class="hint">Telefoningiz qo'lingizda bo'lmaganda shu kodlardan biri bilan kirasiz.
+           Har biri faqat <b>bir marta</b> ishlaydi. Xavfsiz joyda saqlang — bu kodlar boshqa ko'rsatilmaydi.</p>
+        <div class="backup-grid" id="backupGrid"></div>
+        <div class="row-actions">
+          <button class="btn btn-mini btn-ghost" id="backupCopy">Nusxalash</button>
+          <button class="btn btn-mini btn-ghost" id="backupDownload">Fayl qilib saqlash</button>
+          <button class="btn btn-mini" id="backupDone">Saqladim, yopish</button>
+        </div>
+      </div>
+
+      <h3 class="sec-title" style="margin-top:22px">Qurilmalar va faol seanslar</h3>
+      <p class="hint">Hisobingizga qaysi qurilmalardan kirilgan. Tanimagan qurilmani darhol yoping.</p>
       <div id="authSessions"></div>
+      <div class="row-actions">
+        <button class="btn btn-mini btn-ghost" id="sessRefresh">Yangilash</button>
+        <button class="btn btn-mini btn-danger" id="sessRevokeAll">Boshqa qurilmalarni yopish</button>
+        <span class="hint" id="sessHint"></span>
+      </div>
     </div>
 
     <div class="card danger-card">

@@ -176,3 +176,8 @@ textarea {
 textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
 .link-out { color: var(--blue); font-size: 12.5px; word-break: break-all; }
 .split-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+
+/* ═══════════ Kirish sahifasi: qo'shimcha qadamlar ═══════════ */
+.auth-row-end { display: flex; justify-content: flex-end; margin-top: -4px; }
+.auth-row-end .link-btn { font-size: 12.5px; }

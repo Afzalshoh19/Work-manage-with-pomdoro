@@ -4,12 +4,16 @@
  *   ishga tushirish:  node server.js
  */
 import http from 'node:http';
+import https from 'node:https';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { load, dailyBackup, paths } from './lib/db.js';
 import { userFromRequest } from './lib/auth.js';
+import { isSecureRequest } from './lib/net.js';
+import { sweep as sweepLimits } from './lib/ratelimit.js';
+import { TLS_ENABLED, TLS_KEY, TLS_CERT, TLS_CA, FORCE_HTTPS, HSTS_DAYS } from './lib/paths.js';
 import * as Auth from './routes/auth.js';
 import * as Profile from './routes/profile.js';
 import * as Tasks from './routes/tasks.js';
@@ -52,6 +56,22 @@ const routes = [
   ['POST',   '/api/auth/password',       Auth.changePassword],
   ['POST',   '/api/auth/verify',         Auth.verifyEmail, true],
   ['POST',   '/api/auth/resend-code',    Auth.resendCode, true],
+  ['POST',   '/api/auth/forgot',         Auth.forgotPassword, true],
+  ['POST',   '/api/auth/reset',          Auth.resetPassword, true],
+
+  // Ikki bosqichli tasdiqlash
+  ['POST',   '/api/auth/2fa/verify',     Auth.twoFactorVerify, true],
+  ['GET',    '/api/auth/2fa',            Auth.twoFactorStatus],
+  ['POST',   '/api/auth/2fa/setup',      Auth.twoFactorSetup],
+  ['POST',   '/api/auth/2fa/enable',     Auth.twoFactorEnable],
+  ['POST',   '/api/auth/2fa/disable',    Auth.twoFactorDisable],
+  ['POST',   '/api/auth/2fa/cancel',     Auth.twoFactorCancel],
+  ['POST',   '/api/auth/2fa/backup-codes', Auth.twoFactorBackupCodes],
+
+  // Qurilmalar (ochiq seanslar)
+  ['GET',    '/api/auth/sessions',              Auth.mySessions],
+  ['POST',   '/api/auth/sessions/revoke-others', Auth.revokeOtherSessions],
+  ['DELETE', '/api/auth/sessions/:id',          Auth.revokeMySession],
   ['GET',    '/api/auth/smtp',           Auth.getSmtpSettings],
   ['PUT',    '/api/auth/smtp',           Auth.saveSmtpSettings],
   ['POST',   '/api/auth/smtp/test',      Auth.testSmtp],
@@ -145,12 +165,30 @@ function matchRoute(method, pathname) {
 }
 
 /* ---------------- Yordamchilar ---------------- */
-function json(res, status, data, cookie) {
+/**
+ * Har bir javobga qo'yiladigan xavfsizlik sarlavhalari.
+ * HSTS faqat HTTPS orqali kelgan so'rovga qo'yiladi — HTTP ustida
+ * uni yuborish standart bo'yicha ham ma'nosiz, ham zararli.
+ */
+function securityHeaders(req) {
+  const h = {
+    'X-Content-Type-Options': 'nosniff',
+    'X-Frame-Options': 'SAMEORIGIN',
+    'Referrer-Policy': 'same-origin'
+  };
+  if (HSTS_DAYS > 0 && isSecureRequest(req)) {
+    h['Strict-Transport-Security'] = `max-age=${Math.round(HSTS_DAYS * 86400)}; includeSubDomains`;
+  }
+  return h;
+}
+
+function json(res, status, data, cookie, req) {
   const body = JSON.stringify(data);
   const headers = {
     'Content-Type': 'application/json; charset=utf-8',
     'Content-Length': Buffer.byteLength(body),
-    'Cache-Control': 'no-store'
+    'Cache-Control': 'no-store',
+    ...securityHeaders(req)
   };
   if (cookie) headers['Set-Cookie'] = cookie;
   res.writeHead(status, headers);
@@ -199,7 +237,8 @@ function serveStatic(req, res, pathname) {
       'Content-Type': MIME[ext] || 'application/octet-stream',
       'Content-Length': stat.size,
       'Cache-Control': ext === '.html' ? 'no-store, must-revalidate' : 'no-cache',
-      ETag: etag
+      ETag: etag,
+      ...securityHeaders(req)
     });
     // Fayl o'qishda xato bo'lsa (o'chirilgan, band) 'error' hodisasi ushlanmasa server qulaydi
     const stream = fs.createReadStream(filePath);
@@ -221,14 +260,49 @@ function originAllowed(req) {
 }
 
 /* ---------------- Server ---------------- */
-const server = http.createServer((req, res) => {
+function onRequest(req, res) {
   res.on('error', () => { /* mijoz ulanishni uzdi — server to'xtamasin */ });
   handleRequest(req, res).catch((err) => {
     console.error('  So\'rovda kutilmagan xato:', (err && err.message) || err);
     if (res.headersSent) return res.destroy();
-    try { json(res, 500, { error: 'Server xatosi' }); } catch { res.destroy(); }
+    try { json(res, 500, { error: 'Server xatosi' }, null, req); } catch { res.destroy(); }
   });
-});
+}
+
+/** TLS sertifikatlari o'qiladi; xato bo'lsa server HTTP rejimida qoladi */
+function tlsOptions() {
+  if (!TLS_ENABLED) return null;
+  try {
+    const opt = { key: fs.readFileSync(TLS_KEY), cert: fs.readFileSync(TLS_CERT) };
+    if (TLS_CA) opt.ca = fs.readFileSync(TLS_CA);
+    return opt;
+  } catch (err) {
+    console.error('  TLS sertifikati o\'qilmadi:', err.message);
+    console.error('  Server HTTP rejimida ishga tushadi.');
+    return null;
+  }
+}
+
+const tls = tlsOptions();
+const server = tls ? https.createServer(tls, onRequest) : http.createServer(onRequest);
+const httpsActive = !!tls;
+
+/**
+ * HTTPS yoqilganda 80-portdagi HTTP so'rovlari HTTPS'ga yo'naltiriladi.
+ * REDIRECT_PORT berilmasa yo'naltiruvchi umuman ishga tushmaydi.
+ */
+let redirector = null;
+if (httpsActive && FORCE_HTTPS && process.env.REDIRECT_PORT) {
+  const rp = Number(process.env.REDIRECT_PORT);
+  redirector = http.createServer((req, res) => {
+    const host = String(req.headers.host || '').split(':')[0];
+    const target = 'https://' + host + (PORT === 443 ? '' : ':' + PORT) + req.url;
+    res.writeHead(301, { Location: target, 'Cache-Control': 'no-store' });
+    res.end();
+  });
+  redirector.on('error', (e) => console.error('  Yo\'naltiruvchi port xatosi:', e.message));
+  redirector.listen(rp, HOST, () => console.log('  HTTP -> HTTPS yo\'naltirish: ' + rp + '-port'));
+}
 
 async function handleRequest(req, res) {
   const url = new URL(req.url, 'http://' + (req.headers.host || 'localhost'));
@@ -242,15 +316,15 @@ async function handleRequest(req, res) {
   if (!pathname.startsWith('/api/')) return serveStatic(req, res, pathname);
 
   const route = matchRoute(req.method, pathname);
-  if (!route) return json(res, 404, { error: 'Bunday API manzili yoq' });
+  if (!route) return json(res, 404, { error: 'Bunday API manzili yoq' }, null, req);
 
   if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method) && !originAllowed(req)) {
-    return json(res, 403, { error: 'So\'rov manbasi ruxsat etilmagan' });
+    return json(res, 403, { error: 'So\'rov manbasi ruxsat etilmagan' }, null, req);
   }
 
   const { user, token } = userFromRequest(req);
   if (!route.open && !user) {
-    return json(res, 401, { error: 'Avval tizimga kiring', code: 'AUTH_REQUIRED' });
+    return json(res, 401, { error: 'Avval tizimga kiring', code: 'AUTH_REQUIRED' }, null, req);
   }
 
   try {
@@ -286,21 +360,26 @@ async function handleRequest(req, res) {
     // ishlata olsin (masalan TASK_LOCKED kodi yoki pendingVerification bayrog'i)
     if (result && result.error) {
       const { status, ...payload } = result;
-      return json(res, status || 400, payload);
+      return json(res, status || 400, payload, null, req);
     }
 
     const cookie = result?.__cookie;
     if (cookie) delete result.__cookie;
-    return json(res, 200, result ?? { ok: true }, cookie);
+    return json(res, 200, result ?? { ok: true }, cookie, req);
   } catch (err) {
     console.error('[api]', req.method, pathname, '-', err.message);
-    return json(res, 500, { error: err.message || 'Server xatosi' });
+    return json(res, 500, { error: err.message || 'Server xatosi' }, null, req);
   }
 }
 
 const db = load();
 safeBackup();
 setInterval(safeBackup, 60 * 60 * 1000).unref();
+
+// Eskirgan cheklov hisoblagichlari baza ichida to'planib qolmasin
+const safeSweep = () => { try { sweepLimits(); } catch (e) { console.error('  Tozalash xatosi:', e.message); } };
+safeSweep();
+setInterval(safeSweep, 6 * 60 * 60 * 1000).unref();
 
 /** Zaxira nusxada xato bo'lsa ham server to'xtamasligi kerak */
 function safeBackup() {
@@ -312,7 +391,12 @@ server.listen(PORT, HOST, () => {
   console.log('');
   console.log('  🍅  Pomodoro — Ish jarayonini boshqarish tizimi');
   console.log('  ---------------------------------------------');
-  console.log('  Manzil : http://' + HOST + ':' + PORT);
+  console.log('  Manzil : ' + (httpsActive ? 'https' : 'http') + '://' + HOST + ':' + PORT);
+  if (!httpsActive) {
+    console.log('  Eslatma: HTTPS o\'chiq. Tashqi manzilga chiqarishdan oldin');
+    console.log('           TLS_KEY va TLS_CERT ni bering yoki nginx orqasiga qo\'ying');
+    console.log('           (u holda TRUST_PROXY=1).');
+  }
   console.log('  Baza   : ' + paths.DB_FILE);
   console.log('  Hisob  : ' + (db.users.length
     ? db.users.length + ' ta foydalanuvchi'
@@ -339,6 +423,7 @@ process.on('unhandledRejection', (reason) => {
 
 function shutdown(signal) {
   console.log('\n  Server toxtatildi (' + signal + ').');
+  if (redirector) { try { redirector.close(); } catch { /* ahamiyatsiz */ } }
   server.close(() => process.exit(0));
   setTimeout(() => process.exit(0), 3000).unref();
 }

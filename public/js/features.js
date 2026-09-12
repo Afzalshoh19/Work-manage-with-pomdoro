@@ -41,11 +41,8 @@ export async function loadProfile() {
     <div class="kpi p"><div class="kpi-val">${st.activeDays}</div><div class="kpi-lbl">Faol kunlar</div></div>
     <div class="kpi"><div class="kpi-val" style="font-size:15px">${since.toLocaleDateString('uz-UZ')}</div><div class="kpi-lbl">Ro'yxatdan o'tgan sana</div></div>`;
 
-  $('authSessions').innerHTML = profileData.sessions.map(s => `
-    <div class="session-row">
-      <span>${C.esc((s.userAgent || 'Nomalum qurilma').slice(0, 70))}</span>
-      <span class="hint">${new Date(s.createdAt).toLocaleString('uz-UZ')}</span>
-    </div>`).join('') || '<div class="hint">Faol seans yo\'q</div>';
+  loadSessions();
+  loadTwoFactor();
 
   $('pwHint').textContent = u.hasPassword ? '' : 'Siz OAuth orqali kirgansiz — joriy parolni bo\'sh qoldiring.';
   $('pwCurrent').disabled = !u.hasPassword;
@@ -575,8 +572,244 @@ function bindOauth() {
 export function initFeatures(ctx) {
   C = ctx;
   bindProfile();
+  bindSecurity();
   bindReport();
   bindSmtp();
   bindIntegrations();
   bindOauth();
+}
+
+
+/* ═══════════════ QURILMALAR VA 2FA ═══════════════ */
+
+/** «3 daqiqa oldin» ko'rinishidagi vaqt */
+function agoText(iso) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 2) return 'hozir';
+  if (m < 60) return m + ' daqiqa oldin';
+  const h = Math.floor(m / 60);
+  if (h < 24) return h + ' soat oldin';
+  const d = Math.floor(h / 24);
+  if (d < 30) return d + ' kun oldin';
+  return new Date(iso).toLocaleDateString('uz-UZ');
+}
+
+function renderSessions(list) {
+  const box = $('authSessions');
+  if (!list.length) {
+    box.innerHTML = '<div class="hint">Faol seans yo\'q</div>';
+    return;
+  }
+  box.innerHTML = list.map(s => `
+    <div class="session-row" data-sid="${C.esc(s.id || '')}">
+      <div class="sess-main">
+        <span class="sess-dev">${C.esc(s.device || 'Noma\'lum qurilma')}
+          ${s.current ? '<span class="sess-now">shu qurilma</span>' : ''}</span>
+        <span class="sess-sub">${s.ip ? C.esc(s.ip) + ' · ' : ''}kirilgan: ${new Date(s.createdAt).toLocaleString('uz-UZ')}</span>
+      </div>
+      <span class="sess-when" title="Oxirgi faollik">${agoText(s.lastSeenAt)}</span>
+      ${s.current
+        ? '<span class="hint">—</span>'
+        : `<button class="btn btn-mini btn-ghost sess-kill" data-sid="${C.esc(s.id)}">Yopish</button>`}
+    </div>`).join('');
+}
+
+async function loadSessions() {
+  try {
+    const res = await api.sessions();
+    renderSessions(res.sessions);
+    const others = res.sessions.filter(x => !x.current).length;
+    $('sessRevokeAll').disabled = others === 0;
+    $('sessHint').textContent = others ? `Boshqa ${others} ta qurilma` : 'Boshqa qurilma yo\'q';
+  } catch (err) {
+    $('authSessions').innerHTML = '<div class="hint">Seanslarni yuklab bo\'lmadi: ' + C.esc(err.message) + '</div>';
+  }
+}
+
+/* ── Ikki bosqichli tasdiqlash ── */
+
+function renderTwoFactor(st) {
+  const badge = $('twofaBadge');
+  badge.textContent = st.enabled ? 'Yoqilgan' : 'O\'chiq';
+  badge.className = 'twofa-badge ' + (st.enabled ? 'on' : 'off');
+
+  $('twofaInfo').textContent = st.enabled
+    ? `${st.backupLeft} ta zaxira koddan foydalanish mumkin` +
+      (st.confirmedAt ? ' · yoqilgan: ' + new Date(st.confirmedAt).toLocaleDateString('uz-UZ') : '')
+    : 'Hisobingiz faqat parol bilan himoyalangan';
+
+  $('twofaOff').hidden = st.enabled || st.pending;
+  $('twofaSetup').hidden = !st.pending || st.enabled;
+  $('twofaOn').hidden = !st.enabled;
+
+  // Sozlash tugallanmagan bo'lsa kalit serverdan qaytadi — sahifa
+  // yangilangan bo'lsa ham foydalanuvchi davom ettira oladi
+  if (st.pending && st.secretGrouped) {
+    $('twofaSecret').textContent = st.secretGrouped;
+    $('twofaAccount').textContent = st.account || '';
+  }
+
+  if (st.enabled && st.backupLeft <= 2) {
+    $('twofaInfo').textContent += ' — kodlar tugayapti, yangilang';
+  }
+}
+
+async function loadTwoFactor() {
+  try {
+    const st = await api.twoFactor();
+    renderTwoFactor(st);
+  } catch { /* sozlamalar oynasi ochilmagan bo'lishi mumkin */ }
+}
+
+let lastBackupCodes = [];
+
+function showBackupCodes(codes) {
+  lastBackupCodes = codes;
+  $('backupGrid').innerHTML = codes.map(c => `<code>${C.esc(c)}</code>`).join('');
+  $('backupBox').hidden = false;
+  $('backupBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+/** 2FA ni tasdiqlash uchun kiritilgan parol */
+function twofaAuth() {
+  const pw = $('twofaPassword').value;
+  return pw ? { password: pw } : {};
+}
+
+function bindSecurity() {
+  /* Qurilmalar */
+  $('sessRefresh').addEventListener('click', loadSessions);
+
+  $('authSessions').addEventListener('click', async (e) => {
+    const b = e.target.closest('.sess-kill');
+    if (!b) return;
+    const ok = await C.confirmBox('Qurilmani yopish',
+      'Shu qurilmadagi seans darhol yopiladi va qaytadan kirish talab qilinadi.', 'Yopish');
+    if (!ok) return;
+    try {
+      const res = await api.revokeSession(b.dataset.sid);
+      renderSessions(res.sessions);
+      C.toast('Qurilma yopildi', 'ok');
+      loadSessions();
+    } catch (err) { C.toast(err.message, 'err'); }
+  });
+
+  $('sessRevokeAll').addEventListener('click', async () => {
+    const ok = await C.confirmBox('Boshqa qurilmalarni yopish',
+      'Shu qurilmadan tashqari barcha seanslar yopiladi.', 'Hammasini yopish');
+    if (!ok) return;
+    try {
+      const res = await api.revokeOthers();
+      renderSessions(res.sessions);
+      C.toast(res.closed ? `${res.closed} ta qurilma yopildi` : 'Yopiladigan qurilma yo\'q', 'ok');
+      loadSessions();
+    } catch (err) { C.toast(err.message, 'err'); }
+  });
+
+  /* 2FA — sozlashni boshlash */
+  $('twofaStart').addEventListener('click', async () => {
+    try {
+      const st = await api.twoFactorSetup();
+      $('twofaSecret').textContent = st.secretGrouped;
+      $('twofaAccount').textContent = st.account;
+      $('twofaSetupCode').value = '';
+      $('twofaSetupHint').textContent = '';
+      renderTwoFactor({ enabled: false, pending: true, backupLeft: 0 });
+      setTimeout(() => $('twofaSetupCode').focus(), 60);
+    } catch (err) { C.toast(err.message, 'err'); }
+  });
+
+  $('twofaCopy').addEventListener('click', async () => {
+    const text = $('twofaSecret').textContent.replace(/\s/g, '');
+    try {
+      await navigator.clipboard.writeText(text);
+      C.toast('Kalit nusxalandi', 'ok');
+    } catch { C.toast('Nusxalab bo\'lmadi — kalitni qo\'lda ko\'chiring', 'warn'); }
+  });
+
+  $('twofaSetupCode').addEventListener('input', (e) => {
+    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6);
+  });
+
+  $('twofaEnable').addEventListener('click', async () => {
+    const code = $('twofaSetupCode').value;
+    if (code.length !== 6) return C.toast('6 xonali kodni kiriting', 'err');
+    try {
+      const res = await api.twoFactorEnable(code);
+      showBackupCodes(res.backupCodes);
+      C.toast('Ikki bosqichli tasdiqlash yoqildi', 'ok');
+      await loadTwoFactor();
+      await loadSessions();
+    } catch (err) {
+      $('twofaSetupHint').textContent = err.message;
+      C.toast(err.message, 'err');
+    }
+  });
+
+  $('twofaCancel').addEventListener('click', async () => {
+    try { await api.twoFactorCancel(); } catch { /* holat baribir yangilanadi */ }
+    $('twofaSetupCode').value = '';
+    $('twofaSetupHint').textContent = '';
+    await loadTwoFactor();
+  });
+
+  /* 2FA — yoqilgan holatdagi amallar */
+  $('twofaDisable').addEventListener('click', async () => {
+    const ok = await C.confirmBox('Ikki bosqichli tasdiqlashni o\'chirish',
+      'Hisobingiz faqat parol bilan himoyalangan holga qaytadi.', 'O\'chirish');
+    if (!ok) return;
+    try {
+      await api.twoFactorDisable(twofaAuth());
+      $('twofaPassword').value = '';
+      $('backupBox').hidden = true;
+      C.toast('Ikki bosqichli tasdiqlash o\'chirildi', 'ok');
+      await loadTwoFactor();
+      await loadProfile();
+    } catch (err) { C.toast(err.message, 'err'); }
+  });
+
+  $('twofaNewCodes').addEventListener('click', async () => {
+    const ok = await C.confirmBox('Zaxira kodlarni yangilash',
+      'Eski zaxira kodlar darhol kuchini yo\'qotadi.', 'Yangilash');
+    if (!ok) return;
+    try {
+      const res = await api.twoFactorCodes(twofaAuth());
+      $('twofaPassword').value = '';
+      showBackupCodes(res.backupCodes);
+      C.toast('Yangi kodlar yaratildi', 'ok');
+      await loadTwoFactor();
+    } catch (err) { C.toast(err.message, 'err'); }
+  });
+
+  /* Zaxira kodlar bilan ishlash */
+  $('backupCopy').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(lastBackupCodes.join('\n'));
+      C.toast('Kodlar nusxalandi', 'ok');
+    } catch { C.toast('Nusxalab bo\'lmadi', 'warn'); }
+  });
+
+  $('backupDownload').addEventListener('click', () => {
+    const text = [
+      'Pomodoro — zaxira kodlar',
+      'Hisob: ' + (profileData?.user?.email || ''),
+      'Yaratilgan: ' + new Date().toLocaleString('uz-UZ'),
+      '',
+      'Har bir kod faqat bir marta ishlaydi.',
+      ''
+    ].concat(lastBackupCodes).join('\n');
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'pomodoro-zaxira-kodlar.txt';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 10000);
+  });
+
+  $('backupDone').addEventListener('click', () => {
+    $('backupBox').hidden = true;
+    lastBackupCodes = [];
+  });
 }

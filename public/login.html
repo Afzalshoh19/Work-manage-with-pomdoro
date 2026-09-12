@@ -64,6 +64,9 @@
           <input type="email" id="loginEmail" autocomplete="username" placeholder="ism@kompaniya.uz" required></label>
         <label class="field"><span>Parol</span>
           <input type="password" id="loginPassword" autocomplete="current-password" placeholder="••••••••" required></label>
+        <div class="auth-row-end">
+          <button type="button" class="link-btn" id="btnForgot">Parolni unutdingizmi?</button>
+        </div>
         <button class="btn btn-primary btn-block" type="submit">Kirish</button>
       </form>
 
@@ -97,6 +100,52 @@
           <button type="button" class="link-btn" id="btnBackToLogin">← Kirishga qaytish</button>
         </div>
         <p class="auth-note" id="verifyHint" hidden></p>
+      </form>
+
+      <!-- Parolni unutdim: 1-qadam — kod so'rash -->
+      <form class="auth-form" id="formForgot">
+        <p class="verify-lead">Emailingizni kiriting — parolni tiklash uchun 6 xonali kod yuboramiz.</p>
+        <label class="field"><span>Email</span>
+          <input type="email" id="forgotEmail" autocomplete="username" placeholder="ism@kompaniya.uz" required></label>
+        <button class="btn btn-primary btn-block" type="submit">Kod yuborish</button>
+        <div class="verify-foot">
+          <button type="button" class="link-btn back-login">← Kirishga qaytish</button>
+        </div>
+      </form>
+
+      <!-- Parolni unutdim: 2-qadam — kod va yangi parol -->
+      <form class="auth-form" id="formReset">
+        <p class="verify-lead"><b id="resetEmail">—</b> manziliga kod yuborildi. Kodni va yangi parolni kiriting.</p>
+        <label class="field"><span>Tasdiqlash kodi</span>
+          <input type="text" id="resetCode" inputmode="numeric" autocomplete="one-time-code"
+                 maxlength="6" placeholder="000000" class="code-input" required></label>
+        <label class="field"><span>Yangi parol</span>
+          <input type="password" id="resetPassword" autocomplete="new-password"
+                 placeholder="Kamida 8 belgi, harf va raqam" required></label>
+        <div class="pw-meter"><i id="resetBar"></i></div>
+        <label class="field"><span>Parolni takrorlang</span>
+          <input type="password" id="resetPassword2" autocomplete="new-password" placeholder="••••••••" required></label>
+        <button class="btn btn-primary btn-block" type="submit">Parolni yangilash</button>
+        <div class="verify-foot">
+          <button type="button" class="link-btn" id="btnResendReset">Kodni qayta yuborish</button>
+          <button type="button" class="link-btn back-login">← Kirishga qaytish</button>
+        </div>
+        <p class="auth-note" id="resetHint" hidden></p>
+      </form>
+
+      <!-- Ikki bosqichli tasdiqlash -->
+      <form class="auth-form" id="formTwofa">
+        <p class="verify-lead">
+          Ilovadagi 6 xonali kodni kiriting.
+          <span id="twofaBackupHint" hidden><br>Telefon qo'lingizda bo'lmasa — zaxira kodlardan birini yozing.</span>
+        </p>
+        <label class="field"><span>Kod</span>
+          <input type="text" id="twofaCode" autocomplete="one-time-code"
+                 maxlength="11" placeholder="000000" class="code-input" required></label>
+        <button class="btn btn-primary btn-block" type="submit">Tasdiqlash</button>
+        <div class="verify-foot">
+          <button type="button" class="link-btn back-login">← Kirishga qaytish</button>
+        </div>
       </form>
 
       <p class="auth-foot">Ma'lumotlaringiz shu kompyuterdagi serverda saqlanadi.</p>

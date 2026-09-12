@@ -19,8 +19,56 @@ kaliti bor.
 | `PORT` | `4123` | Server tinglaydigan port |
 | `HOST` | `127.0.0.1` | **Serverda `0.0.0.0` qilinishi shart**, aks holda tashqaridan ulanib bo'lmaydi |
 | `DATA_DIR` | `./data` | Baza saqlanadigan papka. Alohida diskda bo'lishi kerak |
-| `SECURE_COOKIES` | `NODE_ENV=production` bo'lsa yoqiq | HTTPS'da cookie'ga `Secure` bayrog'i qo'yiladi |
+| `SECURE_COOKIES` | `NODE_ENV=production` bo'lsa yoqiq | Cookie'ga `Secure` bayrog'ini **majburan** qo'yadi. Odatda kerak emas — ulanish HTTPS ekani so'rovning o'zidan aniqlanadi |
 | `NODE_ENV` | — | `production` qilinsa `SECURE_COOKIES` o'zi yoqiladi |
+| `TRUST_PROXY` | `0` | Teskari proksi (nginx, Caddy, Traefik) orqasida **majburiy**. Yoqilsa `X-Forwarded-Proto` va `X-Forwarded-For` o'qiladi |
+| `TLS_KEY` | — | O'z sertifikati bilan HTTPS: yopiq kalit fayli (`.pem`) |
+| `TLS_CERT` | — | Sertifikat fayli (`.pem`). `TLS_KEY` bilan birga berilsa server HTTPS'da ko'tariladi |
+| `TLS_CA` | — | Oraliq sertifikatlar zanjiri (kerak bo'lsa) |
+| `FORCE_HTTPS` | HTTPS yoqilgan bo'lsa `1` | HSTS va HTTP→HTTPS yo'naltirish |
+| `REDIRECT_PORT` | — | Berilsa, shu portda HTTP so'rovlarini HTTPS'ga yo'naltiruvchi ishga tushadi (odatda `80`) |
+| `HSTS_DAYS` | `180` | HSTS muddati. `0` — o'chirish |
+
+### HTTPS ni qanday yoqish
+
+**Variant A — proksi orqasida (tavsiya etiladi).** nginx yoki Caddy TLS'ni o'z
+zimmasiga oladi, Pomodoro esa HTTP'da ichki portda turadi:
+
+```bash
+HOST=127.0.0.1 PORT=4123 TRUST_PROXY=1 NODE_ENV=production node server.js
+```
+
+nginx tomonida sarlavhalar uzatilishi shart:
+
+```nginx
+proxy_set_header Host              $host;
+proxy_set_header X-Real-IP         $remote_addr;
+proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+proxy_set_header X-Forwarded-Proto $scheme;
+```
+
+> `TRUST_PROXY=1` ni **faqat** haqiqatan proksi orqasida yoqing. To'g'ridan-to'g'ri
+> internetga chiqarilgan serverda yoqilsa, mijoz o'z IP'sini o'zi yozib,
+> urinishlar cheklovini aylanib o'tadi.
+
+**Variant B — Pomodoro o'zi TLS bilan:**
+
+```bash
+HOST=0.0.0.0 PORT=443 REDIRECT_PORT=80 \
+TLS_KEY=/etc/letsencrypt/live/domen/privkey.pem \
+TLS_CERT=/etc/letsencrypt/live/domen/fullchain.pem \
+NODE_ENV=production node server.js
+```
+
+Sertifikat o'qilmasa server to'xtamaydi — ogohlantirish yozib, HTTP rejimida ishlaydi.
+
+### Mijoz IP'si nima uchun muhim
+
+Kirish urinishlari ham hisob, ham IP bo'yicha cheklanadi. Agar server proksi
+orqasida turib `TRUST_PROXY` yoqilmasa, barcha foydalanuvchilar bitta IP
+(`127.0.0.1`) sifatida ko'rinadi. Bunday holatda tizim IP bo'yicha cheklovni
+**o'zi o'chiradi** — aks holda bir necha urinishdan keyin butun jamoa
+bloklanardi. Hisob bo'yicha cheklovlar esa har doim ishlaydi.
 
 `.env.example` faylida shu ro'yxat izohlari bilan turadi.
 
@@ -82,7 +130,8 @@ server {
 }
 ```
 
-Proxy ortida ishlatganda `SECURE_COOKIES=1` qo'yish shart.
+Proksi ortida ishlatganda `TRUST_PROXY=1` qo'yish shart — HTTPS aniqlanishi va
+mijoz IP'si shunga bog'liq.
 
 ## 5. Birinchi ishga tushirishdan keyin
 

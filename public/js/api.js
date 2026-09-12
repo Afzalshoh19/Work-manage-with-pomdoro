@@ -14,7 +14,12 @@ async function request(method, url, body) {
   if (res.status === 401 && data.code === 'AUTH_REQUIRED') {
     throw new AuthError(data.error || 'Avval tizimga kiring');
   }
-  if (!res.ok) throw new Error(data.error || `Server xatosi (${res.status})`);
+  if (!res.ok) {
+    const err = new Error(data.error || `Server xatosi (${res.status})`);
+    Object.assign(err, data);     // qo'shimcha maydonlar (code, backupLeft, ...)
+    err.status = res.status;
+    throw err;
+  }
   return data;
 }
 
@@ -75,6 +80,17 @@ export const api = {
   smtpSettings:  ()             => request('GET', '/api/auth/smtp'),
   saveSmtp:      (payload)      => request('PUT', '/api/auth/smtp', payload),
   testSmtp:      (to)           => request('POST', '/api/auth/smtp/test', { to }),
+
+  /* Qurilmalar va ikki bosqichli tasdiqlash */
+  sessions:      ()             => request('GET', '/api/auth/sessions'),
+  revokeSession: (id)           => request('DELETE', '/api/auth/sessions/' + id),
+  revokeOthers:  ()             => request('POST', '/api/auth/sessions/revoke-others', {}),
+  twoFactor:     ()             => request('GET', '/api/auth/2fa'),
+  twoFactorSetup:()             => request('POST', '/api/auth/2fa/setup', {}),
+  twoFactorEnable:(code)        => request('POST', '/api/auth/2fa/enable', { code }),
+  twoFactorDisable:(payload)    => request('POST', '/api/auth/2fa/disable', payload),
+  twoFactorCancel:()            => request('POST', '/api/auth/2fa/cancel', {}),
+  twoFactorCodes:(payload)      => request('POST', '/api/auth/2fa/backup-codes', payload),
 
   /* Profil */
   profile:       ()             => request('GET', '/api/profile'),

@@ -1,4 +1,5 @@
 /** Foydalanuvchi profili va integratsiya sozlamalari */
+import { forgetUser } from '../lib/ratelimit.js';
 import { getDb, persist, DEFAULT_INTEGRATIONS, userWorkSchedule, WEEKDAYS, defaultWorkSchedule } from '../lib/db.js';
 import { checkLunch } from './tasks.js';
 import { encryptSecret, decryptSecret, maskSecret, verifyPassword } from '../lib/crypto.js';
@@ -58,7 +59,7 @@ export function updateProfile({ user, body }) {
   return { user: publicUser(user) };
 }
 
-export function deleteAccount({ user, body }) {
+export function deleteAccount({ user, body, req }) {
   const db = getDb();
   if (user.passwordHash && !verifyPassword(String(body.password || ''), user.passwordSalt, user.passwordHash)) {
     return { error: 'Parol noto\'g\'ri', status: 401 };
@@ -68,13 +69,14 @@ export function deleteAccount({ user, body }) {
   }
   db.tasks = db.tasks.filter(t => t.userId !== user.id);
   db.sessions = db.sessions.filter(s => s.userId !== user.id);
+  forgetUser(user.id, user.email);
   db.dayPlans = db.dayPlans.filter(d => d.userId !== user.id);
   delete db.timers[user.id];
   delete db.userState[user.id];
   db.users = db.users.filter(u => u.id !== user.id);
   destroyAllSessions(user.id);
   persist();
-  return { ok: true, __cookie: clearCookie() };
+  return { ok: true, __cookie: clearCookie(req) };
 }
 
 /* ═══════════ Integratsiya sozlamalari ═══════════ */

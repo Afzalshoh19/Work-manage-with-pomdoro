@@ -73,9 +73,29 @@ HOST=0.0.0.0
 # aks holda yangilanishda baza yo'qoladi.
 DATA_DIR=/var/lib/pomodoro
 
-# HTTPS orqali xizmat qilinsa 1 qiling - cookie'ga Secure bayrog'i qo'yiladi.
-# NODE_ENV=production bo'lsa o'zi yoqiladi.
-SECURE_COOKIES=1
+# ---------- HTTPS ----------
+# Variant A: nginx / Caddy orqasida (tavsiya etiladi).
+# Proksi X-Forwarded-Proto va X-Forwarded-For yuborishi shart.
+# DIQQAT: to'g'ridan-to'g'ri internetga chiqarilgan serverda YOQMANG -
+# mijoz o'z IP'sini o'zi yozib, urinishlar cheklovini aylanib o'tadi.
+TRUST_PROXY=0
+
+# Variant B: server o'zi TLS bilan ko'tarilsin.
+# Ikkalasi berilsa HTTPS yoqiladi; sertifikat o'qilmasa HTTP rejimida qoladi.
+# TLS_KEY=/etc/letsencrypt/live/domen/privkey.pem
+# TLS_CERT=/etc/letsencrypt/live/domen/fullchain.pem
+# TLS_CA=
+
+# HTTP so'rovlarini HTTPS'ga yo'naltiruvchi port (odatda 80).
+# Berilmasa yo'naltiruvchi ishga tushmaydi.
+# REDIRECT_PORT=80
+
+# HSTS muddati (kun). 0 - o'chirish.
+HSTS_DAYS=180
+
+# Cookie'ga Secure bayrog'ini MAJBURAN qo'yish.
+# Odatda kerak emas: ulanish HTTPS ekani so'rovning o'zidan aniqlanadi.
+# SECURE_COOKIES=1
 
 NODE_ENV=production
 `, 'utf8');

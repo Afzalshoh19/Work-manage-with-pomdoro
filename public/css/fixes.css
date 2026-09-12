@@ -57,3 +57,74 @@
 .pill:focus-visible, .icon-btn:focus-visible, .user-btn:focus-visible {
   outline: 2px solid var(--accent); outline-offset: 2px;
 }
+
+
+/* ═══════════ Ikki bosqichli tasdiqlash ═══════════ */
+.twofa-state { display: flex; align-items: center; gap: 10px; margin: 10px 0 12px; flex-wrap: wrap; }
+.twofa-badge {
+  font-size: 11.5px; font-weight: 600; letter-spacing: .3px;
+  padding: 3px 10px; border-radius: 20px;
+  border: 1px solid var(--line-2); color: var(--txt-2);
+}
+.twofa-badge.on  { color: var(--green); border-color: color-mix(in srgb, var(--green) 45%, transparent);
+                   background: color-mix(in srgb, var(--green) 12%, transparent); }
+.twofa-badge.off { color: var(--txt-3); }
+
+.twofa-setup {
+  border: 1px solid var(--line); border-radius: 11px;
+  background: var(--card-2); padding: 14px 16px; margin-bottom: 12px;
+}
+.twofa-steps { margin: 0 0 12px; padding-left: 20px; font-size: 13px; color: var(--txt-2); line-height: 1.7; }
+.twofa-steps li { margin-bottom: 5px; }
+.twofa-steps code { font-size: 12.5px; }
+.twofa-key { display: flex; align-items: center; gap: 8px; margin-top: 5px; flex-wrap: wrap; }
+.twofa-key code {
+  font-size: 13.5px; letter-spacing: 1.5px; font-weight: 600;
+  padding: 7px 11px; border-radius: 8px;
+  background: var(--bg-2); border: 1px solid var(--line); color: var(--txt);
+  word-break: break-all;
+}
+
+.backup-box {
+  border: 1px solid color-mix(in srgb, var(--amber) 45%, transparent);
+  background: color-mix(in srgb, var(--amber) 8%, transparent);
+  border-radius: 11px; padding: 14px 16px; margin: 12px 0;
+}
+.backup-box h4 { margin: 0 0 6px; font-size: 14px; }
+.backup-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(124px, 1fr));
+  gap: 7px; margin: 12px 0;
+}
+.backup-grid code {
+  display: block; text-align: center; padding: 7px 4px;
+  font-size: 13px; font-weight: 600; letter-spacing: .8px;
+  background: var(--bg-2); border: 1px solid var(--line); border-radius: 7px; color: var(--txt);
+}
+.backup-grid code.used { opacity: .4; text-decoration: line-through; }
+
+/* ═══════════ Qurilmalar ro'yxati ═══════════ */
+.session-row {
+  display: grid; grid-template-columns: 1fr auto auto; gap: 12px;
+  align-items: center; padding: 11px 0; border-top: 1px solid var(--line);
+}
+.session-row:first-child { border-top: 0; }
+.sess-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.sess-dev { font-size: 13.5px; font-weight: 500; display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+.sess-sub { font-size: 11.5px; color: var(--txt-3); }
+.sess-now {
+  font-size: 10px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase;
+  padding: 2px 7px; border-radius: 20px;
+  color: var(--green); border: 1px solid color-mix(in srgb, var(--green) 45%, transparent);
+}
+.sess-when { font-size: 11.5px; color: var(--txt-3); white-space: nowrap; }
+.btn-danger {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 45%, transparent);
+  color: var(--accent);
+}
+.btn-danger:hover { background: color-mix(in srgb, var(--accent) 26%, transparent); }
+
+@media (max-width: 560px) {
+  .session-row { grid-template-columns: 1fr auto; }
+  .sess-when { grid-column: 1 / -1; }
+}

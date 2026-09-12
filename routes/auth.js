@@ -3,11 +3,18 @@ import { getDb, persist, findUserByEmail, findUserById, claimLegacyData, DEFAULT
 import { hashPassword, verifyPassword, passwordProblem, randomToken, decryptSecret, encryptSecret } from '../lib/crypto.js';
 import {
   createSession, destroySession, destroyAllSessions, sessionCookie, clearCookie,
-  publicUser, loginLocked, noteLoginFailure, clearLoginFailures
+  publicUser, loginBlocked, noteLoginFailure, clearLoginFailures,
+  listSessions, revokeSession
 } from '../lib/auth.js';
 import { uid, str } from '../lib/util.js';
-import { issueCode, checkCode, smtpReady } from '../lib/verify.js';
+import { issueCode, checkCode, issueResetCode, checkResetCode, smtpReady } from '../lib/verify.js';
 import { smtpConfig, saveSmtp, sendMail } from '../lib/mailer.js';
+import { clientIp } from '../lib/net.js';
+import { lockedFor, noteFailure, clearFailures, lockMessage } from '../lib/ratelimit.js';
+import {
+  newSecret, groupSecret, otpauthUri, verifyTotp,
+  newBackupCodes, useBackupCode, BACKUP_COUNT, PERIOD, DIGITS
+} from '../lib/totp.js';
 
 const EMOJI = ['🍅', '🚀', '🎯', '⚡', '🌟', '🦊', '🐼', '🦉', '🌊', '🔥', '🌱', '🎨'];
 const COLORS = ['#ff5f56', '#4a9eff', '#35c88f', '#f6b73c', '#a77dff', '#ff8a80'];
@@ -61,6 +68,11 @@ export async function register({ body, req }) {
   const email = str(body.email, 200);
   const name = str(body.name, 80);
   const password = String(body.password || '');
+  const ip = clientIp(req);
+
+  // Bitta tarmoqdan ommaviy hisob ochishga cheklov
+  const ipLock = lockedFor('register-ip', ip);
+  if (ipLock) return { error: `Juda ko'p hisob ochildi. ${lockMessage(ipLock)}`, status: 429 };
 
   if (!isEmail(email)) return { error: 'Email manzili noto\'g\'ri', status: 400 };
   if (!name) return { error: 'Ismingizni kiriting', status: 400 };
@@ -68,6 +80,7 @@ export async function register({ body, req }) {
   if (pw) return { error: pw, status: 400 };
   if (findUserByEmail(email)) return { error: 'Bu email allaqachon ro\'yxatdan o\'tgan', status: 409 };
 
+  noteFailure('register-ip', ip);   // har bir yangi hisob shu IP hisobiga yoziladi
   const user = newUser({ email, name, provider: 'local', password });
 
   // Pochta serveri sozlanmagan bo'lsa kodni yetkazib bo'lmaydi — bunday holatda
@@ -77,7 +90,7 @@ export async function register({ body, req }) {
     user.emailVerifiedAt = new Date().toISOString();
     persist();
     const token = createSession(user.id, req);
-    return { user: publicUser(user), __cookie: sessionCookie(token), verificationSkipped: true };
+    return { user: publicUser(user), __cookie: sessionCookie(token, req), verificationSkipped: true };
   }
 
   // Email tasdiqlanmaguncha sessiya ochilmaydi
@@ -97,18 +110,26 @@ export async function register({ body, req }) {
 
 /** Kiritilgan kodni tekshiradi va sessiyani ochadi */
 export function verifyEmail({ body, req }) {
+  const ip = clientIp(req);
+  const ipLock = lockedFor('code-ip', ip);
+  if (ipLock) return { error: `Juda ko'p urinish. ${lockMessage(ipLock)}`, status: 429 };
+
   const email = str(body.email, 200);
   const user = findUserByEmail(email);
   if (!user) return { error: 'Bunday hisob topilmadi', status: 404 };
   if (user.emailVerified) return { error: 'Email allaqachon tasdiqlangan', status: 400 };
 
   const res = checkCode(user, body.code);
-  if (!res.ok) return { error: res.error, status: 400 };
+  if (!res.ok) {
+    noteFailure('code-ip', ip);
+    return { error: res.error, status: 400 };
+  }
+  clearFailures('code-ip', ip);
 
   user.lastLoginAt = new Date().toISOString();
   persist();
   const token = createSession(user.id, req);
-  return { user: publicUser(user), __cookie: sessionCookie(token) };
+  return { user: publicUser(user), __cookie: sessionCookie(token, req) };
 }
 
 /** Kodni qayta yuborish */
@@ -163,16 +184,17 @@ export async function testSmtp({ user, body }) {
 export function login({ body, req }) {
   const email = str(body.email, 200);
   const password = String(body.password || '');
+  const ip = clientIp(req);
 
-  const lockedFor = loginLocked(email);
-  if (lockedFor) return { error: `Juda ko'p urinish. ${lockedFor} daqiqadan keyin qayta urining`, status: 429 };
+  const blocked = loginBlocked(email, ip);
+  if (blocked) return { error: blocked, status: 429 };
 
   const user = findUserByEmail(email);
   if (!user || !user.passwordHash || !verifyPassword(password, user.passwordSalt, user.passwordHash)) {
-    noteLoginFailure(email);
+    noteLoginFailure(email, ip);
     return { error: 'Email yoki parol noto\'g\'ri', status: 401 };
   }
-  clearLoginFailures(email);
+  clearLoginFailures(email, ip);
 
   // Tasdiqlanmagan hisob — kod so'raladi. Pochta sozlanmagan bo'lsa
   // kodni yetkazib bo'lmaydi, shuning uchun to'sib qo'yilmaydi.
@@ -180,15 +202,30 @@ export function login({ body, req }) {
     return { pendingVerification: true, email: user.email, error: 'Avval emailingizni tasdiqlang', status: 403 };
   }
 
+  // Ikki bosqichli tasdiqlash yoqilgan bo'lsa — sessiya hali ochilmaydi
+  if (user.totp?.enabled) {
+    return {
+      twoFactorRequired: true,
+      ticket: newTicket(user.id),
+      email: user.email,
+      backupLeft: (user.totp.backupHashes || []).length
+    };
+  }
+
+  return finishLogin(user, req);
+}
+
+/** Parol (va kerak bo'lsa 2FA) tekshirilgandan keyingi umumiy qism */
+function finishLogin(user, req) {
   user.lastLoginAt = new Date().toISOString();
   persist();
   const token = createSession(user.id, req);
-  return { user: publicUser(user), __cookie: sessionCookie(token) };
+  return { user: publicUser(user), __cookie: sessionCookie(token, req) };
 }
 
-export function logout({ authToken }) {
+export function logout({ authToken, req }) {
   if (authToken) destroySession(authToken);
-  return { ok: true, __cookie: clearCookie() };
+  return { ok: true, __cookie: clearCookie(req) };
 }
 
 export function me({ user }) {
@@ -219,11 +256,43 @@ export function changePassword({ user, body, authToken }) {
 
 /* ═══════════ OAuth ═══════════ */
 
-const pending = new Map();   // state -> { provider, createdAt, redirect }
+/**
+ * OAuth oqimidagi `state` bazada saqlanadi.
+ * Xotirada tursa, server qayta yuklanganda yoki ikkinchi nusxa ishga
+ * tushganda o'sha paytda kirayotgan odam xatolikka uchrardi.
+ */
+const STATE_TTL_MS = 10 * 60000;
+
+function oauthStates() {
+  const db = getDb();
+  if (!db.oauthStates || typeof db.oauthStates !== 'object') db.oauthStates = {};
+  return db.oauthStates;
+}
 
 function cleanPending() {
+  const st = oauthStates();
   const now = Date.now();
-  for (const [k, v] of pending) if (now - v.createdAt > 10 * 60000) pending.delete(k);
+  let n = 0;
+  for (const [k, v] of Object.entries(st)) {
+    if (!v?.createdAt || now - v.createdAt > STATE_TTL_MS) { delete st[k]; n++; }
+  }
+  if (n) persist();
+}
+
+function putState(state, provider) {
+  oauthStates()[state] = { provider, createdAt: Date.now() };
+  persist();
+}
+
+/** state bir marta ishlatiladi — o'qilgach darhol o'chiriladi */
+function takeState(state) {
+  const st = oauthStates();
+  const rec = st[String(state || '')];
+  if (!rec) return null;
+  delete st[String(state)];
+  persist();
+  if (Date.now() - rec.createdAt > STATE_TTL_MS) return null;
+  return rec;
 }
 
 const PROVIDERS = {
@@ -292,7 +361,7 @@ export function oauthStart({ params, req }) {
   }
   cleanPending();
   const state = randomToken(16);
-  pending.set(state, { provider, createdAt: Date.now() });
+  putState(state, provider);
 
   const url = new URL(cfg.authUrl);
   url.searchParams.set('client_id', conf.clientId);
@@ -314,8 +383,7 @@ export async function oauthCallback({ params, query, req }) {
 
   if (!cfg) return fail('Noma\'lum provayder');
   if (query.error) return fail(`${cfg.name}: ${query.error}`);
-  const rec = pending.get(query.state);
-  pending.delete(query.state);
+  const rec = takeState(query.state);
   if (!rec || rec.provider !== provider) return fail('Sessiya eskirgan, qaytadan urining');
   if (!query.code) return fail('Kod olinmadi');
 
@@ -352,8 +420,12 @@ export async function oauthCallback({ params, query, req }) {
     } else {
       user = newUser({ email: profile.email, name: profile.name, provider, providerId: profile.id });
     }
+    // OAuth bilan kirganda ham ikki bosqichli tasdiqlash so'raladi
+    if (user.totp?.enabled) {
+      return { __redirect: '/login.html?twofa=' + encodeURIComponent(newTicket(user.id)) };
+    }
     const token = createSession(user.id, req);
-    return { __redirect: '/', __cookie: sessionCookie(token) };
+    return { __redirect: '/', __cookie: sessionCookie(token, req) };
   } catch (err) {
     return fail(err.message || 'OAuth xatosi');
   }
@@ -386,4 +458,364 @@ export function saveOauthSettings({ user, body, req }) {
   if (body.enabled !== undefined) conf.enabled = !!body.enabled;
   persist();
   return { ...getOauthSettings({ user }), redirectUri: redirectUri(req, provider) };
+}
+
+
+/* ═══════════ Parolni unutdim ═══════════ */
+
+/**
+ * Tiklash kodini so'rash.
+ * Javob har doim bir xil — bunday email bor-yo'qligini bildirmaydi.
+ */
+export async function forgotPassword({ body, req }) {
+  const email = str(body.email, 200);
+  const ip = clientIp(req);
+
+  const ipLock = lockedFor('forgot-ip', ip);
+  if (ipLock) return { error: `Juda ko'p so'rov. ${lockMessage(ipLock)}`, status: 429 };
+  const mailLock = lockedFor('forgot', email);
+  if (mailLock) return { error: `Juda ko'p so'rov. ${lockMessage(mailLock)}`, status: 429 };
+
+  const neutral = {
+    ok: true,
+    smtpReady: smtpReady(),
+    message: smtpReady()
+      ? 'Agar bunday hisob mavjud bo\'lsa, tiklash kodi emailga yuborildi'
+      : 'Pochta serveri sozlanmagan — kod server jurnaliga yozildi'
+  };
+
+  // Hisoblagich hisob bor-yo'qligidan qat'i nazar oshiriladi: aks holda
+  // tasodifiy manzillarga cheksiz so'rov yuborib, endpointni charchatish mumkin
+  noteFailure('forgot-ip', ip);
+  noteFailure('forgot', email);
+
+  const user = findUserByEmail(email);
+  if (!user) return neutral;
+
+  // Faqat parol bilan kiradigan hisoblar uchun ma'noga ega
+  if (!user.passwordHash && user.provider !== 'local') {
+    return {
+      ...neutral,
+      message: `Bu hisob ${user.provider} orqali ochilgan — o'sha xizmat orqali kiring`
+    };
+  }
+
+  const res = await issueResetCode(user);
+  if (!res.ok) return { error: res.error, status: 429 };
+  return neutral;
+}
+
+/** Kod bilan yangi parol o'rnatish */
+export function resetPassword({ body, req }) {
+  const ip = clientIp(req);
+  const ipLock = lockedFor('code-ip', ip);
+  if (ipLock) return { error: `Juda ko'p urinish. ${lockMessage(ipLock)}`, status: 429 };
+
+  const email = str(body.email, 200);
+  const password = String(body.password || '');
+  const problem = passwordProblem(password);
+  if (problem) return { error: problem, status: 400 };
+
+  const user = findUserByEmail(email);
+  if (!user) {
+    noteFailure('code-ip', ip);
+    return { error: 'Kod yoki email noto\'g\'ri', status: 400 };
+  }
+
+  const res = checkResetCode(user, body.code);
+  if (!res.ok) {
+    noteFailure('code-ip', ip);
+    return { error: res.error, status: 400 };
+  }
+  clearFailures('code-ip', ip);
+  clearFailures('login', email);
+  clearFailures('login-ip', ip);
+
+  const { salt, hash } = hashPassword(password);
+  user.passwordSalt = salt;
+  user.passwordHash = hash;
+  // Parol tiklangach eski seanslar ishonchsiz — hammasi yopiladi
+  destroyAllSessions(user.id);
+  // Kodni emailga yetkaza olgan bo'lsak, email egasi ekani tasdiqlangan
+  if (!user.emailVerified) {
+    user.emailVerified = true;
+    user.emailVerifiedAt = new Date().toISOString();
+  }
+  user.lastLoginAt = new Date().toISOString();
+  persist();
+
+  // 2FA yoqilgan bo'lsa parol yetarli emas
+  if (user.totp?.enabled) {
+    return {
+      passwordChanged: true,
+      twoFactorRequired: true,
+      ticket: newTicket(user.id),
+      email: user.email,
+      backupLeft: (user.totp.backupHashes || []).length
+    };
+  }
+
+  const token = createSession(user.id, req);
+  return {
+    user: publicUser(user),
+    passwordChanged: true,
+    message: 'Parol yangilandi. Barcha qurilmalardagi seanslar yopildi.',
+    __cookie: sessionCookie(token, req)
+  };
+}
+
+/* ═══════════ Qurilmalar (ochiq seanslar) ═══════════ */
+
+export function mySessions({ user, authToken }) {
+  return { sessions: listSessions(user.id, authToken) };
+}
+
+export function revokeMySession({ user, params, authToken }) {
+  const res = revokeSession(user.id, params.id, authToken);
+  if (res === 'topilmadi') return { error: 'Bunday seans topilmadi', status: 404 };
+  if (res === 'joriy') {
+    return { error: 'Joriy qurilmani shu yerdan yopib bo\'lmaydi — «Chiqish» tugmasini bosing', status: 400 };
+  }
+  return { ok: true, sessions: listSessions(user.id, authToken) };
+}
+
+/** Joriy qurilmadan tashqari hammasini yopish */
+export function revokeOtherSessions({ user, authToken }) {
+  const before = listSessions(user.id, authToken).length;
+  destroyAllSessions(user.id, authToken);
+  const after = listSessions(user.id, authToken).length;
+  return { ok: true, closed: before - after, sessions: listSessions(user.id, authToken) };
+}
+
+/* ═══════════ Ikki bosqichli tasdiqlash (2FA) ═══════════ */
+
+const TICKET_TTL_MS = 5 * 60000;
+
+function tickets() {
+  const db = getDb();
+  if (!db.twoFactorPending || typeof db.twoFactorPending !== 'object') db.twoFactorPending = {};
+  return db.twoFactorPending;
+}
+
+/** Parol to'g'ri, endi kod kutilyapti — shu holat uchun qisqa muddatli chipta */
+function newTicket(userId) {
+  const t = tickets();
+  const now = Date.now();
+  for (const [k, v] of Object.entries(t)) if (now - (v?.createdAt || 0) > TICKET_TTL_MS) delete t[k];
+  const ticket = randomToken(24);
+  t[ticket] = { userId, createdAt: now };
+  persist();
+  return ticket;
+}
+
+function takeTicket(ticket, { consume = true } = {}) {
+  const t = tickets();
+  const rec = t[String(ticket || '')];
+  if (!rec) return null;
+  if (Date.now() - rec.createdAt > TICKET_TTL_MS) { delete t[String(ticket)]; persist(); return null; }
+  if (consume) { delete t[String(ticket)]; persist(); }
+  return rec;
+}
+
+/** Kirish jarayonidagi 2FA kodini tekshirish */
+export function twoFactorVerify({ body, req }) {
+  const ip = clientIp(req);
+  const rec = takeTicket(body.ticket, { consume: false });
+  if (!rec) return { error: 'Tasdiqlash muddati tugadi — qaytadan kiring', status: 401, code: 'TICKET_EXPIRED' };
+
+  const user = findUserById(rec.userId);
+  if (!user?.totp?.enabled) return { error: 'Ikki bosqichli tasdiqlash yoqilmagan', status: 400 };
+
+  const lock = Math.max(lockedFor('twofa', user.id), lockedFor('code-ip', ip));
+  if (lock) return { error: `Juda ko'p urinish. ${lockMessage(lock)}`, status: 429 };
+
+  const input = String(body.code || '').trim();
+  const result = consumeTwoFactor(user, input);
+  if (!result.ok) {
+    noteFailure('twofa', user.id);
+    noteFailure('code-ip', ip);
+    return { error: result.error, status: 401 };
+  }
+
+  clearFailures('twofa', user.id);
+  clearFailures('code-ip', ip);
+  takeTicket(body.ticket);          // chipta ishlatildi
+  const out = finishLogin(user, req);
+  return { ...out, usedBackupCode: result.backup, backupLeft: result.left };
+}
+
+/**
+ * TOTP kodini yoki zaxira kodni tekshiradi.
+ * Muvaffaqiyatda ishlatilgan oyna/zaxira kod hisobdan chiqariladi.
+ */
+function consumeTwoFactor(user, input) {
+  const t = user.totp;
+  const secret = decryptSecret(t.secretEnc);
+  if (!secret) return { ok: false, error: 'Kalit o\'qilmadi — 2FA ni qaytadan sozlang' };
+
+  const digits = String(input).replace(/\D/g, '');
+  if (digits.length === DIGITS) {
+    const r = verifyTotp(secret, digits, { lastStep: t.lastStep ?? null });
+    if (r.ok) {
+      t.lastStep = r.step;          // shu oyna qayta ishlatilmaydi
+      persist();
+      return { ok: true, backup: false, left: (t.backupHashes || []).length };
+    }
+    return { ok: false, error: 'Kod noto\'g\'ri yoki muddati o\'tgan' };
+  }
+
+  // Zaxira kod
+  const b = useBackupCode(t.backupHashes, input);
+  if (b.ok) {
+    persist();
+    return { ok: true, backup: true, left: b.left };
+  }
+  return { ok: false, error: 'Kod noto\'g\'ri' };
+}
+
+/** 1-qadam: kalit yaratish (hali yoqilmaydi) */
+export function twoFactorSetup({ user }) {
+  if (user.totp?.enabled) return { error: 'Ikki bosqichli tasdiqlash allaqachon yoqilgan', status: 400 };
+  const secret = newSecret();
+  user.totp = { enabled: false, secretEnc: encryptSecret(secret), backupHashes: [], lastStep: null };
+  persist();
+  return {
+    secret,
+    secretGrouped: groupSecret(secret),
+    otpauth: otpauthUri(secret, user.email),
+    account: user.email,
+    issuer: 'Pomodoro',
+    digits: DIGITS,
+    period: PERIOD
+  };
+}
+
+/** 2-qadam: ilovadagi kod bilan tasdiqlash va yoqish */
+export function twoFactorEnable({ user, body, authToken }) {
+  const t = user.totp;
+  if (!t?.secretEnc) return { error: 'Avval «Sozlashni boshlash» tugmasini bosing', status: 400 };
+  if (t.enabled) return { error: 'Allaqachon yoqilgan', status: 400 };
+
+  const lock = lockedFor('twofa', user.id);
+  if (lock) return { error: `Juda ko'p urinish. ${lockMessage(lock)}`, status: 429 };
+
+  const secret = decryptSecret(t.secretEnc);
+  const r = verifyTotp(secret, String(body.code || ''));
+  if (!r.ok) {
+    noteFailure('twofa', user.id);
+    return { error: 'Kod noto\'g\'ri. Telefon soati to\'g\'ri ekanini tekshiring', status: 400 };
+  }
+  clearFailures('twofa', user.id);
+
+  const { codes, hashes } = newBackupCodes();
+  t.enabled = true;
+  t.confirmedAt = new Date().toISOString();
+  t.backupHashes = hashes;
+  t.lastStep = r.step;
+  persist();
+  // Boshqa qurilmalardagi eski seanslar 2FA'siz ochilgan — yopiladi
+  destroyAllSessions(user.id, authToken);
+
+  return {
+    ok: true,
+    enabled: true,
+    backupCodes: codes,
+    message: 'Ikki bosqichli tasdiqlash yoqildi. Zaxira kodlarni saqlab qo\'ying — ular boshqa ko\'rsatilmaydi.'
+  };
+}
+
+/** O'chirish — joriy parol yoki amaldagi kod bilan tasdiqlanadi */
+export function twoFactorDisable({ user, body }) {
+  if (!user.totp?.enabled) return { error: 'Ikki bosqichli tasdiqlash yoqilmagan', status: 400 };
+
+  const lock = lockedFor('twofa', user.id);
+  if (lock) return { error: `Juda ko'p urinish. ${lockMessage(lock)}`, status: 429 };
+
+  const ok = confirmIdentity(user, body);
+  if (!ok) {
+    noteFailure('twofa', user.id);
+    return { error: 'Parol yoki kod noto\'g\'ri', status: 401 };
+  }
+  clearFailures('twofa', user.id);
+
+  delete user.totp;
+  persist();
+  return { ok: true, enabled: false, message: 'Ikki bosqichli tasdiqlash o\'chirildi' };
+}
+
+/** Zaxira kodlarni yangilash — eskilari darhol kuchini yo'qotadi */
+export function twoFactorBackupCodes({ user, body }) {
+  if (!user.totp?.enabled) return { error: 'Ikki bosqichli tasdiqlash yoqilmagan', status: 400 };
+
+  const lock = lockedFor('twofa', user.id);
+  if (lock) return { error: `Juda ko'p urinish. ${lockMessage(lock)}`, status: 429 };
+
+  if (!confirmIdentity(user, body)) {
+    noteFailure('twofa', user.id);
+    return { error: 'Parol yoki kod noto\'g\'ri', status: 401 };
+  }
+  clearFailures('twofa', user.id);
+
+  const { codes, hashes } = newBackupCodes();
+  user.totp.backupHashes = hashes;
+  persist();
+  return {
+    ok: true,
+    backupCodes: codes,
+    count: BACKUP_COUNT,
+    message: 'Yangi zaxira kodlar yaratildi. Eskilari endi ishlamaydi.'
+  };
+}
+
+/** Joriy holat — sozlamalar oynasi uchun */
+export function twoFactorStatus({ user }) {
+  const t = user.totp;
+  const pending = !!(t?.secretEnc && !t.enabled);
+  const out = {
+    enabled: !!t?.enabled,
+    pending,
+    confirmedAt: t?.confirmedAt || null,
+    backupLeft: t?.enabled ? (t.backupHashes || []).length : 0,
+    backupTotal: BACKUP_COUNT
+  };
+
+  // Sozlash tugallanmagan bo'lsa kalit egasiga qaytariladi — sahifa
+  // yangilangandan keyin ham davom ettirish imkoni bo'lsin.
+  // Yoqilgandan keyin kalit boshqa hech qachon berilmaydi.
+  if (pending) {
+    const secret = decryptSecret(t.secretEnc);
+    if (secret) {
+      out.secret = secret;
+      out.secretGrouped = groupSecret(secret);
+      out.otpauth = otpauthUri(secret, user.email);
+      out.account = user.email;
+      out.digits = DIGITS;
+      out.period = PERIOD;
+    }
+  }
+  return out;
+}
+
+/** Tugallanmagan sozlashni bekor qiladi */
+export function twoFactorCancel({ user }) {
+  if (user.totp?.enabled) return { error: 'Yoqilgan tasdiqlashni bekor qilib bo\'lmaydi', status: 400 };
+  if (user.totp) { delete user.totp; persist(); }
+  return { ok: true, enabled: false, pending: false };
+}
+
+/**
+ * Nozik amallar uchun shaxsni tasdiqlash: parol yoki amaldagi TOTP kodi.
+ * OAuth orqali kirgan, paroli yo'q foydalanuvchilar kod bilan tasdiqlaydi.
+ */
+function confirmIdentity(user, body) {
+  const password = String(body?.password || '');
+  if (user.passwordHash && password && verifyPassword(password, user.passwordSalt, user.passwordHash)) return true;
+
+  const code = String(body?.code || '').trim();
+  if (code && user.totp?.secretEnc) {
+    const secret = decryptSecret(user.totp.secretEnc);
+    if (verifyTotp(secret, code).ok) return true;
+    if (user.totp.enabled && useBackupCode(user.totp.backupHashes, code).ok) { persist(); return true; }
+  }
+  return false;
 }
