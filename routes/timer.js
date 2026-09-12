@@ -1,5 +1,17 @@
 import { getDb, persist, userSettings, userStateOf, daySetup } from '../lib/db.js';
 import { uid, isDate, clamp } from '../lib/util.js';
+import { isMeet } from './tasks.js';
+
+/** Uchrashuv davomiyligi (daqiqa) — tanaffus chiqarilgan holda */
+function meetMinutes(task) {
+  if (!task?.meetStart || !task?.meetEnd) return null;
+  const m = (t) => { const [h, x] = String(t).split(':'); return (+h || 0) * 60 + (+x || 0); };
+  let d = m(task.meetEnd) - m(task.meetStart);
+  if (d <= 0) d += 1440;
+  const br = task.meetBreak;
+  if (br?.enabled && br.minutes > 0 && br.minutes < d) d -= br.minutes;
+  return d > 0 ? d : null;
+}
 
 const MODES = ['work', 'short', 'long'];
 
@@ -110,11 +122,14 @@ export function startTimer({ body, user }) {
     }
   }
 
-  // Davomiylik shu kunning sozlamasidan olinadi (kunlik o'zgartirish bo'lsa — undan)
+  // Davomiylik shu kunning sozlamasidan olinadi (kunlik o'zgartirish bo'lsa — undan).
+  // Uchrashuvda esa pomodoro emas — uchrashuvning o'z davomiyligi ishlatiladi.
   const setup = daySetup(user.id, date);
+  const meetTask = taskId ? db.tasks.find(t => t.id === taskId && t.userId === user.id) : null;
+  const meetLen = mode === 'work' && meetTask && isMeet(meetTask.category) ? meetMinutes(meetTask) : null;
   const minutes = body.durationMinutes !== undefined
-    ? clamp(body.durationMinutes, 1, 180)
-    : modeMinutes(mode, setup);
+    ? clamp(body.durationMinutes, 1, 720)
+    : (meetLen ?? modeMinutes(mode, setup));
 
   db.timers[user.id] = {
     id: uid(),
@@ -203,8 +218,12 @@ export function completeTimer({ user }) {
   const elapsed = recordSession(db, user.id, timer, { completed: true });
 
   if (timer.mode === 'work') {
-    state.pomodorosSinceLongBreak = (state.pomodorosSinceLongBreak || 0) + 1;
-    const task = db.tasks.find(t => t.id === timer.taskId && t.userId === user.id);
+    const t0 = db.tasks.find(t => t.id === timer.taskId && t.userId === user.id);
+    // Uchrashuv pomodoro siklini surmaydi
+    if (!t0 || !isMeet(t0.category)) {
+      state.pomodorosSinceLongBreak = (state.pomodorosSinceLongBreak || 0) + 1;
+    }
+    const task = t0;
     if (task) {
       task.completedPomodoros = (task.completedPomodoros || 0) + 1;
       task.focusSeconds = (task.focusSeconds || 0) + elapsed;
@@ -219,14 +238,19 @@ export function completeTimer({ user }) {
 
   const setup = daySetup(user.id, timer.date);
   const interval = Math.max(1, setup.longBreakInterval);
+  const doneTask = db.tasks.find(t => t.id === timer.taskId && t.userId === user.id);
+  const wasMeet = !!doneTask && isMeet(doneTask.category);
+
   let nextMode = 'work';
-  if (timer.mode === 'work') {
+  if (timer.mode === 'work' && !wasMeet) {
     nextMode = (state.pomodorosSinceLongBreak % interval === 0) ? 'long' : 'short';
   }
   delete db.timers[user.id];
   persist();
 
-  const auto = timer.mode === 'work' ? settings.autoStartBreaks : settings.autoStartWork;
+  // Uchrashuvdan keyin tanaffus avtomatik boshlanmaydi
+  const auto = wasMeet ? false
+    : timer.mode === 'work' ? settings.autoStartBreaks : settings.autoStartWork;
   return {
     ...snapshot(user.id),
     finishedMode: timer.mode,

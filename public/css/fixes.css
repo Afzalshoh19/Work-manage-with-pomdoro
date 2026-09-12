@@ -31,6 +31,9 @@
 
 /* ═══════════ Mobil: barcha tablar sig'sin ═══════════ */
 @media (max-width: 860px) {
+  /* Tablar bir qatorga sig'may qolganda pastki qatorga tushsin — gorizontal scroll chiqmasin */
+  .topbar { flex-wrap: wrap; }
+  .brand, .topbar-right { min-width: auto; }
   .tabs { width: 100%; order: 3; }
   .tab { flex: 1; justify-content: center; padding: 8px 6px; font-size: 12px; gap: 5px; }
 }

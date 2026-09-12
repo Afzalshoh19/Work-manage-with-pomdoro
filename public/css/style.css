@@ -36,6 +36,7 @@
 
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
+:root { --meet: #00b8c4; }
 html, body { height: 100%; }
 body {
   margin: 0;

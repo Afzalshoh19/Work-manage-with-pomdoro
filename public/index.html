@@ -663,6 +663,8 @@
                 <option value="loyiha">Loyiha</option>
                 <option value="uy">Uy ishlari</option>
                 <option value="sport">Sport</option>
+                <option value="meet">Meet</option>
+                <option value="uchrashuv">Uchrashuv</option>
                 <option value="boshqa">Boshqa</option>
               </select>
             </label>
@@ -678,6 +680,26 @@
               <span>Taxminiy vaqt</span>
               <output id="taskEstimate">50 daq</output>
             </label>
+          </div>
+          <div class="meet-box" id="mtBox" hidden>
+            <p class="meet-note">Uchrashuvda pomodoro sanalmaydi — taymer boshlanish va tugash vaqtidan hisoblanadi.</p>
+            <div class="meet-row">
+              <label class="field"><span>Boshlanishi</span><input type="time" id="mtStart" value="10:00"></label>
+              <label class="field"><span>Tugashi</span><input type="time" id="mtEnd" value="11:00"></label>
+              <label class="field"><span>Davomiyligi</span><output id="mtLen">1 soat</output></label>
+            </div>
+            <label class="meet-check"><input type="checkbox" id="mtBrOn"><span>Uchrashuv ichida tanaffus bo'lsin</span></label>
+            <div class="meet-row" id="mtBrRow" hidden>
+              <label class="field"><span>Qayerida</span>
+                <select id="mtPlace">
+                  <option value="boshida">Boshida</option>
+                  <option value="ortasida" selected>O'rtasida</option>
+                  <option value="oxirida">Oxirida</option>
+                  <option value="vaqt">Belgilangan vaqtda</option>
+                </select></label>
+              <label class="field"><span>Necha daqiqa</span><input type="number" id="mtMin" value="10" min="1" max="240"></label>
+              <label class="field" id="mtAtField" hidden><span>Qaysi vaqtda</span><input type="time" id="mtAt"></label>
+            </div>
           </div>
         </form>
 
@@ -875,7 +897,7 @@
     <div class="edit-grid">
       <label class="field wide"><span>Vazifa nomi</span>
         <input type="text" id="edTitle" maxlength="200" required></label>
-      <label class="field">
+      <label class="field pomo-field">
         <span>Pomodoro</span>
         <div class="stepper">
           <button type="button" class="step" data-edstep="-1">−</button>
@@ -883,7 +905,7 @@
           <button type="button" class="step" data-edstep="1">+</button>
         </div>
       </label>
-      <label class="field"><span>Taxminiy vaqt</span><output id="edEstimate">—</output></label>
+      <label class="field est-field"><span>Taxminiy vaqt</span><output id="edEstimate">—</output></label>
       <label class="field"><span>Kategoriya</span>
         <select id="edCategory">
           <option value="ish">Ish</option>
@@ -891,6 +913,8 @@
           <option value="loyiha">Loyiha</option>
           <option value="uy">Uy ishlari</option>
           <option value="sport">Sport</option>
+          <option value="meet">Meet</option>
+          <option value="uchrashuv">Uchrashuv</option>
           <option value="boshqa">Boshqa</option>
         </select></label>
       <label class="field"><span>Muhimlik</span>
@@ -901,6 +925,26 @@
         </select></label>
       <label class="field wide"><span>Izoh</span>
         <textarea id="edNote" maxlength="1000" placeholder="Ixtiyoriy izoh…"></textarea></label>
+    </div>
+    <div class="meet-box" id="edMtBox" hidden>
+      <p class="meet-note">Uchrashuvda pomodoro sanalmaydi — taymer boshlanish va tugash vaqtidan hisoblanadi.</p>
+      <div class="meet-row">
+        <label class="field"><span>Boshlanishi</span><input type="time" id="edMtStart" value="10:00"></label>
+        <label class="field"><span>Tugashi</span><input type="time" id="edMtEnd" value="11:00"></label>
+        <label class="field"><span>Davomiyligi</span><output id="edMtLen">1 soat</output></label>
+      </div>
+      <label class="meet-check"><input type="checkbox" id="edMtBrOn"><span>Uchrashuv ichida tanaffus bo'lsin</span></label>
+      <div class="meet-row" id="edMtBrRow" hidden>
+        <label class="field"><span>Qayerida</span>
+          <select id="edMtPlace">
+            <option value="boshida">Boshida</option>
+            <option value="ortasida" selected>O'rtasida</option>
+            <option value="oxirida">Oxirida</option>
+            <option value="vaqt">Belgilangan vaqtda</option>
+          </select></label>
+        <label class="field"><span>Necha daqiqa</span><input type="number" id="edMtMin" value="10" min="1" max="240"></label>
+        <label class="field" id="edMtAtField" hidden><span>Qaysi vaqtda</span><input type="time" id="edMtAt"></label>
+      </div>
     </div>
     <p class="hint" id="edSourceInfo" hidden></p>
     <div class="modal-actions">

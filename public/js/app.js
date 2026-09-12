@@ -103,6 +103,8 @@ function openTaskEditor(task) {
   $('edCategory').value = task.category;
   $('edPriority').value = task.priority || 'orta';
   $('edNote').value = task.note || '';
+  fillMeet('edMt', task);
+  syncMeet('edMt', task.category);
   editEstimate();
 
   const src = task.source;
@@ -602,6 +604,98 @@ function dayWorkMinutes() {
   return S.plan?.setup?.workMinutes || S.settings?.workMinutes || 25;
 }
 
+/* ══════════════════ Uchrashuv (meet / uchrashuv) ══════════════════ */
+
+const MEET_CATS = new Set(['meet', 'uchrashuv']);
+const isMeetCat = (c) => MEET_CATS.has(c);
+
+/** Bir xil tuzilishdagi maydonlar to'plami — qo'shish (mt) va tahrirlash (edMt) uchun */
+function meetFields(p) {
+  return {
+    box: $(p + 'Box'), start: $(p + 'Start'), end: $(p + 'End'), len: $(p + 'Len'),
+    brOn: $(p + 'BrOn'), brRow: $(p + 'BrRow'), place: $(p + 'Place'),
+    min: $(p + 'Min'), atField: $(p + 'AtField'), at: $(p + 'At')
+  };
+}
+
+const hhmmToMin = (t) => { const [h, m] = String(t || '').split(':'); return (+h || 0) * 60 + (+m || 0); };
+
+/** Uchrashuv oralig'i (daqiqa) — yarim tundan o'tsa ham to'g'ri sanaladi */
+function meetSpanOf(f) {
+  let d = hhmmToMin(f.end.value) - hhmmToMin(f.start.value);
+  if (d <= 0) d += 1440;
+  return d;
+}
+
+/**
+ * Kategoriya uchrashuv bo'lsa — vaqt maydonlari ochiladi,
+ * pomodoro soni va taxminiy vaqt esa yashiriladi (ular uchrashuvda ma'nosiz).
+ */
+function syncMeet(p, category) {
+  const f = meetFields(p);
+  if (!f.box) return;
+  const on = isMeetCat(category);
+  f.box.hidden = !on;
+
+  const scope = f.box.closest('form') || document;
+  scope.querySelectorAll('.pomo-field, .est-field').forEach(el => {
+    el.hidden = on;
+    if (el.parentElement) el.parentElement.classList.toggle('meet-on', on);
+  });
+  if (!on) return;
+
+  const span = meetSpanOf(f);
+  f.len.textContent = fmtDuration(span);
+  f.brRow.hidden = !f.brOn.checked;
+  f.atField.hidden = f.place.value !== 'vaqt';
+  const maxBr = Math.max(1, span - 1);
+  f.min.max = maxBr;
+  if (+f.min.value > maxBr) f.min.value = maxBr;
+  if (f.place.value === 'vaqt' && !f.at.value) f.at.value = f.start.value;
+}
+
+/** So'rov uchun uchrashuv maydonlari */
+function meetPayload(p) {
+  const f = meetFields(p);
+  return {
+    meetStart: f.start.value,
+    meetEnd: f.end.value,
+    meetBreak: f.brOn.checked
+      ? {
+          enabled: true,
+          placement: f.place.value,
+          minutes: +f.min.value || 0,
+          at: f.place.value === 'vaqt' ? f.at.value : null
+        }
+      : { enabled: false }
+  };
+}
+
+/** Uchrashuv maydonlarini vazifadan to'ldiradi */
+function fillMeet(p, task) {
+  const f = meetFields(p);
+  if (!f.box) return;
+  const br = task.meetBreak || {};
+  f.start.value = task.meetStart || '10:00';
+  f.end.value = task.meetEnd || '11:00';
+  f.brOn.checked = !!br.enabled;
+  f.place.value = br.placement || 'ortasida';
+  f.min.value = br.minutes || 10;
+  f.at.value = br.at || '';
+}
+
+/** Maydonlar o'zgarganda darhol qayta hisoblansin */
+function wireMeet(p, catSelectId) {
+  const f = meetFields(p);
+  if (!f.box) return;
+  const upd = () => syncMeet(p, $(catSelectId).value);
+  $(catSelectId).addEventListener('change', upd);
+  for (const el of [f.start, f.end, f.brOn, f.place, f.min, f.at]) {
+    el.addEventListener('change', upd);
+    el.addEventListener('input', upd);
+  }
+}
+
 function taskEstimateText() {
   const n = Math.max(1, +$('taskPomos').value || 1);
   $('taskEstimate').textContent = fmtDuration(n * dayWorkMinutes());
@@ -750,8 +844,11 @@ function renderPlan() {
                 : t.overflow ? 'Ish vaqtidan tashqarida' : 'Rejadagi vaqt'
             }">${t.pinnedStart ? '▶ ' : ''}${tm(t.startTime, t.startDayOffset)}–${tm(t.endTime, t.endDayOffset)}</span>` : ''}
             ${t.pausedMinutes > 0 ? `<span class="chip pause" title="Pauzada o'tgan vaqt — tugash vaqti shunga surildi">⏸ ${fmtDuration(t.pausedMinutes)}</span>` : ''}
-            <span class="t-pomos" title="${t.completedPomodoros}/${t.plannedPomodoros} pomodoro">${dots}</span>
-            <span title="Pomodorolar davomiyliklari yig'indisi — oraliq cho'zilsa ham o'zgarmaydi">${t.completedPomodoros}/${t.plannedPomodoros}${extra} · ${fmtDuration(t.focusMinutes ?? t.estimatedMinutes)}</span>
+            ${t.isMeet
+              ? `<span title="Uchrashuv davomiyligi — tanaffus chiqarilgan">${fmtDuration(t.focusMinutes)}${
+                   t.meetBreakMinutes ? ` · tanaffus ${t.meetBreakMinutes} daq` : ''}</span>`
+              : `<span class="t-pomos" title="${t.completedPomodoros}/${t.plannedPomodoros} pomodoro">${dots}</span>
+            <span title="Pomodorolar davomiyliklari yig'indisi — oraliq cho'zilsa ham o'zgarmaydi">${t.completedPomodoros}/${t.plannedPomodoros}${extra} · ${fmtDuration(t.focusMinutes ?? t.estimatedMinutes)}</span>`}
             ${t.note ? `<span class="t-note" title="${esc(t.note)}">${icon('note')}</span>` : ''}
           </div>
         </div>
@@ -785,7 +882,8 @@ function renderPlan() {
     long: 'Uzun tanaffus',
     short: 'Qisqa tanaffus',
     lunch: 'Tushlik — vazifa belgilanmaydi',
-    pause: '⏸ Pauza — ishlanmagan vaqt'
+    pause: '⏸ Pauza — ishlanmagan vaqt',
+    'meet-break': 'Uchrashuv ichidagi tanaffus'
   };
 
   $('timeline').innerHTML = blocks.length
@@ -793,7 +891,9 @@ function renderPlan() {
         <span class="tl-time">${tm(b.from, b.fromDayOffset)} – ${tm(b.to, b.toDayOffset)}</span>
         <div class="tl-bar ${b.type}">${b.type === 'work'
           ? `#${b.n} · ${esc(b.task)}`
-          : `${LABEL[b.type]} · ${b.minutes} daq`}</div>
+          : b.type === 'meet'
+            ? `${esc(b.meetTitle || b.task)} · uchrashuv · ${b.minutes} daq`
+            : `${LABEL[b.type]} · ${b.minutes} daq`}</div>
       </div>`).join('')
     : '<div class="empty">Jadval bo\'sh</div>';
 }
@@ -1266,13 +1366,16 @@ function bindEvents() {
     e.preventDefault();
     const title = $('taskTitle').value.trim();
     if (!title) { toast('Vazifa nomini kiriting', 'err'); $('taskTitle').focus(); return; }
-    await guard(() => api.addTask({
+    const category = $('taskCategory').value;
+    const payload = {
       date: S.date,
       title,
       plannedPomodoros: +$('taskPomos').value || 1,
-      category: $('taskCategory').value,
+      category,
       priority: $('taskPriority').value
-    }));
+    };
+    if (isMeetCat(category)) Object.assign(payload, meetPayload('mt'));
+    await guard(() => api.addTask(payload));
     $('taskTitle').value = '';
     $('taskTitle').focus();
     await loadPlan();
@@ -1285,6 +1388,8 @@ function bindEvents() {
     taskEstimateText();
   }));
   $('taskPomos').addEventListener('input', taskEstimateText);
+  wireMeet('mt', 'taskCategory');
+  wireMeet('edMt', 'edCategory');
 
   /* Reja amallari */
   $('btnCopyYesterday').addEventListener('click', async () => {
@@ -1507,13 +1612,16 @@ function bindEvents() {
     e.preventDefault();
     const title = $('edTitle').value.trim();
     if (!title) { toast('Vazifa nomini kiriting', 'err'); return; }
-    await guard(() => api.updateTask(editingId, {
+    const category = $('edCategory').value;
+    const patch = {
       title,
       plannedPomodoros: +$('edPomos').value || 1,
-      category: $('edCategory').value,
+      category,
       priority: $('edPriority').value,
       note: $('edNote').value.trim()
-    }));
+    };
+    if (isMeetCat(category)) Object.assign(patch, meetPayload('edMt'));
+    await guard(() => api.updateTask(editingId, patch));
     closeTaskEditor();
     await loadPlan();
     toast('Vazifa yangilandi', 'ok');

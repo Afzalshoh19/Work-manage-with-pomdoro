@@ -4,11 +4,13 @@ const esc = (s) => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;
 
 export const CAT_COLORS = {
   ish: '#ff5f56', oqish: '#4a9eff', loyiha: '#a77dff',
-  uy: '#f6b73c', sport: '#35c88f', boshqa: '#8a97a8'
+  uy: '#f6b73c', sport: '#35c88f',
+  meet: '#00b8c4', uchrashuv: '#00b8c4', boshqa: '#8a97a8'
 };
 export const CAT_LABELS = {
   ish: 'Ish', oqish: "O'qish", loyiha: 'Loyiha',
-  uy: 'Uy ishlari', sport: 'Sport', boshqa: 'Boshqa'
+  uy: 'Uy ishlari', sport: 'Sport',
+  meet: 'Meet', uchrashuv: 'Uchrashuv', boshqa: 'Boshqa'
 };
 
 const shortDate = (d) => {

@@ -78,6 +78,7 @@ const routes = [
   ['GET',    '/api/plan/workdays',       Tasks.workdaysInRange],
   ['POST',   '/api/plan/bulk',           Tasks.bulkAddTasks],
   ['GET',    '/api/tasks/statuses',      Tasks.statusList],
+  ['GET',    '/api/tasks/categories',    Tasks.categoryList],
   ['POST',   '/api/plan/copy',           Tasks.copyPlan],
   ['POST',   '/api/tasks/copy',          Tasks.copyTasks],
   ['POST',   '/api/tasks/:id/log',       Tasks.logPomodoros],

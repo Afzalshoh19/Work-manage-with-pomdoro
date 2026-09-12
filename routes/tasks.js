@@ -3,7 +3,65 @@ import { buildSchedule } from '../lib/plan.js';
 import { withActuals } from '../lib/actuals.js';
 import { uid, isDate, clamp, str, addDays } from '../lib/util.js';
 
-const CATEGORIES = ['ish', 'oqish', 'loyiha', 'uy', 'sport', 'boshqa'];
+const CATEGORIES = ['ish', 'oqish', 'loyiha', 'uy', 'sport', 'meet', 'uchrashuv', 'boshqa'];
+
+/* Uchrashuv turidagi kategoriyalar: vaqti belgilangan, tanaffus hisoblanmaydi */
+export const MEET_CATEGORIES = new Set(['meet', 'uchrashuv']);
+export const isMeet = (c) => MEET_CATEGORIES.has(c);
+
+/* Tanaffusni uchrashuvning qayeriga qo'yish mumkin */
+export const BREAK_PLACEMENTS = {
+  boshida: 'Boshida',
+  ortasida: "O'rtasida",
+  oxirida: 'Oxirida',
+  vaqt: 'Belgilangan vaqtda'
+};
+
+/**
+ * Uchrashuv maydonlarini tekshiradi va tozalaydi.
+ * @returns {{error:string}|{meet:Object}}
+ */
+function parseMeet(body, current = {}) {
+  const start = pad(str(body.meetStart ?? current.meetStart, 5));
+  const end = pad(str(body.meetEnd ?? current.meetEnd, 5));
+  if (!HHMM.test(start)) return { error: 'Uchrashuv boshlanish vaqti notogri (soat:daqiqa)' };
+  if (!HHMM.test(end)) return { error: 'Uchrashuv tugash vaqti notogri (soat:daqiqa)' };
+
+  const s = mins(start);
+  let e = mins(end);
+  if (e <= s) e += 1440;                       // yarim tundan oshishi mumkin
+  const uzunlik = e - s;
+  if (uzunlik < 5) return { error: 'Uchrashuv kamida 5 daqiqa bo\'lishi kerak' };
+  if (uzunlik > 12 * 60) return { error: 'Uchrashuv 12 soatdan uzun bo\'lmasligi kerak' };
+
+  const src = body.meetBreak ?? current.meetBreak ?? {};
+  const yoqilgan = !!src.enabled;
+  const joy = BREAK_PLACEMENTS[src.placement] ? src.placement : 'ortasida';
+  const davomiylik = clamp(src.minutes ?? 10, 1, 240);
+
+  if (yoqilgan && davomiylik >= uzunlik) {
+    return { error: 'Tanaffus uchrashuvdan qisqa bo\'lishi kerak' };
+  }
+
+  let at = null;
+  if (yoqilgan && joy === 'vaqt') {
+    at = pad(str(src.at, 5));
+    if (!HHMM.test(at)) return { error: 'Tanaffus boshlanish vaqti notogri (soat:daqiqa)' };
+    let a = mins(at);
+    while (a < s) a += 1440;
+    if (a < s || a + davomiylik > e) {
+      return { error: `Tanaffus uchrashuv ichida bo'lishi kerak (${start}–${end})` };
+    }
+  }
+
+  return {
+    meet: {
+      meetStart: start,
+      meetEnd: end,
+      meetBreak: { enabled: yoqilgan, placement: joy, minutes: davomiylik, at }
+    }
+  };
+}
 
 function normCategory(c) {
   c = str(c, 20).toLowerCase();
@@ -139,6 +197,14 @@ export function createTask({ body, user }) {
     createdAt: new Date().toISOString(),
     completedAt: null
   };
+  // Uchrashuv bo'lsa vaqti belgilanishi shart — pomodoro soni o'rniga shu ishlatiladi
+  if (isMeet(task.category)) {
+    const m = parseMeet(body);
+    if (m.error) return { error: m.error, status: 400 };
+    Object.assign(task, m.meet);
+    task.plannedPomodoros = 1;
+  }
+
   db.tasks.push(task);
   persist();
   return { task };
@@ -150,6 +216,17 @@ export function setStatus(task, status) {
   task.done = status === 'bajarildi';
   task.completedAt = task.done ? (task.completedAt || new Date().toISOString()) : null;
   return task;
+}
+
+export function categoryList() {
+  const LABELS = {
+    ish: 'Ish', oqish: "O'qish", loyiha: 'Loyiha', uy: 'Uy ishlari',
+    sport: 'Sport', meet: 'Meet', uchrashuv: 'Uchrashuv', boshqa: 'Boshqa'
+  };
+  return {
+    categories: CATEGORIES.map(k => ({ key: k, label: LABELS[k], meet: isMeet(k) })),
+    breakPlacements: Object.entries(BREAK_PLACEMENTS).map(([key, label]) => ({ key, label }))
+  };
 }
 
 export function statusList() {
@@ -182,6 +259,18 @@ export function updateTask({ params, body, user }) {
   }
   if (body.note !== undefined) task.note = str(body.note, 1000);
   if (body.category !== undefined) task.category = normCategory(body.category);
+
+  // Uchrashuv maydonlari: kategoriya uchrashuvga o'tsa yoki vaqt yuborilsa
+  const meetTouched = body.meetStart !== undefined || body.meetEnd !== undefined || body.meetBreak !== undefined;
+  if (isMeet(task.category) && (meetTouched || !task.meetStart)) {
+    const m = parseMeet(body, task);
+    if (m.error) return { error: m.error, status: 400 };
+    Object.assign(task, m.meet);
+    task.plannedPomodoros = 1;
+  } else if (!isMeet(task.category)) {
+    // Oddiy vazifaga qaytdi — uchrashuv maydonlari kerak emas
+    delete task.meetStart; delete task.meetEnd; delete task.meetBreak;
+  }
   if (body.priority !== undefined && ['past', 'orta', 'yuqori'].includes(body.priority)) task.priority = body.priority;
   if (body.plannedPomodoros !== undefined) task.plannedPomodoros = clamp(body.plannedPomodoros, 1, 30);
   if (body.completedPomodoros !== undefined) task.completedPomodoros = clamp(body.completedPomodoros, 0, 99);
