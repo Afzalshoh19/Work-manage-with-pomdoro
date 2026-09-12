@@ -352,7 +352,7 @@
 .t-btn.copy:hover { color: var(--blue); border-color: color-mix(in srgb, var(--blue) 45%, transparent); }
 
 /* Kun rejimi kartochkalari bitta qatorga sig'ishi uchun ixchamlashtirish */
-.ds-view { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; }
+.ds-view { flex-wrap: wrap; overflow: visible; }
 .dv-item { min-width: 0; flex: 0 0 auto; padding: 9px 11px; }
 .dv-item > b { white-space: nowrap; }
 
@@ -490,3 +490,7 @@
    yashirish qoidasi ustidan yozilib ketardi. */
 .plan-wrap:not([open]) > .task-list,
 .timeline-wrap:not([open]) > .timeline { display: none; }
+
+/* Amallar qatori: qo'shish va reja tuzish oldinda, ko'chirish amallari ajratilgan */
+.head-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.ha-sep { width: 1px; align-self: stretch; min-height: 22px; background: var(--line); margin: 0 2px; }

@@ -459,8 +459,76 @@ function bindIntegrations() {
 
 /* ═══════════════ OAUTH SOZLAMALARI (tizim egasi) ═══════════════ */
 
+/* ═══════════════ POCHTA SERVERI (SMTP) ═══════════════ */
+
+export async function loadSmtpSettings(user) {
+  if (user.role !== 'owner') return;
+  $('smtpCard').hidden = false;
+  try {
+    const c = await api.smtpSettings();
+    $('smtpHost').value = c.host || '';
+    $('smtpPort').value = c.port || 587;
+    $('smtpUser').value = c.user || '';
+    $('smtpFrom').value = c.from || '';
+    $('smtpSecure').value = c.secure ? '1' : '0';
+    $('smtpEnabled').checked = !!c.enabled;
+    $('smtpPass').placeholder = c.hasPass
+      ? "Saqlangan — o'zgartirish uchun yozing"
+      : 'Parol yoki ilova kaliti';
+
+    $('smtpState').innerHTML = c.ready
+      ? `<span class="pill-stat good">✓ Xat yuborishga tayyor</span>`
+        + (c.lastSentAt ? `<span class="pill-stat">Oxirgi xat: ${new Date(c.lastSentAt).toLocaleString('uz-UZ')}</span>` : '')
+      : `<span class="pill-stat warn">Sozlanmagan — tasdiqlash kodi server jurnaliga yoziladi</span>`;
+    if (c.lastError) {
+      $('smtpState').innerHTML += `<span class="pill-stat bad">Oxirgi xato: ${C.esc(c.lastError)}</span>`;
+    }
+  } catch (err) {
+    $('smtpState').innerHTML = `<span class="pill-stat bad">${C.esc(err.message)}</span>`;
+  }
+}
+
+function bindSmtp() {
+  $('smtpSave').addEventListener('click', async () => {
+    $('smtpMsg').textContent = 'Saqlanmoqda…';
+    try {
+      await api.saveSmtp({
+        host: $('smtpHost').value.trim(),
+        port: +$('smtpPort').value || 587,
+        user: $('smtpUser').value.trim(),
+        pass: $('smtpPass').value,          // bo'sh bo'lsa eskisi qoladi
+        from: $('smtpFrom').value.trim(),
+        secure: $('smtpSecure').value === '1',
+        enabled: $('smtpEnabled').checked
+      });
+      $('smtpPass').value = '';
+      $('smtpMsg').textContent = '';
+      await loadSmtpSettings(C.state.user);
+      C.toast('Pochta sozlamasi saqlandi', 'ok');
+    } catch (err) {
+      $('smtpMsg').textContent = '';
+      C.toast(err.message, 'err');
+    }
+  });
+
+  $('smtpTest').addEventListener('click', async () => {
+    $('smtpMsg').textContent = 'Yuborilmoqda…';
+    try {
+      const r = await api.testSmtp(C.state.user.email);
+      $('smtpMsg').textContent = '';
+      C.toast(`Sinov xati ${r.to} manziliga yuborildi`, 'ok');
+      await loadSmtpSettings(C.state.user);
+    } catch (err) {
+      $('smtpMsg').textContent = '';
+      C.toast(err.message, 'err');
+      await loadSmtpSettings(C.state.user);
+    }
+  });
+}
+
 export async function loadOauthSettings(user) {
   if (user.role !== 'owner') return;
+  loadSmtpSettings(user);
   $('oauthCard').hidden = false;
   const base = location.origin;
   $('googleRedirect').textContent = base + '/api/auth/callback/google';
@@ -508,6 +576,7 @@ export function initFeatures(ctx) {
   C = ctx;
   bindProfile();
   bindReport();
+  bindSmtp();
   bindIntegrations();
   bindOauth();
 }

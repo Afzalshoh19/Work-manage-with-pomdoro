@@ -72,6 +72,9 @@ export const api = {
   changePassword:(payload)      => request('POST', '/api/auth/password', payload),
   oauthSettings: ()             => request('GET', '/api/auth/oauth-settings'),
   saveOauth:     (payload)      => request('PUT', '/api/auth/oauth-settings', payload),
+  smtpSettings:  ()             => request('GET', '/api/auth/smtp'),
+  saveSmtp:      (payload)      => request('PUT', '/api/auth/smtp', payload),
+  testSmtp:      (to)           => request('POST', '/api/auth/smtp/test', { to }),
 
   /* Profil */
   profile:       ()             => request('GET', '/api/profile'),

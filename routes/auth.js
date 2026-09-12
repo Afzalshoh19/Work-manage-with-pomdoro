@@ -6,6 +6,8 @@ import {
   publicUser, loginLocked, noteLoginFailure, clearLoginFailures
 } from '../lib/auth.js';
 import { uid, str } from '../lib/util.js';
+import { issueCode, checkCode, smtpReady } from '../lib/verify.js';
+import { smtpConfig, saveSmtp, sendMail } from '../lib/mailer.js';
 
 const EMOJI = ['🍅', '🚀', '🎯', '⚡', '🌟', '🦊', '🐼', '🦉', '🌊', '🔥', '🌱', '🎨'];
 const COLORS = ['#ff5f56', '#4a9eff', '#35c88f', '#f6b73c', '#a77dff', '#ff8a80'];
@@ -29,6 +31,9 @@ function newUser({ email, name, provider, providerId, password }) {
     timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || '',
     provider,
     providerIds: providerId ? { [provider]: String(providerId) } : {},
+    // Google/GitHub emailni o'zi tasdiqlagan; oddiy ro'yxatdan o'tishda kod yuboriladi
+    emailVerified: provider !== 'local',
+    emailVerifiedAt: provider !== 'local' ? new Date().toISOString() : null,
     passwordHash: null,
     passwordSalt: null,
     role: isFirst ? 'owner' : 'user',
@@ -52,7 +57,7 @@ function newUser({ email, name, provider, providerId, password }) {
 
 /* ═══════════ Email + parol ═══════════ */
 
-export function register({ body, req }) {
+export async function register({ body, req }) {
   const email = str(body.email, 200);
   const name = str(body.name, 80);
   const password = String(body.password || '');
@@ -64,8 +69,95 @@ export function register({ body, req }) {
   if (findUserByEmail(email)) return { error: 'Bu email allaqachon ro\'yxatdan o\'tgan', status: 409 };
 
   const user = newUser({ email, name, provider: 'local', password });
+
+  // Pochta serveri sozlanmagan bo'lsa kodni yetkazib bo'lmaydi — bunday holatda
+  // tasdiqlash talab qilinmaydi, aks holda hech kim ro'yxatdan o'ta olmaydi.
+  if (!smtpReady()) {
+    user.emailVerified = true;
+    user.emailVerifiedAt = new Date().toISOString();
+    persist();
+    const token = createSession(user.id, req);
+    return { user: publicUser(user), __cookie: sessionCookie(token), verificationSkipped: true };
+  }
+
+  // Email tasdiqlanmaguncha sessiya ochilmaydi
+  const res = await issueCode(user);
+  return {
+    pendingVerification: true,
+    email: user.email,
+    sent: !!res.sent,
+    smtpReady: smtpReady(),
+    message: res.sent
+      ? `Tasdiqlash kodi ${user.email} manziliga yuborildi`
+      : 'Pochta serveri sozlanmagan — kod server jurnaliga yozildi'
+  };
+}
+
+/* ═══════════ Email tasdiqlash ═══════════ */
+
+/** Kiritilgan kodni tekshiradi va sessiyani ochadi */
+export function verifyEmail({ body, req }) {
+  const email = str(body.email, 200);
+  const user = findUserByEmail(email);
+  if (!user) return { error: 'Bunday hisob topilmadi', status: 404 };
+  if (user.emailVerified) return { error: 'Email allaqachon tasdiqlangan', status: 400 };
+
+  const res = checkCode(user, body.code);
+  if (!res.ok) return { error: res.error, status: 400 };
+
+  user.lastLoginAt = new Date().toISOString();
+  persist();
   const token = createSession(user.id, req);
   return { user: publicUser(user), __cookie: sessionCookie(token) };
+}
+
+/** Kodni qayta yuborish */
+export async function resendCode({ body }) {
+  const email = str(body.email, 200);
+  const user = findUserByEmail(email);
+  // Mavjud bo'lmagan hisob haqida ma'lumot bermaymiz
+  if (!user || user.emailVerified) {
+    return { ok: true, sent: false, message: 'Agar bunday hisob bo\'lsa, kod yuborildi' };
+  }
+  const res = await issueCode(user);
+  if (!res.ok) return { error: res.error, status: 429 };
+  return {
+    ok: true,
+    sent: !!res.sent,
+    smtpReady: smtpReady(),
+    message: res.sent ? 'Yangi kod yuborildi' : 'Pochta serveri sozlanmagan — kod server jurnaliga yozildi'
+  };
+}
+
+/* ═══════════ SMTP sozlamalari (faqat egasi) ═══════════ */
+
+export function getSmtpSettings({ user }) {
+  if (user.role !== 'owner') return { error: 'Faqat tizim egasi ko\'ra oladi', status: 403 };
+  const c = smtpConfig();
+  return {
+    enabled: c.enabled, host: c.host, port: c.port, secure: c.secure,
+    user: c.user, from: c.from, hasPass: !!c.passEnc,
+    ready: smtpReady(), lastError: c.lastError, lastSentAt: c.lastSentAt
+  };
+}
+
+export function saveSmtpSettings({ user, body }) {
+  if (user.role !== 'owner') return { error: 'Faqat tizim egasi o\'zgartira oladi', status: 403 };
+  saveSmtp(body || {});
+  return getSmtpSettings({ user });
+}
+
+/** Sinov xati — sozlash to'g'riligini tekshirish uchun */
+export async function testSmtp({ user, body }) {
+  if (user.role !== 'owner') return { error: 'Faqat tizim egasi', status: 403 };
+  if (!smtpReady()) return { error: 'Avval SMTP ma\'lumotlarini to\'ldiring va yoqing', status: 400 };
+  const to = str(body.to, 200) || user.email;
+  const res = await sendMail({
+    to,
+    subject: 'Pomodoro — sinov xati',
+    text: 'Bu sinov xati. Agar buni o\'qiyotgan bo\'lsangiz, pochta sozlamasi to\'g\'ri ishlayapti.'
+  });
+  return res.sent ? { ok: true, to } : { error: res.error || 'Yuborilmadi', status: 502 };
 }
 
 export function login({ body, req }) {
@@ -81,6 +173,13 @@ export function login({ body, req }) {
     return { error: 'Email yoki parol noto\'g\'ri', status: 401 };
   }
   clearLoginFailures(email);
+
+  // Tasdiqlanmagan hisob — kod so'raladi. Pochta sozlanmagan bo'lsa
+  // kodni yetkazib bo'lmaydi, shuning uchun to'sib qo'yilmaydi.
+  if (user.provider === 'local' && user.emailVerified === false && smtpReady()) {
+    return { pendingVerification: true, email: user.email, error: 'Avval emailingizni tasdiqlang', status: 403 };
+  }
+
   user.lastLoginAt = new Date().toISOString();
   persist();
   const token = createSession(user.id, req);

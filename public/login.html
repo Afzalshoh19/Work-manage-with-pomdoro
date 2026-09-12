@@ -82,6 +82,23 @@
         <p class="auth-note" id="firstUserNote" hidden>Siz birinchi foydalanuvchisiz — hisobingiz tizim egasi bo'ladi.</p>
       </form>
 
+      <!-- Emailni tasdiqlash -->
+      <form class="auth-form" id="formVerify">
+        <p class="verify-lead">
+          <b id="verifyEmail">—</b> manziliga 6 xonali kod yuborildi.
+          Kodni quyiga kiriting.
+        </p>
+        <label class="field"><span>Tasdiqlash kodi</span>
+          <input type="text" id="verifyCode" inputmode="numeric" autocomplete="one-time-code"
+                 maxlength="6" placeholder="000000" class="code-input" required></label>
+        <button class="btn btn-primary btn-block" type="submit">Tasdiqlash</button>
+        <div class="verify-foot">
+          <button type="button" class="link-btn" id="btnResend">Kodni qayta yuborish</button>
+          <button type="button" class="link-btn" id="btnBackToLogin">← Kirishga qaytish</button>
+        </div>
+        <p class="auth-note" id="verifyHint" hidden></p>
+      </form>
+
       <p class="auth-foot">Ma'lumotlaringiz shu kompyuterdagi serverda saqlanadi.</p>
     </div>
   </main>

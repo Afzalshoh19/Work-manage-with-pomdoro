@@ -138,10 +138,9 @@ code { background: var(--card-2); padding: 1px 6px; border-radius: 5px; font-siz
 .at-label { display: block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .07em; color: var(--txt-3); }
 .at-title { font-size: 13.5px; font-weight: 550; }
 
-.controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.controls #btnMain { grid-column: 1 / -1; }   /* Boshlash - to'liq qator */
 .controls .btn { min-width: 0; }
-.controls #btnMain { flex: 1 1 150px; }
-.controls .btn-ghost { flex: 0 1 auto; }
 .today-mini { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 18px; }
 .mini { background: var(--card-2); border-radius: 10px; padding: 10px 6px; }
 .mini b { display: block; font-size: 19px; font-weight: 600; font-variant-numeric: tabular-nums; }
@@ -367,3 +366,23 @@ output { display: block; background: var(--card-2); font-weight: 600; color: var
 .tab-ico svg { width: 17px; height: 17px; display: block; }
 .menu button .mi { width: 16px; height: 16px; flex-shrink: 0; }
 .menu button { display: flex; align-items: center; gap: 9px; }
+
+/* ═══════════ Emailni tasdiqlash ═══════════ */
+.verify-lead { font-size: 13.5px; color: var(--txt-2); margin: 0 0 16px; line-height: 1.6; }
+.verify-lead b { color: var(--txt); }
+.code-input {
+  font-size: 26px; letter-spacing: 10px; text-align: center;
+  font-variant-numeric: tabular-nums; padding: 12px 11px;
+}
+.verify-foot { display: flex; justify-content: space-between; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+.link-btn {
+  background: none; border: 0; padding: 0; cursor: pointer;
+  color: var(--accent); font: inherit; font-size: 12.5px;
+}
+.link-btn:hover { text-decoration: underline; }
+.link-btn:disabled { color: var(--txt-3); cursor: not-allowed; text-decoration: none; }
+.auth-alert.warn {
+  color: var(--amber);
+  background: color-mix(in srgb, var(--amber) 12%, transparent);
+  border-color: color-mix(in srgb, var(--amber) 35%, transparent);
+}

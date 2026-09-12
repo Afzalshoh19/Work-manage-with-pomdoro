@@ -10,7 +10,12 @@ async function api(method, url, body) {
   });
   let data = {};
   try { data = await res.json(); } catch {}
-  if (!res.ok) throw new Error(data.error || `Xatolik (${res.status})`);
+  if (!res.ok) {
+    const err = new Error(data.error || `Xatolik (${res.status})`);
+    Object.assign(err, data);          // pendingVerification, email, code ...
+    err.status = res.status;
+    throw err;
+  }
   return data;
 }
 
@@ -22,10 +27,27 @@ function alertBox(msg, kind = 'err') {
 }
 
 function setMode(mode) {
+  const tabs = mode === 'login' || mode === 'register';
+  document.querySelector('.auth-tabs')?.toggleAttribute('hidden', !tabs);
+  document.getElementById('oauthBlock')?.toggleAttribute('hidden', !tabs || !oauthAvailable);
   document.querySelectorAll('.auth-tab').forEach(t => t.classList.toggle('is-active', t.dataset.mode === mode));
   $('formLogin').classList.toggle('is-active', mode === 'login');
   $('formRegister').classList.toggle('is-active', mode === 'register');
+  $('formVerify').classList.toggle('is-active', mode === 'verify');
   alertBox('');
+}
+
+/* ── Emailni tasdiqlash ── */
+let pendingEmail = '';
+let oauthAvailable = false;
+
+function startVerify(email, message, kind = 'ok') {
+  pendingEmail = email;
+  $('verifyEmail').textContent = email;
+  $('verifyCode').value = '';
+  setMode('verify');
+  if (message) alertBox(message, kind);
+  setTimeout(() => $('verifyCode').focus(), 60);
 }
 
 function pwStrength(p) {
@@ -53,8 +75,8 @@ async function init() {
   // Kirish usullarini yuklaymiz
   try {
     const cfg = await api('GET', '/api/auth/config');
-    const any = cfg.providers.google.enabled || cfg.providers.github.enabled;
-    $('oauthBlock').hidden = !any;
+    oauthAvailable = cfg.providers.google.enabled || cfg.providers.github.enabled;
+    $('oauthBlock').hidden = !oauthAvailable;
     $('btnGoogle').hidden = !cfg.providers.google.enabled;
     $('btnGithub').hidden = !cfg.providers.github.enabled;
     if (!cfg.hasUsers) {
@@ -89,8 +111,14 @@ async function init() {
       });
       location.replace('/');
     } catch (err) {
-      alertBox(err.message);
       btn.disabled = false; btn.textContent = 'Kirish';
+      if (err.pendingVerification) {
+        const email = err.email || $('loginEmail').value.trim();
+        startVerify(email, 'Avval emailingizni tasdiqlang', 'warn');
+        try { await api('POST', '/api/auth/resend-code', { email }); } catch { /* kutish vaqti bo'lishi mumkin */ }
+        return;
+      }
+      alertBox(err.message);
     }
   });
 
@@ -102,17 +130,63 @@ async function init() {
     const btn = e.target.querySelector('button[type=submit]');
     btn.disabled = true; btn.textContent = 'Yaratilmoqda…';
     try {
-      await api('POST', '/api/auth/register', {
+      const res = await api('POST', '/api/auth/register', {
         name: $('regName').value.trim(),
         email: $('regEmail').value.trim(),
         password: $('regPassword').value
       });
+      btn.disabled = false; btn.textContent = 'Hisob yaratish';
+      if (res.pendingVerification) {
+        startVerify(res.email, res.message, res.sent ? 'ok' : 'warn');
+        if (!res.sent) $('verifyHint').hidden = false,
+          $('verifyHint').textContent = 'Pochta serveri hali sozlanmagan — kodni server oynasidan (jurnaldan) oling.';
+        return;
+      }
       location.replace('/');
     } catch (err) {
       alertBox(err.message);
       btn.disabled = false; btn.textContent = 'Hisob yaratish';
     }
   });
+
+  /* ── Tasdiqlash ── */
+  $('verifyCode').addEventListener('input', (e) => {
+    e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6);
+  });
+
+  $('formVerify').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type=submit]');
+    btn.disabled = true; btn.textContent = 'Tekshirilmoqda…';
+    try {
+      await api('POST', '/api/auth/verify', { email: pendingEmail, code: $('verifyCode').value });
+      location.replace('/');
+    } catch (err) {
+      alertBox(err.message);
+      btn.disabled = false; btn.textContent = 'Tasdiqlash';
+      $('verifyCode').select();
+    }
+  });
+
+  $('btnResend').addEventListener('click', async () => {
+    const b = $('btnResend');
+    b.disabled = true;
+    try {
+      const res = await api('POST', '/api/auth/resend-code', { email: pendingEmail });
+      alertBox(res.message || 'Yangi kod yuborildi', res.sent ? 'ok' : 'warn');
+    } catch (err) {
+      alertBox(err.message, 'warn');
+    }
+    // Qayta yuborish uchun kutish
+    let left = 60;
+    const tick = setInterval(() => {
+      b.textContent = `Qayta yuborish (${--left})`;
+      if (left <= 0) { clearInterval(tick); b.disabled = false; b.textContent = 'Kodni qayta yuborish'; }
+    }, 1000);
+    b.textContent = `Qayta yuborish (${left})`;
+  });
+
+  $('btnBackToLogin').addEventListener('click', () => setMode('login'));
 }
 
 init();

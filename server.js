@@ -50,6 +50,11 @@ const routes = [
   ['GET',    '/api/auth/start/:provider',    Auth.oauthStart, true],
   ['GET',    '/api/auth/callback/:provider', Auth.oauthCallback, true],
   ['POST',   '/api/auth/password',       Auth.changePassword],
+  ['POST',   '/api/auth/verify',         Auth.verifyEmail, true],
+  ['POST',   '/api/auth/resend-code',    Auth.resendCode, true],
+  ['GET',    '/api/auth/smtp',           Auth.getSmtpSettings],
+  ['PUT',    '/api/auth/smtp',           Auth.saveSmtpSettings],
+  ['POST',   '/api/auth/smtp/test',      Auth.testSmtp],
   ['GET',    '/api/auth/oauth-settings', Auth.getOauthSettings],
   ['PUT',    '/api/auth/oauth-settings', Auth.saveOauthSettings],
 
@@ -276,10 +281,11 @@ async function handleRequest(req, res) {
       });
       return res.end(raw);
     }
-    // Xato kodini ham uzatamiz — mijoz uni ajratib ishlata olsin (masalan TASK_LOCKED)
+    // Xato javobida qo'shimcha maydonlar ham uzatiladi — mijoz ularni ajratib
+    // ishlata olsin (masalan TASK_LOCKED kodi yoki pendingVerification bayrog'i)
     if (result && result.error) {
-      return json(res, result.status || 400,
-        result.code ? { error: result.error, code: result.code } : { error: result.error });
+      const { status, ...payload } = result;
+      return json(res, status || 400, payload);
     }
 
     const cookie = result?.__cookie;

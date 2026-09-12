@@ -109,9 +109,11 @@
             <button class="btn btn-mini" id="dateToday">Bugun</button>
           </div>
           <div class="head-actions">
+            <button class="btn btn-mini" id="btnAddTask" title="Shu kunga yangi vazifa qo'shish">+ Vazifa qo'shish</button>
+            <button class="btn btn-mini btn-ghost" id="btnWeekPlan" title="Bir necha kunga birdaniga reja tuzish">📅 Ko'p kunlik reja</button>
+            <span class="ha-sep" aria-hidden="true"></span>
             <button class="btn btn-mini btn-ghost" id="btnCopyYesterday" title="Kechagi rejani shu kunga nusxalash">⧉ Kechagidan</button>
-            <button class="btn btn-mini btn-ghost" id="btnCarry" title="Bajarilmaganlarni ertaga ko'chirish">→ Ertaga</button>
-            <button class="btn btn-mini" id="btnWeekPlan" title="Bir necha kunga birdaniga reja tuzish">📅 Ko'p kunlik reja</button>
+            <button class="btn btn-mini btn-ghost" id="btnCarry" title="Bajarilmaganlarni ertaga ko'chirish">Ertaga →</button>
           </div>
         </div>
 
@@ -119,7 +121,6 @@
         <div class="day-setup" id="daySetup">
           <div class="ds-view" id="dsView"></div>
           <div class="ds-actions">
-            <button class="btn btn-mini" id="btnAddTask" title="Shu kunga yangi vazifa qo'shish">+ Vazifa qo'shish</button>
             <button class="btn btn-mini" id="dsEdit" title="Pomodoro va tanaffus vaqtlarini shu kunga to'g'rlash">⚙️ To'g'rlash</button>
             <button class="btn btn-mini btn-ghost" id="dsReset" hidden title="Shu kun uchun kiritilgan o'zgarishlarni bekor qilib, profildagi qiymatlarga qaytarish">↺ Standart</button>
           </div>
@@ -507,6 +508,57 @@
       </details>
     </div>
 
+    <div class="card" id="smtpCard" hidden>
+      <h2 class="sec-title">✉️ Pochta serveri (tizim egasi uchun)</h2>
+      <p class="hint" style="margin:-8px 0 14px">
+        Ro'yxatdan o'tishda emailga tasdiqlash kodi yuborilishi uchun kerak.
+        Sozlanmasa tizim ishlashda davom etadi — kod server jurnaliga yoziladi.
+      </p>
+
+      <div class="smtp-state" id="smtpState"></div>
+
+      <div class="edit-grid" style="margin-top:14px">
+        <label class="field"><span>Server manzili (host)</span>
+          <input type="text" id="smtpHost" placeholder="smtp.gmail.com"></label>
+        <label class="field"><span>Port</span>
+          <input type="number" id="smtpPort" min="1" max="65535" placeholder="587"></label>
+        <label class="field"><span>Foydalanuvchi (email)</span>
+          <input type="text" id="smtpUser" autocomplete="off" placeholder="bot@kompaniya.uz"></label>
+        <label class="field"><span>Parol / ilova kaliti</span>
+          <input type="password" id="smtpPass" autocomplete="new-password" placeholder="Saqlangani o'zgarmasligi uchun bo'sh qoldiring"></label>
+        <label class="field"><span>Kimdan (From)</span>
+          <input type="text" id="smtpFrom" placeholder="Pomodoro &lt;bot@kompaniya.uz&gt;"></label>
+        <label class="field">
+          <span>Ulanish turi</span>
+          <select id="smtpSecure">
+            <option value="0">STARTTLS (587-port)</option>
+            <option value="1">To'g'ridan-to'g'ri TLS (465-port)</option>
+          </select>
+        </label>
+      </div>
+
+      <label class="switch" style="margin-top:12px">
+        <input type="checkbox" id="smtpEnabled"><span></span>
+        <span>Xat yuborishni yoqish</span>
+      </label>
+
+      <div class="split-actions" style="margin-top:14px">
+        <button class="btn btn-mini" id="smtpSave">Saqlash</button>
+        <button class="btn btn-mini btn-ghost" id="smtpTest">Sinov xati yuborish</button>
+        <span class="hint" id="smtpMsg"></span>
+      </div>
+
+      <details class="help-block" style="margin-top:14px">
+        <summary>Gmail uchun qanday sozlanadi</summary>
+        <ol>
+          <li>Google hisobingizda <b>ikki bosqichli tasdiqlash</b> yoqilgan bo'lishi kerak</li>
+          <li><a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener">myaccount.google.com/apppasswords</a> — «Ilova kaliti» (App password) yarating</li>
+          <li>Host: <code>smtp.gmail.com</code>, Port: <code>587</code>, Ulanish: STARTTLS</li>
+          <li>Foydalanuvchi — Gmail manzilingiz, parol — yaratilgan 16 belgili ilova kaliti</li>
+        </ol>
+      </details>
+    </div>
+
     <div class="card" id="oauthCard" hidden>
       <h2 class="sec-title">🔑 Kirish usullari (tizim egasi uchun)</h2>
       <p class="hint" style="margin:-8px 0 14px">Google va GitHub orqali kirishni yoqish uchun o'z OAuth ilovangiz ma'lumotlarini kiriting.</p>
@@ -626,11 +678,11 @@
               <span>Taxminiy vaqt</span>
               <output id="taskEstimate">50 daq</output>
             </label>
-            <button class="btn btn-primary" type="submit">+ Qo'shish</button>
           </div>
         </form>
 
     <div class="modal-actions">
+      <button type="submit" form="addForm" class="btn btn-primary" id="addSubmit">+ Qo'shish</button>
       <button type="button" class="btn btn-ghost" id="addCancel">Yopish</button>
     </div>
   </div>
