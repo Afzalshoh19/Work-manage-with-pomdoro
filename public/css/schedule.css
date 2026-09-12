@@ -10,7 +10,7 @@
 .ds-times input { width: 138px; min-width: 138px; }
 .ds-times em { color: var(--txt-3); font-style: normal; }
 .ds-num { display: flex; align-items: center; gap: 6px; }
-.ds-num input { width: 62px; text-align: center; }
+.ds-num input { width: 88px; text-align: center; }
 .ds-num em { font-style: normal; font-size: 11px; color: var(--txt-3); white-space: nowrap; }
 .ds-window { padding-right: 16px; border-right: 1px solid var(--line); }
 

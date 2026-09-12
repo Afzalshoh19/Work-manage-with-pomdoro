@@ -178,6 +178,11 @@ input, select, textarea, output {
 input:focus, select:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 18%, transparent); }
 input[type="date"], input[type="time"] { color-scheme: dark; }
 [data-theme="light"] input[type="date"], [data-theme="light"] input[type="time"] { color-scheme: light; }
+/* Raqam maydonidagi o'q ko'rsatgichlar: mavzu rangida va barmoq bilan bosish uchun yetarli kattalikda */
+input[type="number"], select { color-scheme: dark; }
+[data-theme="light"] input[type="number"], [data-theme="light"] select { color-scheme: light; }
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button { opacity: 1; width: 18px; height: 28px; margin-left: 6px; cursor: pointer; }
 input[type="range"] { padding: 0; accent-color: var(--accent); }
 input[type="checkbox"] { width: auto; accent-color: var(--accent); transform: scale(1.15); }
 

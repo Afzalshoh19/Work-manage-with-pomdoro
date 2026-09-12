@@ -1,5 +1,5 @@
 /* ═══════════ Vazifani tahrirlash oynasi ═══════════ */
-.modal-wide { max-width: 560px; width: calc(100vw - 40px); }
+.modal-wide { max-width: 660px; width: calc(100vw - 40px); }
 .edit-grid {
   display: grid; grid-template-columns: repeat(2, 1fr); gap: 13px;
   margin: 18px 0 4px;
