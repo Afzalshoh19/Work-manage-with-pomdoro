@@ -566,29 +566,35 @@ function restoreActiveTask() {
   if (S.plan?.tasks.some(t => t.id === id)) S.activeTaskId = id;
 }
 
-const ADD_KEY = 'pmd_add_open';
-let addFold = null;
-
-/** Blokni ochib, kursorni nom maydoniga qo'yadi */
+/* ── Vazifa qo'shish oynasi ── */
 function openAddForm() {
-  if ($('addWrap').open) { $('taskTitle').focus(); return; }
-  addFold?.open();
+  $('addScope').textContent = `${fmtDateLong(S.date)} kuniga qo'shiladi`;
+  $('addOverlay').hidden = false;
+  setTimeout(() => $('taskTitle').focus(), 40);
 }
 
-function restoreAddFormState() {
-  let open = false;
-  try { open = localStorage.getItem(ADD_KEY) === '1'; } catch {}
-  $('addWrap').open = open;
+function closeAddForm() { $('addOverlay').hidden = true; }
 
-  addFold = smoothDetails($('addWrap'), { onOpen: () => $('taskTitle').focus() });
+/* ── Kun tartibi yig'ilgan holatda qolsin ── */
+const PLAN_KEY = 'pmd_plan_open';
 
-  $('addWrap').addEventListener('toggle', () => {
-    try { localStorage.setItem(ADD_KEY, $('addWrap').open ? '1' : '0'); } catch {}
+function restoreFoldState() {
+  const wrap = $('planWrap');
+  let open = true;
+  try { open = localStorage.getItem(PLAN_KEY) !== '0'; } catch {}
+  wrap.open = open;
+  smoothDetails(wrap);
+  wrap.addEventListener('toggle', () => {
+    try { localStorage.setItem(PLAN_KEY, wrap.open ? '1' : '0'); } catch {}
   });
 
   // Boshqa yig'iladigan bloklar ham xuddi shunday yumshoq ochilsin
   smoothDetails($('timelineWrap'));
   document.querySelectorAll('#view-settings details.integ').forEach(d => smoothDetails(d));
+
+  $('btnAddTask').addEventListener('click', openAddForm);
+  $('addCancel').addEventListener('click', closeAddForm);
+  $('addOverlay').addEventListener('click', e => { if (e.target === $('addOverlay')) closeAddForm(); });
 }
 
 /** Shu kun uchun amaldagi pomodoro davomiyligi */
@@ -672,6 +678,11 @@ function renderPlan() {
      </div>`;
 
   /* — Vazifalar — */
+  const qoldi = tasks.filter(t => (t.status || (t.done ? 'bajarildi' : 'reja')) !== 'bajarildi').length;
+  $('planCount').textContent = tasks.length
+    ? (qoldi ? `${qoldi} ta qoldi · ${tasks.length} ta jami` : `${tasks.length} ta — hammasi bajarildi`)
+    : '';
+
   const list = $('taskList');
   if (!tasks.length) {
     const isPast = S.date < todayStr();
@@ -1497,6 +1508,10 @@ function bindEvents() {
       if (e.key === 'Escape') { e.preventDefault(); closeWeekPlan(); }
       return;
     }
+    if (!$('addOverlay').hidden) {
+      if (e.key === 'Escape') { e.preventDefault(); closeAddForm(); }
+      return;
+    }
     if (!$('viewOverlay').hidden) {
       if (e.key === 'Escape') { e.preventDefault(); closeTaskView(); }
       return;
@@ -1584,7 +1599,7 @@ async function init() {
   $('histFrom').value = shiftDate(todayStr(), -29);
   taskEstimateText();
 
-  restoreAddFormState();
+  restoreFoldState();
   bindEvents();
   await loadPlan();
   applyTimerSnapshot(await api.timer());

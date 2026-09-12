@@ -457,3 +457,36 @@
 
 /* Bajarilgan vazifa ro'yxat oxirida — biroz xiraroq */
 .task.is-done { opacity: .74; }
+
+/* ═══════════ Kun tartibi — yig'iladigan ═══════════ */
+.plan-wrap { margin-top: 6px; }
+.plan-wrap > summary.list-head {
+  cursor: pointer; list-style: none; user-select: none;
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 4px 0; margin-bottom: 10px;
+}
+.plan-wrap > summary::-webkit-details-marker { display: none; }
+.lh-chev { color: var(--txt-3); font-size: 12px; transition: transform .2s; display: inline-block; }
+.plan-wrap:not([open]) .lh-chev { transform: rotate(-90deg); }
+.plan-wrap > summary h3 { font-size: 15px; }
+.lh-count {
+  font-size: 11.5px; color: var(--txt-3);
+  border: 1px solid var(--line); border-radius: 99px; padding: 1px 9px;
+}
+.plan-wrap > summary .hint { margin-left: auto; }
+.plan-wrap > summary:hover h3 { color: var(--accent); }
+
+/* ═══════════ Vazifa qo'shish oynasi ═══════════ */
+#addModal { max-width: 680px; }
+#addModal .add-form { margin-top: 14px; }
+#addModal .add-row {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(128px, 1fr));
+  gap: 10px; align-items: end; margin-top: 12px;
+}
+#addModal .add-row .btn { align-self: end; }
+
+/* Yopilgan <details> ichidagi blok yashirilsin.
+   .task-list da display:flex bo'lgani uchun brauzerning standart
+   yashirish qoidasi ustidan yozilib ketardi. */
+.plan-wrap:not([open]) > .task-list,
+.timeline-wrap:not([open]) > .timeline { display: none; }
