@@ -4,6 +4,7 @@ import { dailyChart, hourlyChart, categoryBars, topTasksList, CAT_COLORS, CAT_LA
 import { initFeatures, loadProfile, loadReport, loadIntegrations, loadOauthSettings } from './features.js';
 import { initWidgets, updateWidgets } from './widgets.js';
 import { applyAvatar } from './avatar.js';
+import { SVG, icon } from './icons.js';
 import { initSchedule, renderDaySetup, loadWorkSchedule, maybeOnboard, closePomoModal } from './schedule.js';
 import { initWeekPlan, closeWeekPlan } from './weekplan.js';
 
@@ -403,6 +404,47 @@ function setConn(ok) {
 }
 
 /* ══════════════════ Ko'rinishlar ══════════════════ */
+/* ══════════════ Profil bo'limlari ══════════════ */
+
+const PROF_SECTIONS = ['umumiy', 'jadval', 'taymer', 'xavfsizlik', 'integratsiya', 'malumot'];
+let integrationsLoaded = false;
+
+/**
+ * Profil ichidagi bo'limni ochadi.
+ * Manzilga yozib qo'yiladi — havolani yuborish yoki sahifani yangilash mumkin.
+ */
+function showProfSection(name, { updateHash = true } = {}) {
+  const sec = PROF_SECTIONS.includes(name) ? name : 'umumiy';
+
+  document.querySelectorAll('#profRail .rail-item')
+    .forEach(b => b.classList.toggle('is-active', b.dataset.sec === sec));
+  document.querySelectorAll('.prof-sec')
+    .forEach(s => s.classList.toggle('is-active', s.id === 'psec-' + sec));
+
+  // Integratsiyalar og'ir — faqat kerak bo'lganda yuklanadi
+  if (sec === 'integratsiya' && !integrationsLoaded) {
+    integrationsLoaded = true;
+    loadIntegrations();
+  }
+  if (updateHash) {
+    const want = '#profil/' + sec;
+    if (location.hash !== want) history.replaceState(null, '', want);
+  }
+  document.querySelector('.prof-pane')?.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/** Hozir ochiq turgan bo'lim */
+function currentProfSection() {
+  const el = document.querySelector('.prof-sec.is-active');
+  return el ? el.id.replace('psec-', '') : 'umumiy';
+}
+
+/** Manzildagi #profil/... ni o'qiydi */
+function profSectionFromHash() {
+  const m = /^#profil\/([a-z]+)$/.exec(location.hash);
+  return m ? m[1] : null;
+}
+
 function setView(name) {
   document.querySelectorAll('.tab').forEach(t => t.classList.toggle('is-active', t.dataset.view === name));
   document.querySelectorAll('.view').forEach(v => v.classList.toggle('is-active', v.id === 'view-' + name));
@@ -410,8 +452,11 @@ function setView(name) {
   if (name === 'stats') loadStats();
   if (name === 'history') loadHistory();
   if (name === 'report') { $('repDate').value = S.date; loadReport(); }
-  if (name === 'profile') { loadProfile(); loadWorkSchedule(); }
-  if (name === 'settings') loadIntegrations();
+  if (name === 'profile') {
+    loadProfile();
+    loadWorkSchedule();
+    showProfSection(profSectionFromHash() || currentProfSection(), { updateHash: true });
+  }
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -594,7 +639,7 @@ function restoreFoldState() {
 
   // Boshqa yig'iladigan bloklar ham xuddi shunday yumshoq ochilsin
   smoothDetails($('timelineWrap'));
-  document.querySelectorAll('#view-settings details.integ').forEach(d => smoothDetails(d));
+  document.querySelectorAll('#view-profile details.integ').forEach(d => smoothDetails(d));
 
   $('btnAddTask').addEventListener('click', openAddForm);
   $('addCancel').addEventListener('click', closeAddForm);
@@ -704,34 +749,6 @@ function taskEstimateText() {
 }
 
 
-/* Kartochka ikonkalari — emoji o'rniga bir xil uslubdagi chizmalar */
-const SVG = {
-  pomodoro: '<circle cx="12" cy="13.5" r="7.5"/><path d="M12 10v3.5l2.5 1.5M8.5 3.5c1 1.2 2.2 1.8 3.5 1.8s2.5-.6 3.5-1.8"/>',
-  focus:    '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.5"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2"/>',
-  coffee:   '<path d="M4 9h13v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M17 10h1.8a2.2 2.2 0 1 1 0 4.4H17"/><path d="M7 2.5v2.2M11 2.5v2.2"/>',
-  calendar: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
-  gauge:    '<path d="M4 18a9 9 0 1 1 16 0"/><path d="M12 18l4.5-5"/><circle cx="12" cy="18" r="1.3"/>',
-  warn:     '<path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4M12 17.2v.1"/>',
-  check:    '<path d="M20 6.5 9.5 17 4 11.5"/>',
-  play:     '<path d="M7 4.5v15l13-7.5z" fill="currentColor" stroke="none"/>',
-  pause:    '<rect x="7" y="5" width="3.5" height="14" rx="1" fill="currentColor" stroke="none"/><rect x="13.5" y="5" width="3.5" height="14" rx="1" fill="currentColor" stroke="none"/>',
-  eye:      '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>',
-  copy:     '<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/>',
-  pencil:   '<path d="M15 4.5 19.5 9 8 20.5l-5 1 1-5z"/><path d="M13.5 6 18 10.5"/>',
-  trash:    '<path d="M4 7h16M10 4h4M9 7v11M15 7v11M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/>',
-  undo:     '<path d="M4 10h10a5 5 0 1 1 0 10H8"/><path d="M4 10 8 6M4 10l4 4"/>',
-  lock:     '<rect x="4.5" y="10.5" width="15" height="10" rx="2"/><path d="M8 10.5V7a4 4 0 1 1 8 0v3.5"/>',
-  tick:     '<path d="M20 6.5 9.5 17 4 11.5"/>',
-  skip:     '<path d="M5 5v14l10-7z" fill="currentColor" stroke="none"/><path d="M18 5v14"/>',
-  stopSq:   '<rect x="6" y="6" width="12" height="12" rx="1.5" fill="currentColor" stroke="none"/>',
-  cog:      '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1v.3a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-2.8-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3.5 15a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.1-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.8-1.1V4a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.8h.1a2 2 0 1 1 0 4z"/>',
-  plus:     '<path d="M12 5v14M5 12h14"/>',
-  calDays:  '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M7.5 14h2M11 14h2M14.5 14h2M7.5 17.5h2M11 17.5h2"/>',
-  arrowR:   '<path d="M5 12h14M13 6l6 6-6 6"/>',
-  note:     '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
-};
-const icon = (name) => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
-  + 'stroke-linecap="round" stroke-linejoin="round">' + SVG[name] + '</svg>';
 
 function renderPlan() {
   const { tasks, summary } = S.plan;
@@ -1284,10 +1301,8 @@ function bindEvents() {
     if (act === 'profile') return setView('profile');
     if (act === 'report') return setView('report');
     if (act === 'integrations') {
-      setView('settings');
-      setTimeout(() => {
-        $('integrationsCard').scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 60);
+      setView('profile');
+      showProfSection('integratsiya');
       return;
     }
     if (act === 'logout') {
@@ -1568,7 +1583,11 @@ function bindEvents() {
     toast('Shablon qo\'llanildi', 'ok');
   }));
 
-  $('gotoProfileSettings')?.addEventListener('click', () => setView('profile'));
+  /* Profil bo'limlari orasida yurish */
+  $('profRail')?.addEventListener('click', (e) => {
+    const b = e.target.closest('.rail-item');
+    if (b) showProfSection(b.dataset.sec);
+  });
   $('testSound').addEventListener('click', () => { unlockAudio(); playAlarm('test', S.settings.volume); });
   $('askNotif').addEventListener('click', async () => {
     const p = await askNotifyPermission();
@@ -1746,6 +1765,9 @@ async function init() {
 
   restoreFoldState();
   bindEvents();
+
+  // Manzil #profil/... bo'lsa darhol o'sha bo'limni ochamiz
+  if (profSectionFromHash()) setView('profile');
   await loadPlan();
   applyTimerSnapshot(await api.timer());
   loadOauthSettings(S.user);

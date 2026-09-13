@@ -1,0 +1,60 @@
+/* ═══════════════ Profil: bo'limli tuzilma ═══════════════ */
+
+.prof-shell {
+  display: grid; grid-template-columns: 196px minmax(0, 1fr);
+  gap: 16px; align-items: start;
+}
+
+/* ── Yon menyu ── */
+.prof-rail {
+  position: sticky; top: 78px;
+  display: flex; flex-direction: column; gap: 2px;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: 13px; padding: 10px 8px;
+}
+.rail-lbl {
+  font-size: 10px; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--txt-3); font-weight: 600; padding: 9px 9px 4px;
+}
+.rail-lbl:first-child { padding-top: 3px; }
+
+.rail-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 9px; border: 0; border-radius: 8px;
+  background: transparent; color: var(--txt-2);
+  font: inherit; font-size: 13.5px; text-align: left;
+  cursor: pointer; transition: background .14s, color .14s;
+}
+.rail-item .bi { width: 16px; height: 16px; flex: none; opacity: .85; }
+.rail-item:hover { background: var(--card-2); color: var(--txt); }
+.rail-item.is-active {
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+  color: var(--accent); font-weight: 600;
+}
+.rail-item.is-active .bi { opacity: 1; }
+
+/* ── Bo'lim ── */
+.prof-pane { display: flex; flex-direction: column; min-width: 0; }
+.prof-sec { display: none; flex-direction: column; gap: 16px; }
+.prof-sec.is-active { display: flex; }
+
+/* ── Sarlavha belgilari ── */
+.sec-title { display: flex; align-items: center; gap: 9px; }
+.sec-title .bi { width: 18px; height: 18px; flex: none; color: var(--accent); opacity: .9; }
+h3.sec-title .bi { width: 15px; height: 15px; }
+
+@media (max-width: 860px) {
+  .prof-shell { grid-template-columns: 1fr; gap: 12px; }
+  .prof-rail {
+    position: static; flex-direction: row; flex-wrap: wrap;
+    padding: 7px; gap: 4px;
+  }
+  .rail-lbl { display: none; }
+  .rail-item { padding: 7px 11px; }
+}
+@media (max-width: 520px) {
+  .rail-item span { display: none; }
+  .rail-item.is-active span { display: inline; }
+  .rail-item { padding: 8px 10px; }
+}
+@media (prefers-reduced-motion: reduce) { .rail-item { transition: none; } }
