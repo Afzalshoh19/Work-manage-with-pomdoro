@@ -4,6 +4,7 @@ import { dailyChart, hourlyChart, categoryBars, topTasksList, CAT_COLORS, CAT_LA
 import { initFeatures, loadProfile, loadReport, loadIntegrations, loadOauthSettings } from './features.js';
 import { initWidgets, updateWidgets } from './widgets.js';
 import { applyAvatar } from './avatar.js';
+import { load as loadWorkCard } from './workcard.js';
 import { SVG, icon } from './icons.js';
 import { initSchedule, renderDaySetup, loadWorkSchedule, maybeOnboard, closePomoModal } from './schedule.js';
 import { initWeekPlan, closeWeekPlan } from './weekplan.js';
@@ -1003,6 +1004,20 @@ function renderTimer() {
   renderTodayMini();
   renderNotifNotice();
   updateWidgets();
+  syncWorkCard();
+}
+
+/**
+ * Taymer holati o'zgarsa ish kartasi ham yangilanadi.
+ * Har soniyada emas — faqat holat haqiqatan boshqacha bo'lganda.
+ */
+let lastCardState = '';
+function syncWorkCard() {
+  if (document.querySelector('.view.is-active')?.id !== 'view-profile') return;
+  const key = (S.timer ? S.timer.mode + ':' + S.timer.status + ':' + (S.timer.taskId || '') : 'yoq');
+  if (key === lastCardState) return;
+  lastCardState = key;
+  loadWorkCard();
 }
 
 /** Bildirishnoma yoqilgan, lekin brauzer ruxsat bermagan bo'lsa — sababini tushuntiramiz */

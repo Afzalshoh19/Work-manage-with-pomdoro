@@ -4,7 +4,8 @@ import { getDb, persist, DEFAULT_INTEGRATIONS, userWorkSchedule, WEEKDAYS, defau
 import { checkLunch } from './tasks.js';
 import { encryptSecret, decryptSecret, maskSecret, verifyPassword } from '../lib/crypto.js';
 import { publicUser, destroyAllSessions, clearCookie } from '../lib/auth.js';
-import { str, clamp } from '../lib/util.js';
+import { str, clamp, isDate } from '../lib/util.js';
+import { workCard } from '../lib/workcard.js';
 import { saveAvatar, readAvatar, removeAvatar, MAX_BYTES, AVATAR_ICONS, AVATAR_EMOJI, validAvatar } from '../lib/avatars.js';
 
 const AVATARS = [...AVATAR_ICONS, ...AVATAR_EMOJI];
@@ -16,6 +17,24 @@ function ensureIntegrations(user) {
     user.integrations[k] = { ...DEFAULT_INTEGRATIONS[k], ...(user.integrations[k] || {}) };
   }
   return user.integrations;
+}
+
+/* ═══════════ Ish kartasi ═══════════ */
+
+/**
+ * Profildagi ish kartasi uchun ma'lumot.
+ * Alohida marshrut — holat jonli o'zgaradi, butun profilni qayta
+ * so'rash esa og'ir (integratsiyalar, seanslar va hokazo).
+ */
+export function getWorkCard({ user, query }) {
+  const date = isDate(query.date) ? query.date : undefined;
+  return {
+    card: workCard(user.id, date),
+    user: publicUser(user),
+    timezone: user.timezone || '',
+    lastLoginAt: user.lastLoginAt || null,
+    createdAt: user.createdAt
+  };
 }
 
 /* ═══════════ Profil rasmi ═══════════ */

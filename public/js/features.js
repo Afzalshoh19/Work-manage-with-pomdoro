@@ -2,6 +2,7 @@
 import { api, downloadFile } from './api.js';
 import { initAvatar, applyAvatar, setAvatar } from './avatar.js';
 import { avatarInner, isIconAvatar } from './icons.js';
+import { initWorkCard, load as loadWorkCard, refreshSoon as refreshWorkCard } from './workcard.js';
 
 let C = null;   // umumiy kontekst (app.js beradi)
 const $ = (id) => document.getElementById(id);
@@ -21,8 +22,8 @@ export async function loadProfile() {
   $('photoHint').textContent = u.photoUrl
     ? 'Rasm yuklangan'
     : `JPG, PNG yoki WebP · ${profileData.photoMaxKb || 512} KB gacha`;
-  $('profName').textContent = u.name;
-  $('profMeta').innerHTML = [
+  const metaEl = $('profMeta');
+  if (metaEl) metaEl.innerHTML = [
     u.jobTitle && C.esc(u.jobTitle),
     u.company && C.esc(u.company),
     C.esc(u.email),
@@ -48,6 +49,7 @@ export async function loadProfile() {
 
   loadSessions();
   loadTwoFactor();
+  loadWorkCard();
 
   $('pwHint').textContent = u.hasPassword ? '' : 'Siz OAuth orqali kirgansiz — joriy parolni bo\'sh qoldiring.';
   $('pwCurrent').disabled = !u.hasPassword;
@@ -93,6 +95,7 @@ function onAvatarChange(user) {
   if (profileData) profileData.user = user;
   applyAvatar($('profAvatar'), user);
   updateAvatarNote(user.photoUrl || null);
+  refreshWorkCard();
   $('photoRemove').hidden = !user.photoUrl;
   $('photoHint').textContent = user.photoUrl
     ? 'Rasm yuklangan'
@@ -630,6 +633,7 @@ export function initFeatures(ctx) {
   bindProfile();
   bindSecurity();
   initAvatar(ctx, { onChange: onAvatarChange });
+  initWorkCard(ctx);
   bindReport();
   bindSmtp();
   bindIntegrations();

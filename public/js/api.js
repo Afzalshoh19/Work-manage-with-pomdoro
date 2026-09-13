@@ -94,6 +94,7 @@ export const api = {
 
   /* Profil */
   profile:       ()             => request('GET', '/api/profile'),
+  workCard:      (date)         => request('GET', '/api/profile/card' + qs({ date })),
   saveProfile:   (patch)        => request('PUT', '/api/profile', patch),
   deleteAccount: (password)     => request('POST', '/api/profile/delete', { password }),
   uploadAvatar:  (image)        => request('POST', '/api/profile/avatar', { image }),

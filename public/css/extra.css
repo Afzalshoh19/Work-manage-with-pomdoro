@@ -238,3 +238,8 @@ textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3
 /* Avatar ichidagi belgi — o'lcham idishga qarab */
 .avatar > svg { width: 62%; height: 62%; }
 .avatar.has-photo > svg { display: none; }
+
+
+/* Shaxsiy ma'lumot kartasi — ish kartasidan keyin keladi */
+.profile-head h3.sec-title { margin: 0 0 3px; }
+.profile-head .hint { margin: 0 0 4px; }

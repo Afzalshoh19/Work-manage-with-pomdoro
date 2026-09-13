@@ -58,3 +58,86 @@ h3.sec-title .bi { width: 15px; height: 15px; }
   .rail-item { padding: 8px 10px; }
 }
 @media (prefers-reduced-motion: reduce) { .rail-item { transition: none; } }
+
+
+/* ═══════════════ Ish kartasi ═══════════════ */
+
+.work-card { display: flex; flex-direction: column; gap: 14px; }
+
+.wc-head { display: flex; align-items: flex-start; gap: 14px; flex-wrap: wrap; }
+.wc-id { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1 1 200px; }
+.wc-name { font-size: 18px; font-weight: 650; line-height: 1.2; }
+.wc-sub { font-size: 13px; color: var(--txt-2); }
+.wc-mail { font-size: 11.5px; color: var(--txt-3); }
+
+/* Holat belgisi */
+.wc-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 5px 12px; border-radius: 20px;
+  font-size: 12.5px; font-weight: 600;
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  border: 1px solid currentColor;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+.wc-pill i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; flex: none; }
+.wc-pill.tone-work  { color: var(--accent); }
+.wc-pill.tone-break { color: var(--green); }
+.wc-pill.tone-meet  { color: var(--meet, #00b8c4); }
+.wc-pill.tone-lunch { color: var(--amber); }
+.wc-pill.tone-pause { color: var(--amber); }
+.wc-pill.tone-idle  { color: var(--blue); }
+.wc-pill.tone-off   { color: var(--txt-3); }
+.wc-pill.tone-work i { animation: wc-beat 2s ease-in-out infinite; }
+
+@keyframes wc-beat { 0%, 100% { opacity: 1; } 50% { opacity: .35; } }
+
+/* Kun chizig'i */
+.wc-band {
+  position: relative; height: 26px; border-radius: 7px;
+  background: color-mix(in srgb, var(--meet, #00b8c4) 22%, transparent);
+  border: 1px solid var(--line); overflow: hidden;
+}
+.wc-band.is-off { background: var(--bg-2); }
+.wc-band > i { position: absolute; top: 0; height: 100%; display: block; }
+.wc-band .wb-done { left: 0; background: color-mix(in srgb, var(--meet, #00b8c4) 20%, transparent); }
+.wc-band .wb-lunch {
+  background: repeating-linear-gradient(45deg,
+    color-mix(in srgb, var(--amber) 40%, transparent) 0 7px,
+    color-mix(in srgb, var(--amber) 22%, transparent) 7px 14px);
+}
+.wc-band .wb-now { width: 2px; background: var(--accent); box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent); }
+.wc-band-lbl {
+  display: flex; justify-content: space-between; gap: 10px;
+  font-size: 10.5px; color: var(--txt-3); margin-top: -8px;
+}
+.wc-band-lbl span:nth-child(2) { text-align: center; }
+
+/* Raqamlar */
+.wc-nums {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr));
+  gap: 1px; background: var(--line); border: 1px solid var(--line);
+  border-radius: 10px; overflow: hidden;
+}
+.wc-num { background: var(--card); padding: 11px 13px; display: flex; flex-direction: column; gap: 1px; }
+.wc-num b { font-size: 21px; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; }
+.wc-num b small { font-size: 13px; font-weight: 600; color: var(--txt-3); }
+.wc-num span { font-size: 11px; color: var(--txt-3); }
+.wc-num.a b { color: var(--accent); }
+.wc-num.b b { color: var(--violet, #a77dff); }
+.wc-num.c b { color: var(--green); }
+.wc-num.d b { color: var(--blue); }
+
+.wc-foot {
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  font-size: 11.5px; color: var(--txt-3);
+  padding-top: 2px;
+}
+.wc-foot .btn { margin-left: auto; padding: 4px 8px; }
+.wc-foot .btn svg { width: 13px; height: 13px; }
+
+@media (max-width: 560px) {
+  .wc-pill { width: 100%; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wc-pill.tone-work i { animation: none; }
+}

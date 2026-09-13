@@ -80,6 +80,7 @@ const routes = [
 
   // Profil
   ['GET',    '/api/profile',             Profile.getProfile],
+  ['GET',    '/api/profile/card',        Profile.getWorkCard],
   ['PUT',    '/api/profile',             Profile.updateProfile],
   ['POST',   '/api/profile/delete',      Profile.deleteAccount],
   ['POST',   '/api/profile/avatar',      Profile.uploadAvatar],
