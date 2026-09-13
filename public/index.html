@@ -102,15 +102,6 @@
         <div class="notice" id="notifNotice" hidden></div>
       </div>
 
-      <!-- Hamma karta burchakka yig'ilganda shu ko'rinadi -->
-      <div class="card wdg-parked" id="wdgParked" hidden>
-        <svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="13" y="13" width="6" height="6" rx="1" fill="currentColor" stroke="none"/></svg>
-        <h3>Hammasi burchakka yig'ilgan</h3>
-        <p class="hint">Taymer va vazifalar ekran burchagidagi vidjetlarda turibdi.
-           Ularni sudrab boshqa burchakka olib o'tsangiz ham bo'ladi.</p>
-        <button class="btn btn-mini" id="wdgRestoreAll">Kartalarni qaytarish</button>
-      </div>
-
       <!-- Kun tartibi -->
       <div class="card plan-card">
         <div class="card-head">
@@ -126,8 +117,7 @@
             <span class="ha-sep" aria-hidden="true"></span>
             <button class="btn btn-mini btn-ghost" id="btnCopyYesterday" title="Kechagi rejani shu kunga nusxalash"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/></svg> Kechagidan</button>
             <button class="btn btn-mini btn-ghost" id="btnCarry" title="Bajarilmaganlarni ertaga ko'chirish">Ertaga <svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
-            <span class="ha-sep" aria-hidden="true"></span>
-            <button class="card-min" id="btnMinPlan" title="Vazifalarni burchakka yig'ish" aria-label="Vazifalarni burchakka yig'ish"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3v6H3M21 15h-6v6"/><path d="M15 9l6-6M3 21l6-6"/></svg></button>
+
           </div>
         </div>
 
@@ -1068,7 +1058,7 @@
   </div>
 </div>
 
-<!-- Vidjetlar: taymer va vazifalar ekran burchagida -->
+<!-- Taymer vidjeti — ekran burchagida yoki alohida oynada -->
 <div class="wdock" id="wdock" data-corner="br" hidden>
 
   <section class="wdg wdg-timer" id="wdgTimer" data-mode="work" hidden aria-label="Taymer vidjeti">
@@ -1089,20 +1079,6 @@
         <button class="btn btn-mini btn-ghost" id="wdgSkip">O'tkazish</button>
         <button class="btn btn-mini btn-ghost" id="wdgStop">To'xtatish</button>
       </div>
-    </div>
-  </section>
-
-  <section class="wdg wdg-tasks" id="wdgTasks" hidden aria-label="Vazifalar vidjeti">
-    <header class="wdg-head" data-drag>
-      <span class="wdg-grip" aria-hidden="true"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="7" r="1.4" fill="currentColor" stroke="none"/><circle cx="15" cy="7" r="1.4" fill="currentColor" stroke="none"/><circle cx="9" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="15" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="9" cy="17" r="1.4" fill="currentColor" stroke="none"/><circle cx="15" cy="17" r="1.4" fill="currentColor" stroke="none"/></svg></span>
-      <span class="wdg-name">Vazifalar</span>
-      <span class="wdg-time" id="wdgTasksCount">—</span>
-      <button class="wdg-ico" id="wdgTasksPip" title="Alohida oynaga chiqarish (Shift+P)" aria-label="Alohida oynaga chiqarish"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="15" rx="2"/><rect x="12" y="11" width="7.5" height="6" rx="1" fill="currentColor" stroke="none"/></svg></button>
-      <button class="wdg-ico" id="wdgTasksFold" title="Yig'ish" aria-label="Yig'ish"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
-      <button class="wdg-ico" id="wdgTasksClose" title="Kartaga qaytarish" aria-label="Kartaga qaytarish"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9V3h6M21 15v6h-6"/><path d="M3 3l6 6M21 21l-6-6"/></svg></button>
-    </header>
-    <div class="wdg-body">
-      <div class="wdg-list" id="wdgList"></div>
     </div>
   </section>
 

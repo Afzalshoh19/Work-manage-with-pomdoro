@@ -1,12 +1,14 @@
 /**
- * Vidjetlar — taymer va vazifalarni ekran burchagiga yig'ish,
- * hamda ularni alohida, hamma oyna ustida turadigan oynaga chiqarish.
+ * Taymer vidjeti — taymerni ekran burchagiga yig'ish yoki alohida,
+ * hamma oyna ustida turadigan oynaga chiqarish.
  *
  * Ikki rejim bor:
  *   1) Sahifa ichida — burchakda suzib turadigan panel.
  *   2) Alohida oynada — Document Picture-in-Picture. Brauzer haqiqiy
  *      OS oynasini beradi, u boshqa dasturlar ustida qoladi. Shunda
  *      brauzerni yig'ib qo'yib boshqa ish qilsangiz ham taymer ko'rinadi.
+ *
+ * Vazifalar ro'yxati vidjetda emas — u sahifadagi jadvalda turadi.
  *
  * Vidjet o'z mantiqini yozmaydi: tugmalari asosiy kartalardagi tugmalarni
  * bosadi. Shuning uchun xatti-harakat har doim bir xil bo'ladi.
@@ -22,15 +24,14 @@ const $ = (id) => document.getElementById(id);
 const STORE = 'pmd_widgets';
 
 const MODE_LABEL = { work: 'Ish', short: 'Qisqa tanaffus', long: 'Uzun tanaffus' };
-const STATUS_ICON = { reja: '○', jarayonda: '◐', qabulga: '◉', bajarildi: '✔' };
 
 const CORNERS = ['tl', 'tr', 'bl', 'br'];
 
 /** Alohida oynani brauzer qo'llab-quvvatlaydimi */
 export const pipSupported = () => 'documentPictureInPicture' in window;
 
-/** Holat: qaysi vidjet ochiq, yig'ilganmi va qaysi burchakda */
-let W = { timer: false, tasks: false, foldTimer: false, foldTasks: false, corner: 'br' };
+/** Holat: vidjet ochiqmi, yig'ilganmi va qaysi burchakda */
+let W = { timer: false, foldTimer: false, corner: 'br' };
 
 /** Bir marta topib olingan elementlar */
 const E = {};
@@ -76,25 +77,17 @@ function applyLayout() {
   syncTopOffset();
   E.dock.dataset.corner = W.corner;
   E.timer.hidden = !W.timer;
-  E.tasks.hidden = !W.tasks;
   // Alohida oyna ochiq bo'lsa dok ko'rinib turaveradi
-  E.dock.hidden = !(W.timer || W.tasks) && !inPip;
+  E.dock.hidden = !W.timer && !inPip;
 
   // Alohida oynada yig'ish ma'nosiz — joy baribir oynaning o'zi
   E.timer.classList.toggle('is-folded', !!W.foldTimer && !inPip);
-  E.tasks.classList.toggle('is-folded', !!W.foldTasks && !inPip);
 
-  // Karta yig'ilganda sahifadagi nusxasi yashiriladi va joy bo'shaydi
+  // Taymer yig'ilganda sahifadagi kartasi yashiriladi va reja joyni oladi
   document.querySelector('.timer-card')?.toggleAttribute('hidden', !!W.timer);
-  document.querySelector('.plan-card')?.toggleAttribute('hidden', !!W.tasks);
   document.querySelector('.layout')?.classList.toggle('no-timer', !!W.timer);
-  document.querySelector('.layout')?.classList.toggle('no-plan', !!W.tasks);
-
-  // Ikkala karta ham yig'ilsa sahifa bo'm-bo'sh qolmasin
-  $('wdgParked')?.toggleAttribute('hidden', !(W.timer && W.tasks));
 
   E.timerFold.title = W.foldTimer ? 'Yoyish' : 'Yig\'ish';
-  E.tasksFold.title = W.foldTasks ? 'Yoyish' : 'Yig\'ish';
 }
 
 /** Taymer vidjetini joriy holatga moslaydi */
@@ -136,50 +129,22 @@ function renderTimerWidget() {
   }
 }
 
-/** Vazifalar vidjeti — bajarilganlar oxirida */
-function renderTasksWidget() {
-  if (!W.tasks && !pipWin) return;
-  const S = C.state;
-  const tasks = S.plan?.tasks || [];
-  const done = tasks.filter(t => (t.status || (t.done ? 'bajarildi' : 'reja')) === 'bajarildi').length;
-
-  E.tasksCount.textContent = tasks.length ? `${done}/${tasks.length}` : '—';
-
-  if (!tasks.length) {
-    E.list.innerHTML = '<div class="wdg-empty">Bugunga vazifa yo\'q</div>';
-    return;
-  }
-
-  E.list.innerHTML = tasks.map(t => {
-    const st = t.status || (t.done ? 'bajarildi' : 'reja');
-    const active = t.id === S.activeTaskId;
-    return `<div class="wdg-row st-${st} ${active ? 'is-active' : ''}" data-id="${C.esc(t.id)}">
-      <span class="wdg-st" title="${C.esc(t.title)}">${STATUS_ICON[st] || '○'}</span>
-      <span class="wdg-title">${C.esc(t.title)}</span>
-      <span class="wdg-count">${t.completedPomodoros}/${t.plannedPomodoros}</span>
-      ${st === 'bajarildi' ? '' :
-        `<button class="wdg-play" data-play="${C.esc(t.id)}" title="Shu vazifani boshlash">▶</button>`}
-    </div>`;
-  }).join('');
-}
-
 /** Tashqaridan chaqiriladi — taymer yoki reja o'zgarganda */
 export function updateWidgets() {
   if (!E.dock) return;
   renderTimerWidget();
-  renderTasksWidget();
 }
 
 /* ═══════════════ Yig'ish va qaytarish ═══════════════ */
 
-function setOpen(which, open) {
-  W[which] = open;
-  if (open) W['fold' + (which === 'timer' ? 'Timer' : 'Tasks')] = false;
+function setTimerOpen(open) {
+  W.timer = open;
+  if (open) W.foldTimer = false;
   save();
   applyLayout();
   updateWidgets();
-  // Alohida oynada ikkalasi ham yopilsa oynaning o'zi ham kerak emas
-  if (pipWin && !W.timer && !W.tasks) closePip();
+  // Vidjet yopilsa alohida oyna ham kerak emas
+  if (pipWin && !open) closePip();
 }
 
 /* ═══════════════ Alohida oyna (Picture-in-Picture) ═══════════════ */
@@ -204,8 +169,7 @@ function copyStyles(win) {
 
 /** Alohida oyna uchun kerakli o'lcham */
 function pipSize() {
-  const h = (W.timer ? 190 : 0) + (W.tasks ? 252 : 0) + (W.timer && W.tasks ? 10 : 0);
-  return { width: 300, height: Math.max(180, Math.min(620, h || 190)) };
+  return { width: 300, height: 190 };
 }
 
 async function openPip() {
@@ -220,8 +184,8 @@ async function openPip() {
         + 'localhost orqali kiring yoki serverni HTTPS ga o\'tkazing.', 'warn');
     return;
   }
-  // Hech bo'lmaganda bittasi ochiq bo'lsin
-  if (!W.timer && !W.tasks) {
+  // Vidjet yopiq bo'lsa avval ochamiz
+  if (!W.timer) {
     W.timer = true;
     save();
     applyLayout();
@@ -333,13 +297,12 @@ export function initWidgets(ctx) {
   /* Elementlarni bir marta topamiz — keyin boshqa oynaga ko'chsa ham ishlaydi */
   Object.assign(E, {
     dock: $('wdock'),
-    timer: $('wdgTimer'), tasks: $('wdgTasks'),
+    timer: $('wdgTimer'),
     mode: $('wdgMode'), clock: $('wdgClock'), bar: $('wdgBar'),
     task: $('wdgTask'), status: $('wdgStatus'),
     main: $('wdgMain'), skip: $('wdgSkip'), stop: $('wdgStop'),
-    tasksCount: $('wdgTasksCount'), list: $('wdgList'),
-    timerFold: $('wdgTimerFold'), tasksFold: $('wdgTasksFold'),
-    pipBtns: [$('wdgTimerPip'), $('wdgTasksPip')].filter(Boolean)
+    timerFold: $('wdgTimerFold'),
+    pipBtns: [$('wdgTimerPip')].filter(Boolean)
   });
 
   load();
@@ -355,51 +318,25 @@ export function initWidgets(ctx) {
     });
   }
 
-  /* Kartalardagi «kichraytirish» tugmalari */
-  $('btnMinTimer')?.addEventListener('click', () => setOpen('timer', true));
-  $('btnMinPlan')?.addEventListener('click', () => setOpen('tasks', true));
+  /* Kartadagi «kichraytirish» tugmasi */
+  $('btnMinTimer')?.addEventListener('click', () => setTimerOpen(true));
   $('btnPipTimer')?.addEventListener('click', togglePip);
 
   /* Vidjetni kartaga qaytarish */
-  $('wdgTimerClose').addEventListener('click', () => setOpen('timer', false));
-  $('wdgTasksClose').addEventListener('click', () => setOpen('tasks', false));
-
-  $('wdgRestoreAll')?.addEventListener('click', () => {
-    closePip();
-    W.timer = false;
-    W.tasks = false;
-    save();
-    applyLayout();
-    updateWidgets();
-  });
+  $('wdgTimerClose').addEventListener('click', () => setTimerOpen(false));
 
   /* Alohida oynaga chiqarish */
   E.pipBtns.forEach(b => b.addEventListener('click', togglePip));
 
   /* Yig'ish / yoyish */
-  E.timerFold.addEventListener('click', () => { W.foldTimer = !W.foldTimer; save(); applyLayout(); });
-  E.tasksFold.addEventListener('click', () => { W.foldTasks = !W.foldTasks; save(); applyLayout(); });
-
-  E.timer.querySelector('.wdg-head').addEventListener('dblclick', () => {
-    W.foldTimer = !W.foldTimer; save(); applyLayout();
-  });
-  E.tasks.querySelector('.wdg-head').addEventListener('dblclick', () => {
-    W.foldTasks = !W.foldTasks; save(); applyLayout();
-  });
+  const toggleFold = () => { W.foldTimer = !W.foldTimer; save(); applyLayout(); };
+  E.timerFold.addEventListener('click', toggleFold);
+  E.timer.querySelector('.wdg-head').addEventListener('dblclick', toggleFold);
 
   /* Taymer tugmalari — asosiy kartadagilarni bosadi */
   E.main.addEventListener('click', () => $('btnMain').click());
   E.skip.addEventListener('click', () => $('btnSkip').click());
   E.stop.addEventListener('click', () => $('btnStop').click());
-
-  /* Vazifa tanlash va boshlash */
-  E.list.addEventListener('click', (e) => {
-    const play = e.target.closest('[data-play]');
-    if (!play) return;
-    const btn = document.querySelector(`#taskList .task[data-id="${CSS.escape(play.dataset.play)}"] .t-btn.play`);
-    if (btn) btn.click();
-    else C.toast('Vazifa ro\'yxatda topilmadi — sahifani yangilang', 'warn');
-  });
 
   bindDrag();
 
@@ -411,7 +348,7 @@ export function initWidgets(ctx) {
     if (e.ctrlKey || e.altKey || e.metaKey) return;
     if (e.target.matches('input, textarea, select')) return;
     if (!e.shiftKey) return;
-    if (e.key === 'W' || e.key === 'w') { e.preventDefault(); setOpen('timer', !W.timer); }
+    if (e.key === 'W' || e.key === 'w') { e.preventDefault(); setTimerOpen(!W.timer); }
     if (e.key === 'P' || e.key === 'p') { e.preventDefault(); togglePip(); }
   });
 
