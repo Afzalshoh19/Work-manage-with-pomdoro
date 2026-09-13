@@ -12,8 +12,9 @@
 .card-min:hover { color: var(--accent); background: var(--card-2); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
 .card-min .bi { width: 15px; height: 15px; }
 
-/* Taymerdagi tugma pill qatorining o'ng chetiga suriladi */
-.mode-pills .card-min { margin-left: auto; }
+/* Taymerdagi tugmalar pill qatorining o'ng chetiga suriladi */
+.mode-pills #btnPipTimer { margin-left: auto; }
+.mode-pills .card-min + .card-min { margin-left: 0; }
 
 /* Taymer yig'ilganda reja butun kenglikni egallaydi */
 .layout.no-timer { grid-template-columns: 1fr; }
@@ -140,3 +141,38 @@
 .wdg-parked h3 { margin: 0; font-size: 15px; }
 .wdg-parked .hint { max-width: 42ch; margin: 0; }
 .wdg-parked .btn { margin-top: 6px; }
+
+/* ═══════════════ Alohida oyna (Picture-in-Picture) ═══════════════ */
+
+/* Tugma yoqilgan holatda urg'u rangida turadi */
+.wdg-ico.is-on, .card-min.is-on {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+}
+
+/*
+   Alohida oynada dok suzmaydi — oynaning o'zi to'liq egallaydi.
+   Sudrash ham kerak emas: oynani operatsion tizim o'zi ko'chiradi.
+*/
+.wdock.in-pip {
+  position: static;
+  width: 100%;
+  max-width: none;
+  padding: 8px;
+  gap: 8px;
+  overflow-y: auto;
+}
+.wdock.in-pip .wdg {
+  box-shadow: none;
+  border-radius: 10px;
+}
+.wdock.in-pip .wdg-head { cursor: default; }
+.wdock.in-pip .wdg-grip,
+.wdock.in-pip .wdg-ico[id$="Fold"] { display: none; }
+.wdock.in-pip .wdg-list { max-height: none; }
+
+/* Tor oynada tugmalar ikki qatorga tushmasin */
+.wdock.in-pip .wdg-actions .btn { font-size: 11px; padding: 6px 6px; }
+
+/* Alohida oyna mavjud emas — tugma bor, lekin so'nik */
+.wdg-ico.is-off, .card-min.is-off { opacity: .45; }
