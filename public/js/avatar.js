@@ -6,6 +6,7 @@
  * va server tomonda rasm qayta ishlash kutubxonasi kerak bo'lmaydi.
  */
 import { api } from './api.js';
+import { avatarInner } from './icons.js';
 
 const $ = (id) => document.getElementById(id);
 const SIZE = 256;                 // saqlanadigan rasm o'lchami
@@ -107,18 +108,22 @@ async function saveCrop() {
 
 /* ═══════════════ Ko'rsatish ═══════════════ */
 
-/** Avatar elementiga rasm yoki emoji qo'yadi */
+/**
+ * Avatar elementiga rasm, SVG belgi yoki emoji qo'yadi.
+ * Rasm bo'lsa ichidagisi butunlay tozalanadi — aks holda belgi
+ * rasm ustiga chiqib qolardi.
+ */
 export function applyAvatar(el, user) {
   if (!el || !user) return;
-  if (user.photoUrl) {
-    el.style.backgroundImage = `url("${user.photoUrl}")`;
-    el.classList.add('has-photo');
-    el.textContent = '';
-  } else {
-    el.style.backgroundImage = '';
-    el.classList.remove('has-photo');
-    el.textContent = user.avatar || '🍅';
-  }
+  setAvatar(el, user.photoUrl || null, user.avatar);
+}
+
+/** Past darajadagi o'rnatish — profil oldindan ko'rsatish uchun ham ishlatiladi */
+export function setAvatar(el, photoUrl, value) {
+  if (!el) return;
+  el.classList.toggle('has-photo', !!photoUrl);
+  el.style.backgroundImage = photoUrl ? `url("${photoUrl}")` : '';
+  el.innerHTML = photoUrl ? '' : avatarInner(value);
 }
 
 /* ═══════════════ Ishga tushirish ═══════════════ */

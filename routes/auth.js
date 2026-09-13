@@ -16,7 +16,7 @@ import {
   newBackupCodes, useBackupCode, BACKUP_COUNT, PERIOD, DIGITS
 } from '../lib/totp.js';
 
-const EMOJI = ['🍅', '🚀', '🎯', '⚡', '🌟', '🦊', '🐼', '🦉', '🌊', '🔥', '🌱', '🎨'];
+import { AVATAR_ICONS } from '../lib/avatars.js';
 const COLORS = ['#ff5f56', '#4a9eff', '#35c88f', '#f6b73c', '#a77dff', '#ff8a80'];
 
 const isEmail = (e) => /^[^\s@]+@[^\s@]+\.[a-z]{2,}$/i.test(String(e || '').trim());
@@ -31,7 +31,7 @@ function newUser({ email, name, provider, providerId, password }) {
     email: String(email).trim(),
     emailLower: String(email).trim().toLowerCase(),
     name: str(name, 80) || String(email).split('@')[0],
-    avatar: EMOJI[db.users.length % EMOJI.length],
+    avatar: AVATAR_ICONS[db.users.length % AVATAR_ICONS.length],
     color: COLORS[db.users.length % COLORS.length],
     jobTitle: '',
     company: '',

@@ -1,6 +1,7 @@
 /** Profil, hisobotlar va integratsiyalar — app.js dan chaqiriladi */
 import { api, downloadFile } from './api.js';
-import { initAvatar, applyAvatar } from './avatar.js';
+import { initAvatar, applyAvatar, setAvatar } from './avatar.js';
+import { avatarInner, isIconAvatar } from './icons.js';
 
 let C = null;   // umumiy kontekst (app.js beradi)
 const $ = (id) => document.getElementById(id);
@@ -33,8 +34,7 @@ export async function loadProfile() {
   $('profCompany').value = u.company || '';
   $('profEmail').value = u.email;
 
-  $('avatarGrid').innerHTML = profileData.avatars.map(a =>
-    `<button class="avatar-pick ${a === u.avatar ? 'is-active' : ''}" data-avatar="${a}">${a}</button>`).join('');
+  renderAvatarPicker(u);
   $('colorGrid').innerHTML = profileData.colors.map(c =>
     `<button class="color-pick ${c === u.color ? 'is-active' : ''}" data-color="${c}" style="background:${c}"></button>`).join('');
 
@@ -55,11 +55,44 @@ export async function loadProfile() {
   $('delPassword').value = '';
 }
 
+/**
+ * Avatar tanlash paneli — SVG belgilar va emojilar alohida guruhda.
+ * Ikkalasi ham amal qiladi, foydalanuvchi xohlaganini tanlaydi.
+ */
+function renderAvatarPicker(u) {
+  const icons = profileData.avatarIcons || [];
+  const emoji = profileData.avatarEmoji || [];
+
+  const pick = (value, inner) =>
+    `<button type="button" class="avatar-pick ${value === u.avatar ? 'is-active' : ''}" ` +
+    `data-avatar="${C.esc(value)}" title="${C.esc(value)}">${inner}</button>`;
+
+  const group = (label, items, asIcon) =>
+    `<div class="apick-group">
+      <span class="apick-lbl">${label}</span>
+      <div class="apick-row">${items.map(v => pick(v, asIcon ? avatarInner(v) : v)).join('')}</div>
+    </div>`;
+
+  $('avatarGrid').innerHTML = group('Belgilar', icons, true) + group('Emoji', emoji, false);
+  updateAvatarNote(u.photoUrl || null);
+}
+
+/** Rasm ustuvor ekanini tushuntiruvchi eslatma */
+function updateAvatarNote(photoUrl) {
+  const el = $('avatarNote');
+  if (!el) return;
+  el.hidden = !photoUrl;
+  el.textContent = photoUrl
+    ? 'Hozir profil rasmi ishlatilyapti. Tanlangan belgi rasm o\'chirilgandan keyin ko\'rinadi.'
+    : '';
+}
+
 /** Rasm yuklangach profil ham, yuqoridagi tugma ham yangilanadi */
 function onAvatarChange(user) {
   if (!user) return;
   if (profileData) profileData.user = user;
   applyAvatar($('profAvatar'), user);
+  updateAvatarNote(user.photoUrl || null);
   $('photoRemove').hidden = !user.photoUrl;
   $('photoHint').textContent = user.photoUrl
     ? 'Rasm yuklangan'
@@ -74,7 +107,11 @@ function bindProfile() {
     const b = e.target.closest('.avatar-pick');
     if (!b) return;
     $('avatarGrid').querySelectorAll('.avatar-pick').forEach(x => x.classList.toggle('is-active', x === b));
-    $('profAvatar').textContent = b.dataset.avatar;
+
+    // Rasm yuklangan bo'lsa u ustuvor — belgi uning ustiga chizilmaydi
+    const photo = profileData?.user?.photoUrl || null;
+    setAvatar($('profAvatar'), photo, b.dataset.avatar);
+    updateAvatarNote(photo);
   });
   $('colorGrid').addEventListener('click', e => {
     const b = e.target.closest('.color-pick');

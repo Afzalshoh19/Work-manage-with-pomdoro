@@ -68,3 +68,41 @@ export const icon = (name, cls = '') =>
 
 /** Sarlavha oldidagi belgi — o'lchami va rangi uslubdan keladi */
 export const secIcon = (name) => `<span class="sec-ico">${icon(name)}</span>`;
+
+
+/**
+ * Avatar belgilari — profil rasmi yuklanmaganda ishlatiladi.
+ * Kalitlar server bilan bir xil: lib/avatars.js → AVATAR_ICONS.
+ * Emoji avatarlar ham qo'llab-quvvatlanadi, ular matn sifatida chiziladi.
+ */
+export const AVATAR_SVG = {
+  pomodoro:  '<circle cx="12" cy="13.5" r="7.5"/><path d="M12 10v3.5l2.5 1.5M8.5 3.5c1 1.2 2.2 1.8 3.5 1.8s2.5-.6 3.5-1.8"/>',
+  rocket:    '<path d="M12 3c3 2 5 5.6 5 9.6V17l-2.5 2h-5L7 17v-4.4C7 8.6 9 5 12 3z"/><circle cx="12" cy="10" r="1.7"/><path d="M7 14.5 4 17l1.4 3M17 14.5l3 2.5-1.4 3"/>',
+  target:    '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.4"/><circle cx="12" cy="12" r="1.2" fill="currentColor" stroke="none"/>',
+  bolt:      '<path d="M13.5 2.5 5 13.5h5.5L10 21.5 19 10h-5.5z"/>',
+  star:      '<path d="m12 3.5 2.7 5.6 6.1.9-4.4 4.3 1 6.1-5.4-2.9-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
+  flame:     '<path d="M12 21c3.6 0 6-2.4 6-5.6 0-3.6-2.8-5.4-3.6-8.9-2 1.3-2.6 3.2-2.4 5-1-.6-1.6-1.8-1.6-3.2C8.2 9.6 6 11.9 6 15.4 6 18.6 8.4 21 12 21z"/>',
+  leaf:      '<path d="M5 19.5c0-8.5 5.5-13.5 15.5-13.5 0 9.5-5.5 14.5-13.5 14.5"/><path d="M5 19.5c3-3.8 6.8-6.4 11-8"/>',
+  wave:      '<path d="M2.5 9c2.4-2.6 4.8-2.6 7.2 0s4.8 2.6 7.2 0 4.1-1.8 4.6 0"/><path d="M2.5 15c2.4-2.6 4.8-2.6 7.2 0s4.8 2.6 7.2 0 4.1-1.8 4.6 0"/>',
+  book:      '<path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H19.5v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 18.5h15.5V21H6.5A2.5 2.5 0 0 1 4 18.5z"/>',
+  briefcase: '<rect x="3" y="7.5" width="18" height="12" rx="2"/><path d="M9 7.5V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5M3 12.5h18"/>',
+  bulb:      '<path d="M9.5 17.5h5M10.2 20.5h3.6"/><path d="M12 3a6 6 0 0 1 3.4 10.9c-.6.4-.9 1-.9 1.7v.4h-5v-.4c0-.7-.3-1.3-.9-1.7A6 6 0 0 1 12 3z"/>',
+  coffee:    '<path d="M4 9h13v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M17 10h1.8a2.2 2.2 0 1 1 0 4.4H17"/><path d="M7 2.5v2.2M11 2.5v2.2"/>',
+  compass:   '<circle cx="12" cy="12" r="9"/><path d="m15.6 8.4-2.1 5.2-5.1 2.1 2.1-5.2z"/>',
+  mountain:  '<path d="M2.5 19.5 9 7l4 6.6 2.6-3.6 5.9 9.5z"/><path d="M9 7l2.2 3.6"/>',
+  puzzle:    '<path d="M9 4.5h3.2a1.5 1.5 0 1 1 2.8 0H18v3.2a1.5 1.5 0 1 0 0 2.8V14h-3.2a1.5 1.5 0 1 0-2.8 0H9v-3.2a1.5 1.5 0 1 1 0-2.8z"/><path d="M9 14v5.5h9.5"/>',
+  cube:      '<path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/>'
+};
+
+/** Qiymat SVG belgimi yoki emojimi */
+export const isIconAvatar = (key) => Object.prototype.hasOwnProperty.call(AVATAR_SVG, String(key || ''));
+
+/** Avatar belgisi — SVG holida */
+export const avatarIcon = (key) =>
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" '
+  + 'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'
+  + (AVATAR_SVG[key] || AVATAR_SVG.pomodoro) + '</svg>';
+
+/** Avatar ichi — belgi bo'lsa SVG, aks holda emojining o'zi */
+export const avatarInner = (value) =>
+  isIconAvatar(value) ? avatarIcon(value) : String(value || '🍅');

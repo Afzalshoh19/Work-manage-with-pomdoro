@@ -5,9 +5,9 @@ import { checkLunch } from './tasks.js';
 import { encryptSecret, decryptSecret, maskSecret, verifyPassword } from '../lib/crypto.js';
 import { publicUser, destroyAllSessions, clearCookie } from '../lib/auth.js';
 import { str, clamp } from '../lib/util.js';
-import { saveAvatar, readAvatar, removeAvatar, MAX_BYTES } from '../lib/avatars.js';
+import { saveAvatar, readAvatar, removeAvatar, MAX_BYTES, AVATAR_ICONS, AVATAR_EMOJI, validAvatar } from '../lib/avatars.js';
 
-const AVATARS = ['🍅', '🚀', '🎯', '⚡', '🌟', '🦊', '🐼', '🦉', '🌊', '🔥', '🌱', '🎨', '📚', '💼', '🧠', '☕'];
+const AVATARS = [...AVATAR_ICONS, ...AVATAR_EMOJI];
 const COLORS = ['#ff5f56', '#4a9eff', '#35c88f', '#f6b73c', '#a77dff', '#ff8a80', '#00bcd4', '#8bc34a'];
 
 function ensureIntegrations(user) {
@@ -30,7 +30,7 @@ export function uploadAvatar({ user, body }) {
   return { ok: true, user: publicUser(user) };
 }
 
-/** Rasmni olib tashlash — emoji avatarga qaytadi */
+/** Rasmni olib tashlash — belgi yoki emoji avatarga qaytadi */
 export function deleteAvatar({ user }) {
   removeAvatar(user.id);
   delete user.photo;
@@ -74,6 +74,8 @@ export function getProfile({ user }) {
   return {
     user: publicUser(user),
     avatars: AVATARS,
+    avatarIcons: AVATAR_ICONS,
+    avatarEmoji: AVATAR_EMOJI,
     colors: COLORS,
     photoMaxKb: MAX_BYTES / 1024,
     stats: {
@@ -100,7 +102,7 @@ export function updateProfile({ user, body }) {
   if (body.jobTitle !== undefined) user.jobTitle = str(body.jobTitle, 100);
   if (body.company !== undefined) user.company = str(body.company, 100);
   if (body.timezone !== undefined) user.timezone = str(body.timezone, 60);
-  if (body.avatar !== undefined && AVATARS.includes(body.avatar)) user.avatar = body.avatar;
+  if (body.avatar !== undefined) user.avatar = validAvatar(body.avatar);
   if (body.color !== undefined && COLORS.includes(body.color)) user.color = body.color;
   persist();
   return { user: publicUser(user) };

@@ -108,7 +108,12 @@
 .profile-head { display: flex; gap: 18px; align-items: center; margin-bottom: 22px; }
 .profile-head h2 { font-size: 19px; }
 .profile-head .muted { color: var(--txt-3); font-size: 12.5px; }
-.avatar-grid { display: flex; gap: 7px; flex-wrap: wrap; }
+.avatar-grid { display: flex; flex-direction: column; gap: 12px; }
+/* Rang tanlash bir qatorda qoladi — u ham shu sinfdan foydalanadi */
+#colorGrid { flex-direction: row; flex-wrap: wrap; gap: 7px; }
+.apick-group { display: flex; flex-direction: column; gap: 6px; }
+.apick-lbl { font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--txt-3); font-weight: 600; }
+.apick-row { display: flex; gap: 7px; flex-wrap: wrap; }
 .avatar-pick, .color-pick {
   width: 38px; height: 38px; border-radius: 10px; cursor: pointer; font-size: 18px;
   display: grid; place-items: center; background: var(--card-2); border: 1px solid var(--line); transition: .12s;
@@ -223,3 +228,13 @@ textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3
 .crop-zoom { gap: 10px; }
 .crop-zoom > span { font-size: 11.5px; color: var(--txt-3); }
 .crop-zoom input[type="range"] { flex: 1; }
+
+
+/* Avatar tanlash: belgi ham, emoji ham bir xil o'lchamda */
+.avatar-pick { display: inline-flex; align-items: center; justify-content: center; }
+.avatar-pick svg { width: 19px; height: 19px; }
+.avatar-pick.is-active svg { color: var(--accent); }
+
+/* Avatar ichidagi belgi — o'lcham idishga qarab */
+.avatar > svg { width: 62%; height: 62%; }
+.avatar.has-photo > svg { display: none; }
