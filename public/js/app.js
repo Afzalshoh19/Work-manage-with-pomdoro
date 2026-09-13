@@ -2,6 +2,7 @@ import { api, AuthError, downloadFile } from './api.js';
 import { playAlarm, playTick, notify, notifyPermission, askNotifyPermission, unlockAudio } from './sound.js';
 import { dailyChart, hourlyChart, categoryBars, topTasksList, CAT_COLORS, CAT_LABELS } from './charts.js';
 import { initFeatures, loadProfile, loadReport, loadIntegrations, loadOauthSettings } from './features.js';
+import { initWidgets, updateWidgets } from './widgets.js';
 import { initSchedule, renderDaySetup, loadWorkSchedule, maybeOnboard, closePomoModal } from './schedule.js';
 import { initWeekPlan, closeWeekPlan } from './weekplan.js';
 
@@ -903,6 +904,7 @@ function renderActiveTask() {
   $('activeTaskTitle').textContent = t
     ? `${t.title} (${t.completedPomodoros}/${t.plannedPomodoros})`
     : 'Tanlanmagan — ro\'yxatdan ▶ tugmasini bosing';
+  updateWidgets();
 }
 
 /* ══════════════════ Taymer ══════════════════ */
@@ -982,6 +984,7 @@ function renderTimer() {
 
   renderTodayMini();
   renderNotifNotice();
+  updateWidgets();
 }
 
 /** Bildirishnoma yoqilgan, lekin brauzer ruxsat bermagan bo'lsa — sababini tushuntiramiz */
@@ -1730,6 +1733,7 @@ async function init() {
   initFeatures(ctx);
   initSchedule(ctx);
   initWeekPlan(ctx);
+  initWidgets(ctx);
 
   fillSettings();
   $('datePicker').value = S.date;
