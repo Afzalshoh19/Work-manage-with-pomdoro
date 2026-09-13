@@ -3,6 +3,7 @@ import { playAlarm, playTick, notify, notifyPermission, askNotifyPermission, unl
 import { dailyChart, hourlyChart, categoryBars, topTasksList, CAT_COLORS, CAT_LABELS } from './charts.js';
 import { initFeatures, loadProfile, loadReport, loadIntegrations, loadOauthSettings } from './features.js';
 import { initWidgets, updateWidgets } from './widgets.js';
+import { applyAvatar } from './avatar.js';
 import { initSchedule, renderDaySetup, loadWorkSchedule, maybeOnboard, closePomoModal } from './schedule.js';
 import { initWeekPlan, closeWeekPlan } from './weekplan.js';
 
@@ -419,7 +420,7 @@ function renderUser() {
   const u = S.user;
   if (!u) return;
   document.documentElement.style.setProperty('--uc', u.color || '#ff5f56');
-  $('userAvatar').textContent = u.avatar || '🍅';
+  applyAvatar($('userAvatar'), u);
   $('userName').textContent = u.name;
   $('menuName').innerHTML = esc(u.name) + (u.role === 'owner' ? ' <span class="role-chip">EGA</span>' : '');
   $('menuEmail').textContent = u.email;

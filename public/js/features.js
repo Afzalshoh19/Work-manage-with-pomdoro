@@ -1,5 +1,6 @@
 /** Profil, hisobotlar va integratsiyalar — app.js dan chaqiriladi */
 import { api, downloadFile } from './api.js';
+import { initAvatar, applyAvatar } from './avatar.js';
 
 let C = null;   // umumiy kontekst (app.js beradi)
 const $ = (id) => document.getElementById(id);
@@ -14,7 +15,11 @@ export async function loadProfile() {
   const st = profileData.stats;
 
   document.documentElement.style.setProperty('--uc', u.color || '#ff5f56');
-  $('profAvatar').textContent = u.avatar;
+  applyAvatar($('profAvatar'), u);
+  $('photoRemove').hidden = !u.photoUrl;
+  $('photoHint').textContent = u.photoUrl
+    ? 'Rasm yuklangan'
+    : `JPG, PNG yoki WebP · ${profileData.photoMaxKb || 512} KB gacha`;
   $('profName').textContent = u.name;
   $('profMeta').innerHTML = [
     u.jobTitle && C.esc(u.jobTitle),
@@ -50,7 +55,21 @@ export async function loadProfile() {
   $('delPassword').value = '';
 }
 
+/** Rasm yuklangach profil ham, yuqoridagi tugma ham yangilanadi */
+function onAvatarChange(user) {
+  if (!user) return;
+  if (profileData) profileData.user = user;
+  applyAvatar($('profAvatar'), user);
+  $('photoRemove').hidden = !user.photoUrl;
+  $('photoHint').textContent = user.photoUrl
+    ? 'Rasm yuklangan'
+    : `JPG, PNG yoki WebP · ${profileData?.photoMaxKb || 512} KB gacha`;
+  C.setUser(user);
+}
+
 function bindProfile() {
+  $('photoPick2')?.addEventListener('click', () => $('photoPick').click());
+
   $('avatarGrid').addEventListener('click', e => {
     const b = e.target.closest('.avatar-pick');
     if (!b) return;
@@ -573,6 +592,7 @@ export function initFeatures(ctx) {
   C = ctx;
   bindProfile();
   bindSecurity();
+  initAvatar(ctx, { onChange: onAvatarChange });
   bindReport();
   bindSmtp();
   bindIntegrations();

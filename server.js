@@ -82,6 +82,9 @@ const routes = [
   ['GET',    '/api/profile',             Profile.getProfile],
   ['PUT',    '/api/profile',             Profile.updateProfile],
   ['POST',   '/api/profile/delete',      Profile.deleteAccount],
+  ['POST',   '/api/profile/avatar',      Profile.uploadAvatar],
+  ['DELETE', '/api/profile/avatar',       Profile.deleteAvatar],
+  ['GET',    '/api/avatar/:id',          Profile.getAvatar],
   ['GET',    '/api/profile/schedule',    Profile.getWorkSchedule],
   ['PUT',    '/api/profile/schedule',    Profile.saveWorkSchedule],
   ['GET',    '/api/integrations',        Profile.getIntegrations],
@@ -347,13 +350,16 @@ async function handleRequest(req, res) {
       return res.end(result.__html);
     }
     if (result && result.__raw) {
-      const { contentType, filename, body: raw } = result.__raw;
-      res.writeHead(200, {
+      const { contentType, filename, body: raw, inline, cacheControl } = result.__raw;
+      const headers = {
         'Content-Type': contentType,
-        'Content-Disposition': 'attachment; filename="' + filename + '"',
         'Content-Length': Buffer.byteLength(raw),
-        'Cache-Control': 'no-store'
-      });
+        'Cache-Control': cacheControl || 'no-store',
+        ...securityHeaders(req)
+      };
+      // Rasm brauzerda ko'rsatiladi, hisobot esa yuklab olinadi
+      if (!inline) headers['Content-Disposition'] = 'attachment; filename="' + filename + '"';
+      res.writeHead(200, headers);
       return res.end(raw);
     }
     // Xato javobida qo'shimcha maydonlar ham uzatiladi — mijoz ularni ajratib

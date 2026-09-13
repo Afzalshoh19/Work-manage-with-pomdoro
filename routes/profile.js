@@ -5,6 +5,7 @@ import { checkLunch } from './tasks.js';
 import { encryptSecret, decryptSecret, maskSecret, verifyPassword } from '../lib/crypto.js';
 import { publicUser, destroyAllSessions, clearCookie } from '../lib/auth.js';
 import { str, clamp } from '../lib/util.js';
+import { saveAvatar, readAvatar, removeAvatar, MAX_BYTES } from '../lib/avatars.js';
 
 const AVATARS = ['🍅', '🚀', '🎯', '⚡', '🌟', '🦊', '🐼', '🦉', '🌊', '🔥', '🌱', '🎨', '📚', '💼', '🧠', '☕'];
 const COLORS = ['#ff5f56', '#4a9eff', '#35c88f', '#f6b73c', '#a77dff', '#ff8a80', '#00bcd4', '#8bc34a'];
@@ -16,6 +17,51 @@ function ensureIntegrations(user) {
   }
   return user.integrations;
 }
+
+/* ═══════════ Profil rasmi ═══════════ */
+
+/** Rasmni yuklash — mijoz uni 256x256 ga keltirib yuboradi */
+export function uploadAvatar({ user, body }) {
+  const res = saveAvatar(user.id, body.image);
+  if (!res.ok) return { error: res.error, status: 400 };
+
+  user.photo = { ext: res.ext, version: Date.now() };
+  persist();
+  return { ok: true, user: publicUser(user) };
+}
+
+/** Rasmni olib tashlash — emoji avatarga qaytadi */
+export function deleteAvatar({ user }) {
+  removeAvatar(user.id);
+  delete user.photo;
+  persist();
+  return { ok: true, user: publicUser(user) };
+}
+
+/**
+ * Rasmni berish. Tizimga kirgan har qanday foydalanuvchi ko'ra oladi —
+ * jamoa ichida bir-birining rasmini ko'rish uchun kerak.
+ */
+export function getAvatar({ params }) {
+  const db = getDb();
+  const owner = db.users.find(u => u.id === params.id);
+  if (!owner?.photo?.ext) return { error: 'Rasm yo\'q', status: 404 };
+
+  const img = readAvatar(owner.id, owner.photo.ext);
+  if (!img) return { error: 'Rasm topilmadi', status: 404 };
+
+  return {
+    __raw: {
+      inline: true,
+      contentType: img.contentType,
+      // Manzilda ?v= bor, shuning uchun uzoq keshlash xavfsiz
+      cacheControl: 'private, max-age=604800',
+      body: img.buffer
+    }
+  };
+}
+
+export const avatarLimitKb = () => MAX_BYTES / 1024;
 
 /* ═══════════ Profil ═══════════ */
 
@@ -29,6 +75,7 @@ export function getProfile({ user }) {
     user: publicUser(user),
     avatars: AVATARS,
     colors: COLORS,
+    photoMaxKb: MAX_BYTES / 1024,
     stats: {
       totalTasks: myTasks.length,
       doneTasks: myTasks.filter(t => t.done).length,
@@ -70,6 +117,7 @@ export function deleteAccount({ user, body, req }) {
   db.tasks = db.tasks.filter(t => t.userId !== user.id);
   db.sessions = db.sessions.filter(s => s.userId !== user.id);
   forgetUser(user.id, user.email);
+  removeAvatar(user.id);
   db.dayPlans = db.dayPlans.filter(d => d.userId !== user.id);
   delete db.timers[user.id];
   delete db.userState[user.id];

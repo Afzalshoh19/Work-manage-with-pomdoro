@@ -96,6 +96,8 @@ export const api = {
   profile:       ()             => request('GET', '/api/profile'),
   saveProfile:   (patch)        => request('PUT', '/api/profile', patch),
   deleteAccount: (password)     => request('POST', '/api/profile/delete', { password }),
+  uploadAvatar:  (image)        => request('POST', '/api/profile/avatar', { image }),
+  deleteAvatar:  ()             => request('DELETE', '/api/profile/avatar'),
 
   /* Kun tartibi */
   plan:          (date)         => request('GET', '/api/plan' + qs({ date })),
