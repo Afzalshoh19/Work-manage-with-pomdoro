@@ -640,7 +640,8 @@ function restoreFoldState() {
 
   // Boshqa yig'iladigan bloklar ham xuddi shunday yumshoq ochilsin
   smoothDetails($('timelineWrap'));
-  document.querySelectorAll('#view-profile details.integ').forEach(d => smoothDetails(d));
+  document.querySelectorAll('#view-profile details.integ, #view-profile details.fold')
+    .forEach(d => smoothDetails(d));
 
   $('btnAddTask').addEventListener('click', openAddForm);
   $('addCancel').addEventListener('click', closeAddForm);

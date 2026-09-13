@@ -141,3 +141,92 @@ h3.sec-title .bi { width: 15px; height: 15px; }
 @media (prefers-reduced-motion: reduce) {
   .wc-pill.tone-work i { animation: none; }
 }
+
+
+/* ═══════════════ Haftalik natijalar ═══════════════ */
+
+.results-card { display: flex; flex-direction: column; gap: 16px; }
+
+.rs-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.rs-head h3 { margin: 0; }
+.rs-range { font-size: 11.5px; color: var(--txt-3); }
+.rs-change {
+  margin-left: auto; font-size: 12px; font-weight: 600;
+  padding: 3px 9px; border-radius: 20px; white-space: nowrap;
+  border: 1px solid currentColor;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+.rs-change.up { color: var(--green); }
+.rs-change.down { color: var(--amber); }
+.rs-change.flat { color: var(--txt-3); }
+
+/* Haftalik ustunlar */
+.rs-chart { display: flex; align-items: flex-end; gap: 8px; height: 108px; }
+.rs-col { flex: 1; display: flex; flex-direction: column; gap: 5px; min-width: 0; height: 100%; }
+/* Ustun balandligi faqat chizma qismiga nisbatan o'lchansin */
+.rs-barwrap { flex: 1; display: flex; align-items: flex-end; min-height: 0; }
+.rs-barwrap > .rs-bar { width: 100%; }
+.rs-bar {
+  border-radius: 5px 5px 0 0; min-height: 3px;
+  background: color-mix(in srgb, var(--violet, #a77dff) 55%, transparent);
+  transition: height .25s;
+}
+.rs-col.is-today .rs-bar { background: var(--accent); }
+.rs-col.is-future .rs-bar { background: var(--bg-2); border: 1px dashed var(--line-2); }
+.rs-col.is-empty .rs-bar { background: var(--bg-2); }
+.rs-val {
+  font-size: 10.5px; color: var(--txt-3); text-align: center;
+  font-variant-numeric: tabular-nums; white-space: nowrap;
+}
+.rs-col.is-today .rs-val { color: var(--accent); font-weight: 600; }
+.rs-day { font-size: 11px; color: var(--txt-3); text-align: center; }
+.rs-col.is-today .rs-day { color: var(--txt); font-weight: 600; }
+
+/* Xulosa qatori */
+.rs-facts { display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; color: var(--txt-2); }
+.rs-facts b { color: var(--txt); font-weight: 600; }
+.rs-facts .bi { width: 14px; height: 14px; vertical-align: -2px; margin-right: 5px; color: var(--txt-3); flex: none; }
+
+
+/* Kategoriya taqsimoti */
+.rs-split { display: flex; height: 10px; border-radius: 6px; overflow: hidden; background: var(--bg-2); }
+.rs-split i { display: block; height: 100%; }
+.rs-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--txt-2); }
+.rs-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.rs-legend i { width: 9px; height: 9px; border-radius: 3px; flex: none; }
+.rs-legend b { color: var(--txt); font-weight: 600; }
+
+.rs-empty { font-size: 13px; color: var(--txt-3); }
+
+@media (max-width: 520px) {
+  .rs-chart { height: 92px; gap: 5px; }
+  .rs-val { font-size: 9.5px; }
+}
+@media (prefers-reduced-motion: reduce) { .rs-bar { transition: none; } }
+
+
+/* ═══════════════ Yig'iladigan bo'laklar ═══════════════ */
+
+.fold {
+  border: 1px solid var(--line); border-radius: 11px;
+  background: var(--card-2); overflow: hidden; margin-top: 14px;
+}
+.fold-head {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 15px; cursor: pointer; list-style: none;
+  font-size: 13.5px;
+}
+.fold-head::-webkit-details-marker { display: none; }
+.fold-head:hover { background: var(--card); }
+.fold-title { font-weight: 600; }
+.fold-note { margin-left: auto; font-size: 11.5px; color: var(--txt-3); text-align: right; }
+.fold-caret { width: 15px; height: 15px; flex: none; color: var(--txt-3); transition: transform .2s; }
+.fold[open] > .fold-head .fold-caret { transform: rotate(180deg); }
+.fold-body { padding: 4px 15px 16px; border-top: 1px solid var(--line); }
+.fold-body h4.sec-title { margin: 12px 0 8px; font-size: 12px; color: var(--txt-3); }
+.fold-body h4.sec-title .bi { width: 14px; height: 14px; }
+
+@media (max-width: 520px) {
+  .fold-note { display: none; }
+}
+@media (prefers-reduced-motion: reduce) { .fold-caret { transition: none; } }

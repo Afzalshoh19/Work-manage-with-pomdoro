@@ -7,6 +7,7 @@
 import { api } from './api.js';
 import { applyAvatar } from './avatar.js';
 import { icon } from './icons.js';
+import { CAT_COLORS, CAT_LABELS } from './charts.js';
 
 const $ = (id) => document.getElementById(id);
 let C = null;
@@ -130,11 +131,74 @@ function render(data) {
       ${s.remainingSec ? `<span>${fmtLeft(s.remainingSec)}</span>` : ''}
       <span>Oxirgi kirish: ${fmtWhen(data.lastLoginAt)}</span>
       ${data.timezone ? `<span>${C.esc(data.timezone)}</span>` : ''}
-      <button class="btn btn-mini btn-ghost" id="wcRefresh" title="Yangilash">${icon('undo')}</button>
+      <button class="btn btn-mini btn-ghost" id="wcRefresh" title="Yangilash">${icon('undo','bi')}</button>
     </div>`;
 
   applyAvatar($('wcAvatar'), user);
   $('wcRefresh').addEventListener('click', () => load());
+
+  renderResults(card.results);
+}
+
+/* ═══════════════ Haftalik natijalar ═══════════════ */
+
+/** Ustun balandligi — eng katta kunga nisbatan */
+function barHeight(min, max) {
+  if (!min) return 3;
+  return Math.max(6, Math.round((min / max) * 100)) + '%';
+}
+
+function changeChip(pct) {
+  if (pct === null || pct === undefined) return '';
+  const tone = pct > 2 ? 'up' : pct < -2 ? 'down' : 'flat';
+  const sign = pct > 0 ? '+' : '';
+  return `<span class="rs-change ${tone}" title="O'tgan hafta bilan solishtirganda">${sign}${pct}%</span>`;
+}
+
+function renderResults(r) {
+  const box = $('resultsCard');
+  if (!box || !r) return;
+
+  const max = Math.max(1, ...r.week.days.map(d => d.focusMinutes));
+  const hafta = `${r.week.from.slice(8)}–${r.week.to.slice(8)} ${OYLAR[+r.week.to.slice(5, 7) - 1]}`;
+
+  const cols = r.week.days.map(d => {
+    const cls = [d.isToday ? 'is-today' : '', d.isFuture ? 'is-future' : '', !d.focusMinutes ? 'is-empty' : '']
+      .filter(Boolean).join(' ');
+    return `<div class="rs-col ${cls}" title="${d.date}: ${fmtMinutes(d.focusMinutes)}">
+      <span class="rs-val">${d.focusMinutes ? fmtMinutes(d.focusMinutes) : ''}</span>
+      <div class="rs-barwrap"><div class="rs-bar" style="height:${barHeight(d.focusMinutes, max)}"></div></div>
+      <span class="rs-day">${d.weekday}</span>
+    </div>`;
+  }).join('');
+
+  const bh = r.bestHours;
+  const facts = [
+    `<span>${icon('focus','bi')}Shu hafta: <b>${r.week.pomodoros} pomodoro</b> · ${fmtMinutes(r.week.focusMinutes)}</span>`,
+    bh
+      ? `<span>${icon('clock','bi')}Eng samarali vaqtingiz: <b>${bh.from}–${bh.to}</b> · pomodorolarning ${bh.share}% i</span>`
+      : `<span>${icon('clock','bi')}Eng samarali vaqtni aniqlash uchun ma'lumot hali kam</span>`
+  ].join('');
+
+  const cats = r.categories.filter(c => c.percent > 0);
+  const split = cats.length
+    ? `<div class="rs-split">${cats.map(c =>
+        `<i style="width:${c.percent}%;background:${CAT_COLORS[c.category] || CAT_COLORS.boshqa}"
+            title="${C.esc(CAT_LABELS[c.category] || c.category)}: ${c.percent}%"></i>`).join('')}</div>
+       <div class="rs-legend">${cats.map(c =>
+        `<span><i style="background:${CAT_COLORS[c.category] || CAT_COLORS.boshqa}"></i>
+          ${C.esc(CAT_LABELS[c.category] || c.category)} <b>${c.percent}%</b></span>`).join('')}</div>`
+    : '<p class="rs-empty">Shu haftada hali tugallangan pomodoro yo\'q.</p>';
+
+  box.innerHTML = `
+    <div class="rs-head">
+      <h3 class="sec-title">${icon('chart','bi')} Haftalik natijalar</h3>
+      <span class="rs-range">${hafta}</span>
+      ${changeChip(r.changePercent)}
+    </div>
+    <div class="rs-chart">${cols}</div>
+    <div class="rs-facts">${facts}</div>
+    ${split}`;
 }
 
 /* ═══════════════ Yuklash ═══════════════ */
