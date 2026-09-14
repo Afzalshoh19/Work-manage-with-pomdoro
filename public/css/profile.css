@@ -230,3 +230,25 @@ h3.sec-title .bi { width: 15px; height: 15px; }
   .fold-note { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .fold-caret { transition: none; } }
+
+
+/* ═══════════════ Shaxsiy ma'lumot kartasi ═══════════════ */
+
+.profile-head { align-items: flex-start; }
+.profile-head .ph-main { flex: 1; min-width: 0; }
+.profile-head > .btn { flex: none; align-self: flex-start; }
+
+
+/* Sarlavha o'rnida foydalanuvchi */
+.ph-name { margin: 0; font-size: 17px; font-weight: 650; line-height: 1.2; }
+.ph-sub { margin: 2px 0 0; font-size: 12.5px; color: var(--txt-2); }
+
+/* Kartaning o'zida ochiladigan tahrirlash */
+.prof-edit {
+  margin-top: 16px; padding-top: 16px;
+  border-top: 1px solid var(--line);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.prof-edit h4.sec-title { margin: 6px 0 0; font-size: 12px; color: var(--txt-3); }
+.prof-edit .row-actions { margin-top: 6px; }
+.card.is-editing #profEditOpen { display: none; }

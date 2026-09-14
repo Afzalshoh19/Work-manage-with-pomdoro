@@ -22,8 +22,8 @@ export async function loadProfile() {
   $('photoHint').textContent = u.photoUrl
     ? 'Rasm yuklangan'
     : `JPG, PNG yoki WebP · ${profileData.photoMaxKb || 512} KB gacha`;
-  const metaEl = $('profMeta');
-  if (metaEl) metaEl.innerHTML = [
+  $('profName').textContent = u.name;
+  $('profMeta').innerHTML = [
     u.jobTitle && C.esc(u.jobTitle),
     u.company && C.esc(u.company),
     C.esc(u.email),
@@ -36,8 +36,7 @@ export async function loadProfile() {
   $('profEmail').value = u.email;
 
   renderAvatarPicker(u);
-  $('colorGrid').innerHTML = profileData.colors.map(c =>
-    `<button class="color-pick ${c === u.color ? 'is-active' : ''}" data-color="${c}" style="background:${c}"></button>`).join('');
+  renderColorPicker(u);
 
   const since = new Date(st.memberSince);
   $('profStats').innerHTML = `
@@ -55,6 +54,37 @@ export async function loadProfile() {
   $('pwCurrent').disabled = !u.hasPassword;
   $('delPasswordWrap').hidden = !u.hasPassword;
   $('delPassword').value = '';
+}
+
+/**
+ * Tahrirlashni kartaning o'zida ochadi.
+ * Maydonlar har safar joriy qiymatdan to'ldiriladi — bekor qilingandan
+ * keyin eski kiritmalar qolib ketmasin.
+ */
+function openProfEditor() {
+  const u = profileData?.user;
+  if (!u) return;
+  $('profNameInput').value = u.name;
+  $('profJob').value = u.jobTitle || '';
+  $('profCompany').value = u.company || '';
+  $('profEmail').value = u.email;
+  renderAvatarPicker(u);
+  renderColorPicker(u);
+
+  $('profEdit').hidden = false;
+  $('profEdit').closest('.card')?.classList.add('is-editing');
+  setTimeout(() => $('profNameInput').focus(), 40);
+}
+
+function closeProfEditor() {
+  $('profEdit').hidden = true;
+  $('profEdit').closest('.card')?.classList.remove('is-editing');
+}
+
+/** Rang tanlash paneli */
+function renderColorPicker(u) {
+  $('colorGrid').innerHTML = profileData.colors.map(c =>
+    `<button type="button" class="color-pick ${c === u.color ? 'is-active' : ''}" data-color="${c}" style="background:${c}"></button>`).join('');
 }
 
 /**
@@ -123,17 +153,26 @@ function bindProfile() {
     document.documentElement.style.setProperty('--uc', b.dataset.color);
   });
 
-  $('profSave').addEventListener('click', async () => {
+  $('profEditOpen').addEventListener('click', openProfEditor);
+  $('profEditCancel').addEventListener('click', closeProfEditor);
+
+  $('profSave').addEventListener('click', async (e) => {
+    e.preventDefault();
+    const name = $('profNameInput').value.trim();
+    if (!name) return C.toast('Ismni kiriting', 'err');
+
     const avatar = $('avatarGrid').querySelector('.is-active')?.dataset.avatar;
     const color = $('colorGrid').querySelector('.is-active')?.dataset.color;
     const res = await C.guard(() => api.saveProfile({
-      name: $('profNameInput').value.trim(),
+      name,
       jobTitle: $('profJob').value.trim(),
       company: $('profCompany').value.trim(),
       avatar, color
     }));
+    closeProfEditor();
     C.setUser(res.user);
     await loadProfile();
+    refreshWorkCard();
     C.toast('Profil saqlandi', 'ok');
   });
 

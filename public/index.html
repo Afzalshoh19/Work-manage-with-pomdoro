@@ -266,42 +266,42 @@
           </button>
           <input type="file" id="photoFile" accept="image/png,image/jpeg,image/webp" hidden>
         </div>
-        <div>
-          <h3 class="sec-title">Shaxsiy ma'lumot</h3>
-          <p class="hint">Ism, lavozim va rasm — yuqoridagi ish kartasida shular ko'rinadi.</p>
+        <div class="ph-main">
+          <h3 class="ph-name" id="profName">—</h3>
+          <p class="ph-sub" id="profMeta">—</p>
           <div class="photo-actions">
             <button class="btn btn-mini btn-ghost" id="photoPick2">Rasm yuklash</button>
             <button class="btn btn-mini btn-ghost" id="photoRemove" hidden>Rasmni o'chirish</button>
             <span class="hint" id="photoHint"></span>
           </div>
         </div>
+        <button class="btn btn-mini" id="profEditOpen"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4.5 19.5 9 8 20.5l-5 1 1-5z"/><path d="M13.5 6 18 10.5"/></svg> Tahrirlash</button>
       </div>
 
-      <div class="settings-grid">
-        <label class="field"><span>Ism familiya</span><input type="text" id="profNameInput" maxlength="80"></label>
-        <label class="field"><span>Lavozim</span><input type="text" id="profJob" maxlength="100" placeholder="masalan: HR menejer"></label>
-        <label class="field"><span>Tashkilot</span><input type="text" id="profCompany" maxlength="100" placeholder="Kompaniya nomi"></label>
-        <label class="field"><span>Email</span><input type="text" id="profEmail" disabled></label>
-      </div>
-
-      <div class="row-actions">
-        <button class="btn btn-primary btn-mini" id="profSave">Saqlash</button>
-      </div>
-
-      <details class="fold" id="foldAvatar">
-        <summary class="fold-head">
-          <svg class="bi fold-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-          <span class="fold-title">Avatar va rang</span>
-          <span class="fold-note">Rasm yuklamasangiz shu belgi ko'rinadi</span>
-        </summary>
-        <div class="fold-body">
-          <h4 class="sec-title">Avatar</h4>
-          <div class="avatar-grid" id="avatarGrid"></div>
-          <p class="hint" id="avatarNote" hidden></p>
-          <h4 class="sec-title" style="margin-top:16px">Rang</h4>
-          <div class="avatar-grid" id="colorGrid"></div>
+      <div class="prof-edit" id="profEdit" hidden>
+        <div class="settings-grid">
+          <label class="field"><span>Ism familiya</span>
+            <input type="text" id="profNameInput" maxlength="80"></label>
+          <label class="field"><span>Lavozim</span>
+            <input type="text" id="profJob" maxlength="100" placeholder="masalan: HR menejer"></label>
+          <label class="field"><span>Tashkilot</span>
+            <input type="text" id="profCompany" maxlength="100" placeholder="Kompaniya nomi"></label>
+          <label class="field"><span>Email</span>
+            <input type="text" id="profEmail" disabled></label>
         </div>
-      </details>
+
+        <h4 class="sec-title">Avatar</h4>
+        <div class="avatar-grid" id="avatarGrid"></div>
+        <p class="hint" id="avatarNote" hidden></p>
+
+        <h4 class="sec-title" style="margin-top:14px">Rang</h4>
+        <div class="avatar-grid" id="colorGrid"></div>
+
+        <div class="row-actions">
+          <button class="btn btn-primary btn-mini" id="profSave">Saqlash</button>
+          <button class="btn btn-mini btn-ghost" id="profEditCancel">Bekor qilish</button>
+        </div>
+      </div>
 
       <details class="fold" id="foldStats">
         <summary class="fold-head">
