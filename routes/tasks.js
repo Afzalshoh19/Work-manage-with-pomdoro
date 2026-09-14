@@ -290,8 +290,11 @@ export function deleteTask({ params, user }) {
   const i = db.tasks.findIndex(t => t.id === params.id && t.userId === user.id);
   if (i === -1) return { error: 'Vazifa topilmadi', status: 404 };
   const [removed] = db.tasks.splice(i, 1);
-  const timer = db.timers[user.id];
-  if (timer && timer.taskId === removed.id) timer.taskId = null;
+  // Ochiq taymerlarda shu vazifa qolib ketmasin (ikkitagacha bo'lishi mumkin)
+  const open = db.timers[user.id];
+  for (const t of (Array.isArray(open) ? open : open ? [open] : [])) {
+    if (t.taskId === removed.id) t.taskId = null;
+  }
   persist();
   return { ok: true };
 }

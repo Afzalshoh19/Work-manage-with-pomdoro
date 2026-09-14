@@ -919,6 +919,26 @@ function renderPlan() {
     : '<div class="empty">Jadval bo\'sh</div>';
 }
 
+/** Ikkinchi taymer qatori — asosiy siferblatdan mustaqil ishlaydi */
+function renderSecondTimer() {
+  const box = $('secondTimer');
+  if (!box) return;
+
+  const t = S.second;
+  box.hidden = !t;
+  if (!t) return;
+
+  const paused = t.status === 'paused';
+  box.classList.toggle('is-paused', paused);
+  $('stTitle').textContent = t.taskTitle || MODE_LABEL[t.mode] || 'Vazifasiz';
+  $('stTitle').title = t.taskTitle || '';
+  $('stClock').textContent = fmtClock(Math.max(0, t.remaining));
+
+  const frac = t.durationSec > 0 ? 1 - Math.max(0, t.remaining) / t.durationSec : 0;
+  $('stBar').style.width = (Math.min(1, Math.max(0, frac)) * 100).toFixed(1) + '%';
+  $('stMain').textContent = paused ? 'Davom etish' : 'Pauza';
+}
+
 function renderActiveTask() {
   const t = S.plan?.tasks.find(x => x.id === S.activeTaskId);
   $('activeTaskTitle').textContent = t
@@ -934,18 +954,41 @@ function modeMinutes(mode) {
   return mode === 'short' ? s.shortBreakMinutes : mode === 'long' ? s.longBreakMinutes : s.workMinutes;
 }
 
+/**
+ * Ikkita taymerdan qaysi biri asosiy siferblatda ko'rinadi.
+ * 0-slot ustuvor; u yopilsa qolgani asosiyga aylanadi.
+ */
+function pickPrimary(list) {
+  if (!list?.length) return null;
+  return list.find(t => t.slot === 0) || list[0];
+}
+
 function applyTimerSnapshot(snap) {
   const prevActive = S.activeTaskId;
-  S.timer = snap.timer;
+  const list = snap.timers || (snap.timer ? [snap.timer] : []);
+  const primary = pickPrimary(list);
+
+  S.timers = list;
+  S.freeSlot = snap.freeSlot ?? null;
+  S.maxTimers = snap.maxTimers ?? 2;
+  S.timer = primary;
   S.cycle = snap.cycle ?? 0;
-  if (snap.timer) {
-    S.pendingMode = snap.timer.mode;
-    S.remaining = snap.timer.remainingSec;
-    S.endAt = Date.now() + snap.timer.remainingSec * 1000;
-    if (snap.timer.taskId) setActiveTask(snap.timer.taskId);
+
+  // Ikkinchi taymer — asosiy bo'lmagani
+  const second = list.find(t => t !== primary) || null;
+  S.second = second
+    ? { ...second, endAt: Date.now() + second.remainingSec * 1000, remaining: second.remainingSec }
+    : null;
+  S.secondCompleting = false;
+
+  if (primary) {
+    S.pendingMode = primary.mode;
+    S.remaining = primary.remainingSec;
+    S.endAt = Date.now() + primary.remainingSec * 1000;
+    if (primary.taskId) setActiveTask(primary.taskId);
     // Pauza hisoblagichi: serverdagi jamlangan qiymat + shu paytdan o'tgani
-    S.pausedBase = snap.timer.pausedSec || 0;
-    S.pausedSince = snap.timer.status === 'paused' ? Date.now() : null;
+    S.pausedBase = primary.pausedSec || 0;
+    S.pausedSince = primary.status === 'paused' ? Date.now() : null;
   } else {
     S.remaining = modeMinutes(S.pendingMode) * 60;
     S.pausedBase = 0;
@@ -953,6 +996,7 @@ function applyTimerSnapshot(snap) {
   }
   S.completing = false;
   renderTimer();
+  renderSecondTimer();
 
   // Taymerdagi vazifa ekranda ham ko'rinsin. Sahifa yangilanganda reja
   // taymerdan oldin yuklanadi — bu yerda chizilmasa "Tanlanmagan" bo'lib qolardi.
@@ -1056,6 +1100,7 @@ function renderTodayMini() {
 }
 
 function tick() {
+  tickSecond();
   if (!S.timer) return;
   if (S.timer.status === 'running') {
     S.remaining = Math.max(0, (S.endAt - Date.now()) / 1000);
@@ -1073,10 +1118,43 @@ function tick() {
   renderTimer();
 }
 
+/** Ikkinchi taymer ham mustaqil sanaydi va o'zi yakunlanadi */
+function tickSecond() {
+  const t = S.second;
+  if (!t) return;
+  if (t.status === 'running') {
+    t.remaining = Math.max(0, (t.endAt - Date.now()) / 1000);
+    if (t.remaining <= 0.4 && !S.secondCompleting) {
+      S.secondCompleting = true;
+      finishSecond();
+      return;
+    }
+  }
+  renderSecondTimer();
+}
+
+/** Ikkinchi taymer tugadi — faqat o'sha slot yakunlanadi */
+async function finishSecond() {
+  const t = S.second;
+  if (!t) return;
+  try {
+    const res = await api.complete({ slot: t.slot });
+    applyTimerSnapshot(res);
+    await loadPlan();
+    if (S.settings.soundEnabled) playAlarm(t.mode === 'work' ? 'work' : 'break', S.settings.volume);
+    toast(`«${t.taskTitle || 'Ikkinchi vazifa'}» pomodorosi yakunlandi`, 'ok');
+  } catch (err) {
+    if (err instanceof AuthError) { location.replace('/login.html'); return; }
+    S.secondCompleting = false;
+    await syncTimer();
+    await loadPlan();
+  }
+}
+
 async function finishStage() {
   const finishedMode = S.timer.mode;
   try {
-    const res = await api.complete();
+    const res = await api.complete({ slot: S.timer.slot ?? 0 });
     await afterStage(res, finishedMode, true);
   } catch (err) {
     if (err instanceof AuthError) { location.replace('/login.html'); return; }
@@ -1177,6 +1255,20 @@ async function startTimer(mode) {
   if (mode === 'work') await loadPlan();
   renderActiveTask();
   toast(`${MODE_LABEL[mode]} boshlandi — ${modeMinutes(mode)} daqiqa`, 'ok');
+}
+
+/**
+ * Ikkinchi vazifani parallel boshlaydi.
+ * Birinchisi to'xtamaydi — ikkalasi ham hisoblanadi.
+ */
+async function startSecondTask(taskId) {
+  unlockAudio();
+  const res = await guard(() => api.start({ mode: 'work', date: S.date, taskId, slot: S.freeSlot }));
+  applyTimerSnapshot(res);
+  await loadPlan();
+  renderActiveTask();
+  const t = S.timers.find(x => x.taskId === taskId);
+  toast(`«${t?.taskTitle || 'Vazifa'}» parallel boshlandi — ikkalasi ham hisoblanadi`, 'ok');
 }
 
 /* ══════════════════ Statistika ══════════════════ */
@@ -1350,11 +1442,12 @@ function bindEvents() {
     unlockAudio();
     cancelAutoStart();
     if (!S.timer) return startTimer(S.pendingMode);
+    const where = { slot: S.timer.slot ?? 0 };
     if (S.timer.status === 'running') {
-      applyTimerSnapshot(await guard(() => api.pause()));
+      applyTimerSnapshot(await guard(() => api.pause(where)));
       toast('Pauza — bu vaqt hisobga olinadi va jadval suriladi');
     } else {
-      applyTimerSnapshot(await guard(() => api.resume()));
+      applyTimerSnapshot(await guard(() => api.resume(where)));
       // Pauzada o'tgan vaqt vazifa tugash vaqtini surdi — jadvalni yangilaymiz
       await loadPlan();
     }
@@ -1368,7 +1461,7 @@ function bindEvents() {
         'Joriy pomodoro hisobga olinmaydi. Davom etamizmi?', 'Ha, o\'tkazish');
       if (!ok) return;
     }
-    const res = await guard(() => api.skip());
+    const res = await guard(() => api.skip({ slot: S.timer.slot ?? 0 }));
     await afterStage(res, mode, false);
     toast(mode === 'work' ? 'Pomodoro o\'tkazib yuborildi' : 'Tanaffus o\'tkazib yuborildi');
   });
@@ -1379,9 +1472,33 @@ function bindEvents() {
     const ok = await confirmBox('Taymerni to\'xtatish',
       'Joriy sessiya bekor qilinadi (1 daqiqadan uzun ish vaqti tarixga "uzilgan" deb yoziladi).', 'To\'xtatish');
     if (!ok) return;
-    const res = await guard(() => api.stop());
+    const res = await guard(() => api.stop({ slot: S.timer.slot ?? 0 }));
     await afterStage(res, mode, false);
     toast('Taymer to\'xtatildi');
+  });
+
+  /* Ikkinchi taymer */
+  $('stMain').addEventListener('click', async () => {
+    const t = S.second;
+    if (!t) return;
+    const where = { slot: t.slot };
+    if (t.status === 'running') {
+      applyTimerSnapshot(await guard(() => api.pause(where)));
+    } else {
+      applyTimerSnapshot(await guard(() => api.resume(where)));
+      await loadPlan();
+    }
+  });
+
+  $('stStop').addEventListener('click', async () => {
+    const t = S.second;
+    if (!t) return;
+    const ok = await confirmBox('Ikkinchi taymerni to\'xtatish',
+      `«${t.taskTitle || 'Vazifasiz'}» bo'yicha joriy sessiya bekor qilinadi.`, 'To\'xtatish');
+    if (!ok) return;
+    applyTimerSnapshot(await guard(() => api.stop({ slot: t.slot })));
+    await loadPlan();
+    toast('Ikkinchi taymer to\'xtatildi');
   });
 
   /* Sana */
@@ -1453,11 +1570,22 @@ function bindEvents() {
     const task = S.plan.tasks.find(t => t.id === id);
 
     if (e.target.closest('.play')) {
+      // Shu vazifa ustida allaqachon ishlanyaptimi
+      if ((S.timers || []).some(t => t.taskId === id)) {
+        toast('Bu vazifa ustida ish allaqachon boshlangan');
+        return;
+      }
       setActiveTask(id);
       renderActiveTask();
       renderPlan();
-      if (S.timer) { toast('Faol vazifa keyingi pomodoroda qo\'llanadi'); return; }
-      await startTimer('work');
+
+      // Taymer yo'q bo'lsa oddiy boshlash, bo'sh slot bo'lsa — ikkinchi vazifa
+      if (!S.timer) { await startTimer('work'); return; }
+      if (S.freeSlot !== null && S.freeSlot !== undefined) {
+        await startSecondTask(id);
+        return;
+      }
+      toast(`Bir vaqtda ko'pi bilan ${S.maxTimers || 2} ta vazifa ustida ishlash mumkin`, 'warn');
       return;
     }
     if (e.target.closest('.t-view')) {

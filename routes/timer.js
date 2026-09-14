@@ -1,6 +1,75 @@
+/**
+ * Taymer — bir vaqtda ikkitagacha vazifa ustida ishlash mumkin.
+ *
+ * Sabab: bir vazifani boshqa odam qilayotgan paytda siz ikkinchisini
+ * tekshirishingiz yoki qilishingiz mumkin — ikkalasi ham hisoblanadi.
+ *
+ * Har bir taymer «slot» raqamiga ega (0 yoki 1). Buyruqlar shu raqam,
+ * taymer id'si yoki vazifa id'si orqali manzillanadi; bitta taymer
+ * ochiq bo'lsa manzil ko'rsatish shart emas.
+ */
 import { getDb, persist, userSettings, userStateOf, daySetup } from '../lib/db.js';
 import { uid, isDate, clamp } from '../lib/util.js';
 import { isMeet } from './tasks.js';
+
+export const MAX_TIMERS = 2;
+
+/* ═══════════ Slotlar ═══════════ */
+
+/**
+ * Foydalanuvchining ochiq taymerlari.
+ * Eski yozuvda bitta obyekt turardi — o'qishda massivga o'giriladi.
+ */
+function timersOf(db, userId) {
+  const v = db.timers[userId];
+  if (!v) return [];
+  if (Array.isArray(v)) return v;
+  const arr = [{ ...v, slot: 0 }];
+  db.timers[userId] = arr;
+  return arr;
+}
+
+function saveTimers(db, userId, list) {
+  if (list.length) db.timers[userId] = list;
+  else delete db.timers[userId];
+}
+
+const bySlot = (list) => [...list].sort((a, b) => (a.slot || 0) - (b.slot || 0));
+
+/** Bo'sh slot raqami yoki null */
+function freeSlot(list) {
+  for (let s = 0; s < MAX_TIMERS; s++) {
+    if (!list.some(t => (t.slot || 0) === s)) return s;
+  }
+  return null;
+}
+
+/**
+ * Buyruq qaysi taymerga tegishli ekanini aniqlaydi.
+ * Bitta taymer ochiq bo'lsa manzil talab qilinmaydi.
+ */
+function pickTimer(list, body = {}) {
+  if (!list.length) return { error: 'Faol taymer yo\'q', status: 400 };
+
+  if (body.timerId) {
+    const t = list.find(x => x.id === body.timerId);
+    return t ? { timer: t } : { error: 'Bunday taymer topilmadi', status: 404 };
+  }
+  if (body.slot !== undefined && body.slot !== null) {
+    const s = Number(body.slot);
+    const t = list.find(x => (x.slot || 0) === s);
+    return t ? { timer: t } : { error: `${s}-slotda taymer yo'q`, status: 404 };
+  }
+  if (body.taskId) {
+    const t = list.find(x => x.taskId === body.taskId);
+    return t ? { timer: t } : { error: 'Bu vazifa uchun taymer yo\'q', status: 404 };
+  }
+  if (list.length === 1) return { timer: list[0] };
+
+  return { error: 'Ikkita taymer ochiq — qaysi biri ekanini ko\'rsating', status: 400, code: 'SLOT_REQUIRED' };
+}
+
+/* ═══════════ Uchrashuv ═══════════ */
 
 /** Uchrashuv davomiyligi (daqiqa) — tanaffus chiqarilgan holda */
 function meetMinutes(task) {
@@ -56,31 +125,41 @@ function creditPause(db, userId, timer, seconds) {
   return true;
 }
 
-export function snapshot(userId) {
-  const db = getDb();
-  const t = db.timers[userId] || null;
-  const state = userStateOf(userId);
-  if (!t) {
-    return { timer: null, serverTime: Date.now(), cycle: state.pomodorosSinceLongBreak, nextMode: 'work' };
-  }
+/* ═══════════ Ko'rinish ═══════════ */
+
+function view(t) {
   const elapsed = elapsedOf(t);
   return {
-    timer: {
-      id: t.id,
-      mode: t.mode,
-      taskId: t.taskId,
-      taskTitle: t.taskTitle,
-      status: t.status,
-      durationSec: t.durationSec,
-      elapsedSec: Math.round(elapsed),
-      remainingSec: Math.max(0, Math.round(t.durationSec - elapsed)),
-      pausedSec: Math.round(pausedOf(t)),
-      pauseCount: t.pauseCount || 0,
-      startedAtIso: t.startedAtIso
-    },
+    id: t.id,
+    slot: t.slot || 0,
+    mode: t.mode,
+    taskId: t.taskId,
+    taskTitle: t.taskTitle,
+    status: t.status,
+    durationSec: t.durationSec,
+    elapsedSec: Math.round(elapsed),
+    remainingSec: Math.max(0, Math.round(t.durationSec - elapsed)),
+    pausedSec: Math.round(pausedOf(t)),
+    pauseCount: t.pauseCount || 0,
+    startedAtIso: t.startedAtIso
+  };
+}
+
+export function snapshot(userId) {
+  const db = getDb();
+  const list = bySlot(timersOf(db, userId));
+  const state = userStateOf(userId);
+  const primary = list[0] || null;
+
+  return {
+    // Eski mijozlar uchun birinchi taymer alohida ham beriladi
+    timer: primary ? view(primary) : null,
+    timers: list.map(view),
+    freeSlot: freeSlot(list),
+    maxTimers: MAX_TIMERS,
     serverTime: Date.now(),
     cycle: state.pomodorosSinceLongBreak,
-    nextMode: t.mode
+    nextMode: primary ? primary.mode : 'work'
   };
 }
 
@@ -96,12 +175,28 @@ export function getTimer({ user }) {
   return snapshot(user.id);
 }
 
+/* ═══════════ Boshlash ═══════════ */
+
 export function startTimer({ body, user }) {
   const db = getDb();
-  const settings = userSettings(user.id);
+  const list = timersOf(db, user.id);
   const mode = MODES.includes(body.mode) ? body.mode : 'work';
   const date = isDate(body.date) ? body.date : new Date().toISOString().slice(0, 10);
   rollCycleIfNewDay(user.id, date);
+
+  // Shu vazifa ustida allaqachon ishlanyaptimi
+  if (body.taskId && list.some(t => t.taskId === body.taskId)) {
+    return { error: 'Bu vazifa ustida ish allaqachon boshlangan', status: 409, code: 'ALREADY_RUNNING' };
+  }
+
+  // Slotni tanlaymiz
+  let slot = body.slot !== undefined && body.slot !== null ? Number(body.slot) : freeSlot(list);
+  if (!Number.isInteger(slot) || slot < 0 || slot >= MAX_TIMERS) {
+    return { error: `Bir vaqtda ko'pi bilan ${MAX_TIMERS} ta vazifa ustida ishlash mumkin`, status: 409, code: 'NO_FREE_SLOT' };
+  }
+  // So'ralgan slot band bo'lsa — oldingisi yopiladi
+  const busy = list.find(t => (t.slot || 0) === slot);
+  if (busy) closeTimer(db, user.id, busy, { record: true });
 
   let taskId = null, taskTitle = '', pomodoroIndex = 0;
   if (mode === 'work' && body.taskId) {
@@ -131,8 +226,9 @@ export function startTimer({ body, user }) {
     ? clamp(body.durationMinutes, 1, 720)
     : (meetLen ?? modeMinutes(mode, setup));
 
-  db.timers[user.id] = {
+  const fresh = {
     id: uid(),
+    slot,
     mode,
     date,
     taskId,
@@ -148,14 +244,25 @@ export function startTimer({ body, user }) {
     startedAtIso: new Date().toISOString(),
     status: 'running'
   };
+
+  const next = timersOf(db, user.id).filter(t => (t.slot || 0) !== slot);
+  next.push(fresh);
+  saveTimers(db, user.id, next);
   persist();
   return snapshot(user.id);
 }
 
-export function pauseTimer({ user }) {
+/* ═══════════ Pauza ═══════════ */
+
+export function pauseTimer({ user, body }) {
   const db = getDb();
-  const t = db.timers[user.id];
-  if (!t || t.status !== 'running') return { error: 'Ishlayotgan taymer yo\'q', status: 400 };
+  const list = timersOf(db, user.id);
+  const found = pickTimer(list, body);
+  if (found.error) return found;
+
+  const t = found.timer;
+  if (t.status !== 'running') return { error: 'Bu taymer ishlamayapti', status: 400 };
+
   t.elapsedSec = elapsedOf(t);
   t.status = 'paused';
   t.pauseStart = Date.now();                 // pauza vaqti shu paytdan sanaladi
@@ -164,10 +271,15 @@ export function pauseTimer({ user }) {
   return snapshot(user.id);
 }
 
-export function resumeTimer({ user }) {
+export function resumeTimer({ user, body }) {
   const db = getDb();
-  const t = db.timers[user.id];
-  if (!t || t.status !== 'paused') return { error: 'Pauzadagi taymer yo\'q', status: 400 };
+  const list = timersOf(db, user.id);
+  const found = pickTimer(list, body);
+  if (found.error) return found;
+
+  const t = found.timer;
+  if (t.status !== 'paused') return { error: 'Bu taymer pauzada emas', status: 400 };
+
   // Pauzada turgan vaqt jamlanadi va darhol vazifaga yoziladi —
   // shunda jadval pomodoro tugashini kutmasdan suriladi
   if (t.pauseStart) {
@@ -183,6 +295,8 @@ export function resumeTimer({ user }) {
   persist();
   return snapshot(user.id);
 }
+
+/* ═══════════ Yakunlash ═══════════ */
 
 function recordSession(db, userId, timer, { completed }) {
   const elapsed = Math.round(elapsedOf(timer));
@@ -207,11 +321,30 @@ function recordSession(db, userId, timer, { completed }) {
   return elapsed;
 }
 
+/** Taymerni ro'yxatdan olib tashlaydi (kerak bo'lsa seansini yozib) */
+function closeTimer(db, userId, timer, { record = false } = {}) {
+  if (record) {
+    const elapsed = Math.round(elapsedOf(timer));
+    if (timer.mode === 'work' && elapsed >= 60) {
+      recordSession(db, userId, timer, { completed: false });
+      const task = db.tasks.find(t => t.id === timer.taskId && t.userId === userId);
+      if (task) task.focusSeconds = (task.focusSeconds || 0) + elapsed;
+    } else if (timer.mode === 'work') {
+      creditPause(db, userId, timer, Math.round(pausedOf(timer) - (timer.pausedCommitted || 0)));
+    }
+  }
+  const rest = timersOf(db, userId).filter(t => t.id !== timer.id);
+  saveTimers(db, userId, rest);
+}
+
 /** Taymer to'liq tugadi */
-export function completeTimer({ user }) {
+export function completeTimer({ user, body }) {
   const db = getDb();
-  const timer = db.timers[user.id];
-  if (!timer) return { error: 'Faol taymer yo\'q', status: 400 };
+  const list = timersOf(db, user.id);
+  const found = pickTimer(list, body);
+  if (found.error) return found;
+
+  const timer = found.timer;
   const settings = userSettings(user.id);
   const state = userStateOf(user.id);
 
@@ -245,7 +378,9 @@ export function completeTimer({ user }) {
   if (timer.mode === 'work' && !wasMeet) {
     nextMode = (state.pomodorosSinceLongBreak % interval === 0) ? 'long' : 'short';
   }
-  delete db.timers[user.id];
+
+  const slot = timer.slot || 0;
+  closeTimer(db, user.id, timer);
   persist();
 
   // Uchrashuvdan keyin tanaffus avtomatik boshlanmaydi
@@ -254,6 +389,7 @@ export function completeTimer({ user }) {
   return {
     ...snapshot(user.id),
     finishedMode: timer.mode,
+    finishedSlot: slot,
     nextMode,
     nextMinutes: modeMinutes(nextMode, setup),
     autoStart: !!auto
@@ -261,33 +397,31 @@ export function completeTimer({ user }) {
 }
 
 /** Bekor qilish */
-export function stopTimer({ user }) {
+export function stopTimer({ user, body }) {
   const db = getDb();
-  const timer = db.timers[user.id];
-  if (!timer) return { error: 'Faol taymer yo\'q', status: 400 };
-  const elapsed = Math.round(elapsedOf(timer));
-  const paused = Math.round(pausedOf(timer));
-  if (timer.mode === 'work' && elapsed >= 60) {
-    recordSession(db, user.id, timer, { completed: false });
-    const task = db.tasks.find(t => t.id === timer.taskId && t.userId === user.id);
-    if (task) task.focusSeconds = (task.focusSeconds || 0) + elapsed;
-  } else if (timer.mode === 'work') {
-    // Seans juda qisqa — lekin pauzada o'tgan vaqt haqiqatda ketgan
-    creditPause(db, user.id, timer, Math.round(paused - (timer.pausedCommitted || 0)));
-  }
-  delete db.timers[user.id];
+  const list = timersOf(db, user.id);
+  const found = pickTimer(list, body);
+  if (found.error) return found;
+
+  const timer = found.timer;
+  const slot = timer.slot || 0;
+  closeTimer(db, user.id, timer, { record: true });
   persist();
-  return { ...snapshot(user.id), finishedMode: timer.mode, nextMode: 'work', autoStart: false };
+  return { ...snapshot(user.id), finishedMode: timer.mode, finishedSlot: slot, nextMode: 'work', autoStart: false };
 }
 
 /** Tanaffusni o'tkazib yuborish */
-export function skipTimer({ user }) {
+export function skipTimer({ user, body }) {
   const db = getDb();
-  const timer = db.timers[user.id];
-  if (!timer) return { error: 'Faol taymer yo\'q', status: 400 };
-  delete db.timers[user.id];
+  const list = timersOf(db, user.id);
+  const found = pickTimer(list, body);
+  if (found.error) return found;
+
+  const timer = found.timer;
+  const slot = timer.slot || 0;
+  closeTimer(db, user.id, timer);
   persist();
-  return { ...snapshot(user.id), finishedMode: timer.mode, nextMode: 'work', autoStart: false };
+  return { ...snapshot(user.id), finishedMode: timer.mode, finishedSlot: slot, nextMode: 'work', autoStart: false };
 }
 
 export function resetCycle({ user }) {
@@ -296,3 +430,6 @@ export function resetCycle({ user }) {
   persist();
   return snapshot(user.id);
 }
+
+/* Boshqa modullar uchun */
+export { timersOf };

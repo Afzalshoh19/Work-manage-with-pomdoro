@@ -121,11 +121,12 @@ export const api = {
   /* Taymer */
   timer:         ()             => request('GET', '/api/timer'),
   start:         (payload)      => request('POST', '/api/timer/start', payload),
-  pause:         ()             => request('POST', '/api/timer/pause'),
-  resume:        ()             => request('POST', '/api/timer/resume'),
-  complete:      ()             => request('POST', '/api/timer/complete', {}),
-  stop:          ()             => request('POST', '/api/timer/stop', {}),
-  skip:          ()             => request('POST', '/api/timer/skip', {}),
+  // Ikkitagacha taymer ochiq bo'lishi mumkin — qaysi biri ekani `where` da
+  pause:         (where = {})   => request('POST', '/api/timer/pause', where),
+  resume:        (where = {})   => request('POST', '/api/timer/resume', where),
+  complete:      (where = {})   => request('POST', '/api/timer/complete', where),
+  stop:          (where = {})   => request('POST', '/api/timer/stop', where),
+  skip:          (where = {})   => request('POST', '/api/timer/skip', where),
   resetCycle:    ()             => request('POST', '/api/timer/cycle-reset', {}),
 
   /* Sozlamalar / statistika */

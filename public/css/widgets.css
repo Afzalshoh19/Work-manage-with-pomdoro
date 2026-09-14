@@ -141,3 +141,40 @@
 
 /* Alohida oyna mavjud emas — tugma bor, lekin so'nik */
 .wdg-ico.is-off, .card-min.is-off { opacity: .45; }
+
+
+/* ═══════════════ Ikkinchi taymer ═══════════════
+   Bir vaqtda ikkita vazifa ustida ishlash mumkin: asosiy siferblat
+   birinchisini ko'rsatadi, ikkinchisi shu qatorda turadi. */
+
+.second-timer {
+  margin-top: 14px; padding: 11px 13px;
+  border: 1px solid color-mix(in srgb, var(--blue) 40%, transparent);
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--blue) 8%, transparent);
+  display: flex; flex-direction: column; gap: 8px;
+}
+.st-head { display: flex; align-items: center; gap: 9px; }
+.st-badge {
+  font-size: 10px; font-weight: 600; letter-spacing: .04em;
+  padding: 2px 7px; border-radius: 20px; flex: none;
+  color: var(--blue); border: 1px solid color-mix(in srgb, var(--blue) 45%, transparent);
+}
+.st-title {
+  flex: 1; min-width: 0; font-size: 13px; font-weight: 500;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.st-clock {
+  font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums;
+  color: var(--blue); flex: none;
+}
+.second-timer.is-paused .st-clock { color: var(--amber); }
+
+.st-bar { height: 3px; border-radius: 3px; background: var(--bg-2); overflow: hidden; }
+.st-bar > i { display: block; height: 100%; width: 0; background: var(--blue); transition: width .9s linear; }
+.second-timer.is-paused .st-bar > i { background: var(--amber); }
+
+.st-actions { display: flex; gap: 6px; }
+.st-actions .btn { flex: 1; justify-content: center; padding: 6px 8px; font-size: 11.5px; }
+
+@media (prefers-reduced-motion: reduce) { .st-bar > i { transition: none; } }
