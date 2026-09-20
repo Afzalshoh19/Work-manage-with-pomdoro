@@ -29,6 +29,45 @@ kaliti bor.
 | `REDIRECT_PORT` | — | Berilsa, shu portda HTTP so'rovlarini HTTPS'ga yo'naltiruvchi ishga tushadi (odatda `80`) |
 | `HSTS_DAYS` | `180` | HSTS muddati. `0` — o'chirish |
 
+### Maxfiy kalitlar — `.env` fayli
+
+Pochta paroli va OAuth kalitlari **bazaga yozilmaydi**. Ular faqat muhitdan
+o'qiladi. Sabab: shifrlash kaliti (`DATA_DIR/.secret`) bazaning yonida turadi —
+papkani nusxalagan odam (zaxira nusxa, disk surati, `backups/*.json`) shifrlangan
+qiymatni ham, kalitni ham birga olardi. Muhitda turgan qiymat bu nusxaga umuman
+tushmaydi.
+
+| O'zgaruvchi | Nima uchun |
+|---|---|
+| `SMTP_HOST` | Pochta serveri manzili, masalan `smtp.gmail.com` |
+| `SMTP_PORT` | `587` (STARTTLS) yoki `465` (to'g'ridan-to'g'ri TLS) |
+| `SMTP_SECURE` | `1` — to'g'ridan-to'g'ri TLS. Berilmasa `465` uchun o'zi yoqiladi |
+| `SMTP_USER` | Kirish nomi (odatda pochta manzili) |
+| `SMTP_PASS` | Parol yoki **ilova kaliti**. Gmail uchun oddiy parol emas |
+| `SMTP_FROM` | Xat jo'natuvchisi, masalan `Pomodoro <siz@gmail.com>` |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | «Google bilan kirish» |
+| `GITHUB_CLIENT_ID` / `GITHUB_CLIENT_SECRET` | «GitHub bilan kirish» |
+| `APP_BASE_URL` | Tashqi manzil, masalan `https://pomodoro.kompaniya.uz`. OAuth qaytish manzili shundan quriladi |
+
+Qiymatlar `.env` faylidan yoki to'g'ridan-to'g'ri muhitdan olinadi. `.env`
+`.gitignore` da — git'ga tushmaydi. Namuna: `.env.example`.
+
+```bash
+cp .env.example .env
+# .env ni ochib kerakli qatorlarning izohini oching va qiymat yozing
+chmod 600 .env
+```
+
+Muhitda berilgan maydon sozlamalar oynasida **qulflanadi** — tahrirlab
+bo'lmaydi va sababi yozib qo'yiladi. Bazada faqat «yoqilgan/o'chirilgan»
+bayrog'i qoladi, uni interfeysdan bemalol almashtirish mumkin.
+
+> `APP_BASE_URL` ni proksi orqasida albatta bering: `Host` sarlavhasi ichki
+> manzilni ko'rsatsa, OAuth qaytish manzili noto'g'ri quriladi.
+
+> Kalitni almashtirganingizda `.env` ni yangilab, serverni qayta ishga
+> tushiring — muhit ishga tushishda bir marta o'qiladi.
+
 ### HTTPS ni qanday yoqish
 
 **Variant A — proksi orqasida (tavsiya etiladi).** nginx yoki Caddy TLS'ni o'z

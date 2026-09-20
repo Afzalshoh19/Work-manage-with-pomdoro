@@ -3,6 +3,10 @@
  * Tashqi kutubxonasiz Node.js HTTP serveri (npm install talab qilinmaydi).
  *   ishga tushirish:  node server.js
  */
+// .env eng boshida o'qilishi kerak — qolgan modullar muhitni shu paytda ko'radi
+import { loadEnvFile, envNames } from './lib/secrets.js';
+const envHolat = loadEnvFile();
+
 import http from 'node:http';
 import https from 'node:https';
 import fs from 'node:fs';
@@ -408,6 +412,13 @@ server.listen(PORT, HOST, () => {
   console.log('  Hisob  : ' + (db.users.length
     ? db.users.length + ' ta foydalanuvchi'
     : 'hali yo\'q — brauzerda ro\'yxatdan o\'ting'));
+  if (envHolat.loaded) {
+    // Faqat nomlar — qiymatlar hech qachon jurnalga tushmaydi
+    const nomlar = envNames();
+    console.log('  Maxfiy : .env o\'qildi' + (nomlar.length
+      ? ' — ' + nomlar.join(', ')
+      : ' (maxfiy kalitlar berilmagan)'));
+  }
   console.log('  Toxtatish: Ctrl+C');
   console.log('');
 });

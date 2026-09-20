@@ -243,3 +243,16 @@ textarea:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3
 /* Shaxsiy ma'lumot kartasi — ish kartasidan keyin keladi */
 .profile-head h3.sec-title { margin: 0 0 3px; }
 .profile-head .hint { margin: 0 0 4px; }
+
+
+/* .env boshqaradigan maydon — tahrirlab bo'lmaydi */
+input.is-env, select.is-env {
+  opacity: .7; cursor: not-allowed;
+  border-style: dashed;
+}
+.env-note {
+  margin: 8px 0 0; padding: 8px 11px;
+  border-left: 3px solid var(--blue);
+  background: color-mix(in srgb, var(--blue) 9%, transparent);
+  border-radius: 0 7px 7px 0;
+}

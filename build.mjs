@@ -98,6 +98,30 @@ HSTS_DAYS=180
 # SECURE_COOKIES=1
 
 NODE_ENV=production
+
+# ---------- Maxfiy kalitlar ----------
+# Bular bazaga YOZILMAYDI - faqat shu fayldan o'qiladi.
+# Sabab: baza papkasini nusxalagan odam (zaxira nusxa, disk surati)
+# shifrlangan qiymatni ham, data/.secret kalitini ham birga olardi.
+# Bazada faqat "yoqilgan/o'chirilgan" bayrog'i qoladi.
+
+# Pochta serveri
+# SMTP_HOST=smtp.gmail.com
+# SMTP_PORT=587
+# SMTP_SECURE=0
+# SMTP_USER=siz@gmail.com
+# SMTP_PASS=ilova-kaliti
+# SMTP_FROM=Pomodoro <siz@gmail.com>
+
+# Kirish usullari
+# GOOGLE_CLIENT_ID=
+# GOOGLE_CLIENT_SECRET=
+# GITHUB_CLIENT_ID=
+# GITHUB_CLIENT_SECRET=
+
+# Tashqi manzil - OAuth qaytish manzili shundan quriladi.
+# Proksi orqasida Host sarlavhasi haqiqiy domendan farq qilsa kerak bo'ladi.
+# APP_BASE_URL=https://pomodoro.kompaniya.uz
 `, 'utf8');
 
 /* ── 4. Dockerfile ── */

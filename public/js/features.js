@@ -556,6 +556,27 @@ function bindIntegrations() {
 
 /* ═══════════════ POCHTA SERVERI (SMTP) ═══════════════ */
 
+/**
+ * `.env` boshqaradigan maydonni qulflaydi.
+ * Aks holda foydalanuvchi hech qanday ta'sir qilmaydigan maydonni
+ * tahrirlab, nega saqlanmadi deb hayron bo'lardi.
+ */
+function lockIfEnv(el, fromEnv, nom = '.env') {
+  if (!el) return;
+  el.disabled = !!fromEnv;
+  el.classList.toggle('is-env', !!fromEnv);
+  if (fromEnv) el.title = `Qiymat ${nom} faylidan olinadi — bu yerdan o'zgartirib bo'lmaydi`;
+  else el.removeAttribute('title');
+}
+
+/** «Muhitdan boshqarilmoqda» eslatmasi */
+function envNote(boxId, fromEnv, matn) {
+  const el = $(boxId);
+  if (!el) return;
+  el.hidden = !fromEnv?.any;
+  if (fromEnv?.any) el.textContent = matn;
+}
+
 export async function loadSmtpSettings(user) {
   if (user.role !== 'owner') return;
   $('smtpCard').hidden = false;
@@ -567,9 +588,23 @@ export async function loadSmtpSettings(user) {
     $('smtpFrom').value = c.from || '';
     $('smtpSecure').value = c.secure ? '1' : '0';
     $('smtpEnabled').checked = !!c.enabled;
-    $('smtpPass').placeholder = c.hasPass
-      ? "Saqlangan — o'zgartirish uchun yozing"
-      : 'Parol yoki ilova kaliti';
+    const env = c.fromEnv || {};
+    lockIfEnv($('smtpHost'), env.host);
+    lockIfEnv($('smtpPort'), env.port);
+    lockIfEnv($('smtpUser'), env.user);
+    lockIfEnv($('smtpFrom'), env.from);
+    lockIfEnv($('smtpSecure'), env.secure);
+    lockIfEnv($('smtpPass'), env.pass);
+
+    $('smtpPass').placeholder = env.pass
+      ? '.env faylidan olinmoqda'
+      : c.hasPass
+        ? "Saqlangan — o'zgartirish uchun yozing"
+        : 'Parol yoki ilova kaliti';
+
+    envNote('smtpEnvNote', env,
+      'Ba\'zi maydonlar .env faylidan olinmoqda va bu yerdan o\'zgartirilmaydi. '
+      + '«Yoqilgan» bayrog\'i shu yerda qoladi.');
 
     $('smtpState').innerHTML = c.ready
       ? `<span class="pill-stat good">✓ Xat yuborishga tayyor</span>`
@@ -633,8 +668,13 @@ export async function loadOauthSettings(user) {
     for (const [p, ids] of [['google', ['googleId', 'googleSecret', 'googleEnabled', 'googleBadge']],
                             ['github', ['githubId', 'githubSecret', 'githubEnabled', 'githubBadge']]]) {
       const [idEl, secretEl, enEl, badgeEl] = ids;
+      const env = cfg[p].fromEnv || {};
       $(idEl).value = cfg[p].clientId;
-      $(secretEl).placeholder = cfg[p].hasSecret ? 'Saqlangan — o\'zgartirish uchun yozing' : 'Client Secret';
+      lockIfEnv($(idEl), env.clientId);
+      lockIfEnv($(secretEl), env.clientSecret);
+      $(secretEl).placeholder = env.clientSecret
+        ? '.env faylidan olinmoqda'
+        : cfg[p].hasSecret ? 'Saqlangan — o\'zgartirish uchun yozing' : 'Client Secret';
       $(enEl).checked = cfg[p].enabled;
       const b = $(badgeEl);
       const on = cfg[p].enabled && cfg[p].clientId && cfg[p].hasSecret;

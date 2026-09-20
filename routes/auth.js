@@ -10,6 +10,7 @@ import { uid, str } from '../lib/util.js';
 import { issueCode, checkCode, issueResetCode, checkResetCode, smtpReady } from '../lib/verify.js';
 import { smtpConfig, saveSmtp, sendMail } from '../lib/mailer.js';
 import { clientIp } from '../lib/net.js';
+import { envOauth, oauthFromEnv, appBaseUrl } from '../lib/secrets.js';
 import { lockedFor, noteFailure, clearFailures, lockMessage } from '../lib/ratelimit.js';
 import {
   newSecret, groupSecret, otpauthUri, verifyTotp,
@@ -157,7 +158,10 @@ export function getSmtpSettings({ user }) {
   const c = smtpConfig();
   return {
     enabled: c.enabled, host: c.host, port: c.port, secure: c.secure,
-    user: c.user, from: c.from, hasPass: !!c.passEnc,
+    user: c.user, from: c.from,
+    hasPass: !!(c.passPlain || c.passEnc),
+    // Qaysi maydon `.env` dan kelayotgani — interfeys ularni qulflaydi
+    fromEnv: c.fromEnv,
     ready: smtpReady(), lastError: c.lastError, lastSentAt: c.lastSentAt
   };
 }
@@ -345,7 +349,29 @@ export function authConfig() {
   };
 }
 
+/**
+ * Provayder sozlamasi: muhit o'zgaruvchisi bazadagi qiymatdan ustun.
+ * Muhitdagi secret bazaga umuman yozilmaydi — faqat xotirada.
+ */
+function oauthConf(provider) {
+  const db = getDb();
+  const saved = db.oauth?.[provider] || {};
+  const e = envOauth(provider);
+  return {
+    enabled: !!saved.enabled,
+    clientId: e.clientId || saved.clientId || '',
+    clientSecret: e.clientSecret || decryptSecret(saved.clientSecretEnc) || '',
+    fromEnv: oauthFromEnv(provider)
+  };
+}
+
+/**
+ * Qaytish manzili. APP_BASE_URL berilgan bo'lsa shundan quriladi —
+ * proksi orqasida `Host` sarlavhasi haqiqiy domendan farq qilishi mumkin.
+ */
 function redirectUri(req, provider) {
+  const base = appBaseUrl();
+  if (base) return `${base}/api/auth/callback/${provider}`;
   const host = req.headers.host || '127.0.0.1:4123';
   const proto = (req.headers['x-forwarded-proto'] || 'http').split(',')[0];
   return `${proto}://${host}/api/auth/callback/${provider}`;
@@ -355,8 +381,8 @@ export function oauthStart({ params, req }) {
   const provider = params.provider;
   const cfg = PROVIDERS[provider];
   const db = getDb();
-  const conf = db.oauth[provider];
-  if (!cfg || !conf?.enabled || !conf.clientId) {
+  const conf = oauthConf(provider);
+  if (!cfg || !conf.enabled || !conf.clientId) {
     return { error: `${cfg?.name || provider} orqali kirish sozlanmagan`, status: 400 };
   }
   cleanPending();
@@ -388,8 +414,8 @@ export async function oauthCallback({ params, query, req }) {
   if (!query.code) return fail('Kod olinmadi');
 
   const db = getDb();
-  const conf = db.oauth[provider];
-  const clientSecret = decryptSecret(conf.clientSecretEnc);
+  const conf = oauthConf(provider);
+  const clientSecret = conf.clientSecret;
   if (!conf.clientId || !clientSecret) return fail(`${cfg.name} sozlamalari to'liq emas`);
 
   try {
@@ -438,8 +464,9 @@ export function getOauthSettings({ user }) {
   const db = getDb();
   const view = (p) => ({
     enabled: !!db.oauth[p].enabled,
-    clientId: db.oauth[p].clientId || '',
-    hasSecret: !!db.oauth[p].clientSecretEnc
+    clientId: oauthConf(p).clientId,
+    hasSecret: !!oauthConf(p).clientSecret,
+    fromEnv: oauthFromEnv(p)
   });
   return { google: view('google'), github: view('github') };
 }
@@ -450,8 +477,12 @@ export function saveOauthSettings({ user, body, req }) {
   const provider = body.provider === 'github' ? 'github' : 'google';
   const conf = db.oauth[provider];
 
-  if (body.clientId !== undefined) conf.clientId = str(body.clientId, 300);
-  if (body.clientSecret) {
+  // Muhit o'zgaruvchisi boshqaradigan maydon bazaga yozilmaydi —
+  // baribir muhit ustun, yozish faqat chalkashlik tug'dirardi
+  const env = oauthFromEnv(provider);
+
+  if (body.clientId !== undefined && !env.clientId) conf.clientId = str(body.clientId, 300);
+  if (body.clientSecret && !env.clientSecret) {
     // Bo'sh qoldirilsa eskisi saqlanadi; "__clear__" — o'chirish
     conf.clientSecretEnc = body.clientSecret === '__clear__' ? null : encryptSecret(String(body.clientSecret).trim());
   }
