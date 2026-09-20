@@ -1,5 +1,6 @@
 import { getDb, userSettings } from '../lib/db.js';
 import { isDate, addDays, daysBetween, clamp } from '../lib/util.js';
+import { streakOf } from '../lib/workcard.js';
 
 const round1 = (n) => Math.round(n * 10) / 10;
 
@@ -78,11 +79,10 @@ export function getStats({ query, user }) {
     if (hourly[h]) hourly[h].pomodoros++;
   }
 
-  // Ketma-ket kunlar (streak)
-  const doneDays = new Set(work.filter(s => s.completed).map(s => s.date));
-  let streak = 0, cur = date;
-  if (!doneDays.has(cur)) cur = addDays(cur, -1);
-  while (doneDays.has(cur) && streak < 1000) { streak++; cur = addDays(cur, -1); }
+  // Ketma-ket kunlar — hisob lib/workcard.js da, bitta joyda.
+  // Avval bu yerda alohida, soddaroq hisob bor edi: u dam olish kunlarini
+  // o'tkazib yubormagani uchun profildagi raqamdan farq qilardi.
+  const streakInfo = streakOf(user.id, date);
 
   const allDone = work.filter(s => s.completed);
   const activeDays = new Set(allDone.map(s => s.date)).size;
@@ -94,7 +94,8 @@ export function getStats({ query, user }) {
     categories,
     topTasks,
     hourly,
-    streak,
+    streak: streakInfo.current,
+    streakBest: streakInfo.best,
     totals: {
       pomodoros: allDone.length,
       focusHours: round1(allDone.reduce((a, s) => a + s.actualSec, 0) / 3600),
