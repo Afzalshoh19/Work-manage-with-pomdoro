@@ -340,10 +340,16 @@ const PROVIDERS = {
 /** Qaysi kirish usullari yoqilgan */
 export function authConfig() {
   const db = getDb();
+  // clientId `.env` da bo'lishi mumkin, shuning uchun bazadan emas,
+  // `oauthConf()` orqali o'qiladi — aks holda tugma umuman chiqmasdi
+  const yoqilgan = (p) => {
+    const c = oauthConf(p);
+    return !!(c.enabled && c.clientId);
+  };
   return {
     providers: {
-      google: { enabled: !!(db.oauth.google.enabled && db.oauth.google.clientId), name: 'Google' },
-      github: { enabled: !!(db.oauth.github.enabled && db.oauth.github.clientId), name: 'GitHub' }
+      google: { enabled: yoqilgan('google'), name: 'Google' },
+      github: { enabled: yoqilgan('github'), name: 'GitHub' }
     },
     hasUsers: db.users.length > 0
   };
