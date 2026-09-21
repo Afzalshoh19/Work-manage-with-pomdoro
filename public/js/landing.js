@@ -35,6 +35,12 @@ const yangiHolat = () => ({
 
 let S = yangiHolat();
 
+/**
+ * Katta oyna (focus) rejimi. Taymer holatidan ALOHIDA: bu faqat ko'rinish.
+ * Esc bosilsa taymer to'xtamaydi — shunchaki sahifa qaytadi.
+ */
+let katta = false;
+
 const jamiSoniya = () => MODES[S.mode].min * 60;
 
 /** Qolgan vaqt. Ishlayotganda soatdan hisoblanadi — fon rejimida ham aniq. */
@@ -47,7 +53,7 @@ function qolgan() {
 
 function saqla() {
   try {
-    localStorage.setItem(KEY, JSON.stringify(S));
+    localStorage.setItem(KEY, JSON.stringify({ ...S, katta }));
   } catch {
     // Maxfiy oyna yoki sayt ma'lumotlari yopilgan — bu xato emas,
     // shunchaki keyingi ochilishda taymer esda qolmaydi.
@@ -82,6 +88,10 @@ function tikla() {
     S.status = 'idle';
     S.remaining = jamiSoniya();
   }
+
+  // Katta oyna — ko'rinish tanlovi. Taymer ishlayotgan bo'lsagina tiklanadi:
+  // to'xtagan taymer uchun butun sahifani yopib turishning ma'nosi yo'q.
+  katta = saqlangan.katta === true && S.status !== 'idle';
 }
 
 /* ═══════════ Chizish ═══════════ */
@@ -107,6 +117,11 @@ function chiz() {
 
   document.body.dataset.mode = S.mode;
   document.body.classList.toggle('is-running', S.status === 'running');
+
+  // Taymer to'xtagan bo'lsa katta oynada ushlab turishning ma'nosi yo'q
+  if (S.status === 'idle') katta = false;
+  document.body.classList.toggle('lp-focus', katta);
+  $('lpFocusMode').textContent = MODES[S.mode].nom;
 
   for (const el of document.querySelectorAll('#lpPills .pill')) {
     el.classList.toggle('is-active', el.dataset.mode === S.mode);
@@ -155,9 +170,30 @@ function boshla() {
     S.endAt = Date.now() + sek * 1000;
     S.remaining = sek;
     S.status = 'running';
+    katta = true;                             // ishga tushdi — faqat taymer qolsin
   }
   saqla();
   chiz();
+}
+
+/** Katta oynadan chiqish — taymerga tegmaydi, u ishlayaveradi */
+function kattaChiq() {
+  katta = false;
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  saqla();   // tanlov esda qolsin — yangilanganda focus qaytib kelmasin
+  chiz();
+}
+
+/**
+ * Butun ekran. Brauzer buni faqat foydalanuvchi bosgan paytda ruxsat etadi,
+ * shuning uchun faqat shu tugmadan chaqiriladi — o'z-o'zidan emas.
+ */
+function butunEkran() {
+  if (document.fullscreenElement) {
+    document.exitFullscreen().catch(() => {});
+  } else {
+    document.documentElement.requestFullscreen?.().catch(() => {});
+  }
 }
 
 function toxtat() {
@@ -245,6 +281,9 @@ function bogla() {
   $('lpSkip').addEventListener('click', otkaz);
   $('lpStop').addEventListener('click', toxtat);
 
+  $('lpExit').addEventListener('click', kattaChiq);
+  $('lpFull').addEventListener('click', butunEkran);
+
   $('lpPills').addEventListener('click', (e) => {
     const pill = e.target.closest('.pill');
     if (pill) rejimGa(pill.dataset.mode);
@@ -254,8 +293,10 @@ function bogla() {
   document.addEventListener('visibilitychange', () => { if (!document.hidden) chiz(); });
   window.addEventListener('focus', chiz);
 
-  // Probel — boshlash/pauza. Maydonga yozayotganda aralashmaydi.
   document.addEventListener('keydown', (e) => {
+    // Esc — katta oynadan chiqish. Taymer to'xtamaydi.
+    if (e.key === 'Escape' && katta) { kattaChiq(); return; }
+    // Probel — boshlash/pauza. Tugma yoki maydonda turganda aralashmaydi.
     if (e.code !== 'Space' || e.target.closest('input, textarea, button')) return;
     e.preventDefault();
     boshla();

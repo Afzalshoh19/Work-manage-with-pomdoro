@@ -58,6 +58,65 @@
 .lp-note b { color: var(--txt); font-variant-numeric: tabular-nums; }
 .lp-note strong { color: var(--amber); font-weight: 600; }
 
+/* ═══════════════════════════════════════════
+   Katta oyna (focus) — taymer ishga tushganda
+   Sahifadagi hamma narsa yashiriladi, faqat taymer qoladi.
+   ═══════════════════════════════════════════ */
+
+.lp-focus-bar { display: none; }
+
+body.lp-focus { overflow: hidden; }
+
+/* Taymerdan boshqa hamma narsa ko'rinmaydi */
+body.lp-focus .lp-top,
+body.lp-focus .lp-hero-text,
+body.lp-focus .lp-unlock,
+body.lp-focus .lp-cta,
+body.lp-focus .lp-foot,
+body.lp-focus .lp-note,
+body.lp-focus #lpPills { display: none; }
+
+body.lp-focus .lp-hero { display: block; padding: 0; max-width: none; }
+
+body.lp-focus .lp-demo {
+  position: fixed; inset: 0; z-index: 60;
+  margin: 0; max-width: none; width: auto;
+  border: 0; border-radius: 0; box-shadow: none;
+  background: var(--bg);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; padding: 26px;
+  animation: lp-focus-in .22s ease-out;
+}
+@keyframes lp-focus-in { from { opacity: 0; transform: scale(.985); } }
+
+/* Yuqoridagi qator: rejim nomi va tugmalar */
+body.lp-focus .lp-focus-bar {
+  position: absolute; top: 0; left: 0; right: 0;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 22px;
+}
+.lp-focus-mode {
+  font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--mode);
+}
+.lp-focus-btns { display: flex; gap: 6px; }
+.lp-focus-btns .icon-btn svg { width: 17px; height: 17px; }
+
+/* Halqa ekranga qarab kattalashadi */
+body.lp-focus .dial {
+  width: min(62vh, 74vw, 460px);
+  height: min(62vh, 74vw, 460px);
+  margin-bottom: 4px;
+}
+/* Raqam halqa ichiga sig'ishi uchun kenglikka ham bog'lanadi —
+   faqat vh bo'lsa tor ekranda toshib ketadi */
+body.lp-focus .clock { font-size: clamp(46px, min(13vh, 16vw), 104px); }
+body.lp-focus .dial-sub { font-size: clamp(11px, 2.6vw, 14px); max-width: 78%; margin: 0 auto; }
+body.lp-focus .cycle-dots { margin: 22px 0 20px; }
+body.lp-focus .cycle-dots i { width: 11px; height: 11px; }
+
+body.lp-focus .controls { width: min(360px, 88vw); }
+
 /* ═══════════ Imkoniyatlar ═══════════ */
 
 .lp-unlock { max-width: 1160px; margin: 0 auto; padding: 0 28px 76px; }
