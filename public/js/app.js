@@ -1878,7 +1878,8 @@ async function init() {
     toast('Serverga ulanib bo\'lmadi. `node server.js` ishlab turibdimi?', 'err');
     return;
   }
-  if (!me.user) { location.replace('/login.html'); return; }
+  // Bosh manzilga — u yerda mehmon taqdimot sahifasini ko'radi
+  if (!me.user) { location.replace('/'); return; }
 
   S.user = me.user;
   S.settings = me.settings;

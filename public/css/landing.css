@@ -1,0 +1,135 @@
+/* ═══════════════════════════════════════════
+   Taqdimot (landing) sahifasi
+   Taymerning o'zi style.css dagi .dial / .ring / .clock
+   uslublaridan foydalanadi — bu yerda faqat sahifa tuzilishi.
+   ═══════════════════════════════════════════ */
+
+.lp-body {
+  min-height: 100vh;
+  background:
+    radial-gradient(1100px 600px at 8% -6%, color-mix(in srgb, var(--accent) 17%, transparent), transparent 62%),
+    radial-gradient(900px 560px at 96% 18%, color-mix(in srgb, var(--blue) 13%, transparent), transparent 60%),
+    var(--bg);
+}
+
+/* ═══════════ Yuqori qator ═══════════ */
+
+.lp-top {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  max-width: 1160px; margin: 0 auto; padding: 22px 28px;
+}
+.lp-brand { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 700; }
+.lp-brand span { font-size: 27px; filter: drop-shadow(0 3px 10px rgba(255,95,86,.45)); }
+.lp-top-actions { display: flex; gap: 8px; }
+.lp-top-actions .btn { text-decoration: none; }
+
+/* ═══════════ Asosiy qism ═══════════ */
+
+.lp-hero {
+  max-width: 1160px; margin: 0 auto; padding: 34px 28px 72px;
+  display: grid; grid-template-columns: 1fr 400px; gap: 56px; align-items: center;
+}
+.lp-hero-text h1 { font-size: 46px; line-height: 1.12; letter-spacing: -.025em; margin: 0 0 18px; }
+.lp-lead { color: var(--txt-2); font-size: 15.5px; line-height: 1.6; max-width: 480px; margin: 0 0 18px; }
+.lp-try {
+  color: var(--txt-2); font-size: 14px; line-height: 1.55; max-width: 480px; margin: 0 0 26px;
+  padding: 12px 15px; border-left: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border-radius: 0 9px 9px 0;
+}
+.lp-try strong { color: var(--txt); display: block; }
+.lp-hero-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.lp-hero-actions .btn { text-decoration: none; }
+
+/* Tugma ichidagi SVG. plan.css da ham shunday, lekin u sahifa uchun
+   ortiqcha — shuning uchun kerakli uch qator shu yerda takrorlanadi. */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+.btn .bi, .btn svg { width: 15px; height: 15px; flex-shrink: 0; }
+.btn-lg svg { width: 17px; height: 17px; }
+
+/* Demo taymer kartochkasi */
+.lp-demo { text-align: center; }
+.lp-demo .controls { margin-top: 2px; }
+.lp-demo .controls #lpMain { grid-column: 1 / -1; }   /* Boshlash — to'liq qator */
+.lp-note {
+  margin: 18px 0 0; padding-top: 14px; border-top: 1px solid var(--line);
+  color: var(--txt-3); font-size: 12px; line-height: 1.55; text-align: left;
+}
+.lp-note b { color: var(--txt); font-variant-numeric: tabular-nums; }
+.lp-note strong { color: var(--amber); font-weight: 600; }
+
+/* ═══════════ Imkoniyatlar ═══════════ */
+
+.lp-unlock { max-width: 1160px; margin: 0 auto; padding: 0 28px 76px; }
+.lp-sec-head { text-align: center; margin-bottom: 34px; }
+.lp-sec-head h2 { font-size: 30px; letter-spacing: -.02em; margin: 0 0 10px; }
+.lp-sec-head p { color: var(--txt-2); font-size: 14.5px; margin: 0; }
+
+.lp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.lp-feat {
+  display: grid; grid-template-columns: 42px 1fr; gap: 14px; align-items: start;
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--r); padding: 18px 18px 19px;
+  transition: border-color .15s, transform .15s;
+}
+.lp-feat:hover { border-color: var(--line-2); transform: translateY(-2px); }
+.lp-feat b {
+  width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center;
+  background: var(--card-2); border: 1px solid var(--line); color: var(--accent);
+}
+.lp-feat b svg { width: 20px; height: 20px; }
+.lp-feat strong { display: block; font-size: 14px; font-weight: 620; margin-bottom: 5px; }
+.lp-feat span { display: block; color: var(--txt-3); font-size: 12.5px; line-height: 1.55; }
+
+/* Belgilar bir xil qizil bo'lib ketmasin — ohang aralashsin */
+.lp-feat:nth-child(3n+2) b { color: var(--blue); }
+.lp-feat:nth-child(3n) b   { color: var(--green); }
+
+/* ═══════════ Yakuniy chaqiruv ═══════════ */
+
+.lp-cta {
+  max-width: 660px; margin: 0 auto 72px; padding: 44px 28px;
+  text-align: center; background: var(--card);
+  border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow);
+}
+.lp-cta h2 { font-size: 27px; letter-spacing: -.02em; margin: 0 0 9px; }
+.lp-cta > p { color: var(--txt-2); font-size: 14.5px; margin: 0 0 22px; }
+.lp-cta .btn { text-decoration: none; padding-left: 30px; padding-right: 30px; }
+.lp-cta-sub { color: var(--txt-3); font-size: 12.5px; margin: 18px 0 0; }
+.lp-cta-sub a { color: var(--accent); }
+
+/* ═══════════ Pastki qator ═══════════ */
+
+.lp-foot {
+  border-top: 1px solid var(--line); padding: 22px 28px;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  max-width: 1160px; margin: 0 auto; color: var(--txt-3); font-size: 12px;
+}
+
+/* ═══════════ Moslashuvchanlik ═══════════ */
+
+@media (max-width: 1000px) {
+  .lp-grid { grid-template-columns: repeat(2, 1fr); }
+  .lp-feat:nth-child(3n+2) b, .lp-feat:nth-child(3n) b { color: var(--accent); }
+  .lp-feat:nth-child(2n) b { color: var(--blue); }
+}
+
+@media (max-width: 900px) {
+  /* Telefonda birinchi ko'rinadigan narsa — ishlaydigan taymer */
+  .lp-hero { grid-template-columns: 1fr; gap: 32px; padding-top: 16px; padding-bottom: 52px; }
+  .lp-demo { order: -1; max-width: 400px; width: 100%; margin: 0 auto; }
+  .lp-hero-text h1 { font-size: 34px; }
+  .lp-hero-text { text-align: center; }
+  .lp-lead, .lp-try { margin-left: auto; margin-right: auto; }
+  .lp-try { text-align: left; }
+  .lp-hero-actions { justify-content: center; }
+}
+
+@media (max-width: 620px) {
+  .lp-top { padding: 16px 18px; }
+  .lp-hero, .lp-unlock { padding-left: 18px; padding-right: 18px; }
+  .lp-grid { grid-template-columns: 1fr; }
+  .lp-sec-head h2 { font-size: 24px; }
+  .lp-cta { margin-left: 18px; margin-right: 18px; padding: 32px 20px; }
+  .lp-foot { padding: 20px 18px; }
+}

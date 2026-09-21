@@ -14,7 +14,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { load, dailyBackup, paths } from './lib/db.js';
-import { userFromRequest } from './lib/auth.js';
+import { userFromRequest, hasSession } from './lib/auth.js';
 import { isSecureRequest } from './lib/net.js';
 import { sweep as sweepLimits } from './lib/ratelimit.js';
 import { TLS_ENABLED, TLS_KEY, TLS_CERT, TLS_CA, FORCE_HTTPS, HSTS_DAYS } from './lib/paths.js';
@@ -222,7 +222,11 @@ function readBody(req) {
 }
 
 function serveStatic(req, res, pathname) {
-  const rel = pathname === '/' ? '/index.html' : pathname;
+  // Bosh manzil: kirmagan mehmonga taqdimot, kirganga ilovaning o'zi.
+  // Qolgan yo'llar odatdagidek fayl sifatida beriladi.
+  const rel = pathname === '/'
+    ? (hasSession(req) ? '/index.html' : '/landing.html')
+    : pathname;
   const filePath = path.join(PUBLIC_DIR, path.normalize(rel).replace(/^([/\\])+/, ''));
   if (!filePath.startsWith(PUBLIC_DIR)) { res.writeHead(403); return res.end('Taqiqlangan'); }
 

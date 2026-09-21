@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pomodoro — ish vaqtini boshqarish</title>
+<meta name="description" content="Kun tartibini tuzing, vazifalarni pomodoro usulida rejalashtiring va tanaffuslarni tizim o'zi hisoblasin. Taymerni shu yerdayoq sinab ko'ring.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍅</text></svg>">
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/extra.css">
+<link rel="stylesheet" href="/css/fixes.css">
+<link rel="stylesheet" href="/css/landing.css">
+</head>
+<body class="lp-body">
+
+<header class="lp-top">
+  <div class="lp-brand"><span>🍅</span> Pomodoro</div>
+  <nav class="lp-top-actions">
+    <a class="btn btn-ghost" href="/login.html">Kirish</a>
+    <a class="btn btn-primary" href="/login.html#register">Ro'yxatdan o'tish</a>
+  </nav>
+</header>
+
+<main>
+
+  <!-- ═══════ Asosiy qism: matn + ishlaydigan taymer ═══════ -->
+  <section class="lp-hero">
+
+    <div class="lp-hero-text">
+      <h1>Ish vaqtingizni<br>boshqaring</h1>
+      <p class="lp-lead">
+        Vazifalaringizni yozing — tizim kun jadvalini, tanaffuslarni va tushlikni
+        o'zi joylashtiradi. Har bir pomodoro hisobga olinadi, kun oxirida tayyor
+        hisobot chiqadi.
+      </p>
+      <p class="lp-try">
+        <strong>Sinab ko'ring — ro'yxatdan o'tish shart emas.</strong>
+        O'ngdagi taymer hoziroq ishlaydi.
+      </p>
+      <div class="lp-hero-actions">
+        <a class="btn btn-primary btn-lg" href="/login.html#register">Bepul boshlash</a>
+        <a class="btn btn-ghost btn-lg" href="#imkoniyatlar">Nima ochiladi?</a>
+      </div>
+    </div>
+
+    <!-- Demo taymer: serverga umuman murojaat qilmaydi -->
+    <div class="card lp-demo" id="lpDemo">
+
+      <div class="mode-pills" id="lpPills">
+        <button class="pill is-active" type="button" data-mode="work">Ish</button>
+        <button class="pill" type="button" data-mode="short">Qisqa tanaffus</button>
+        <button class="pill" type="button" data-mode="long">Uzun tanaffus</button>
+      </div>
+
+      <div class="dial">
+        <svg viewBox="0 0 240 240" class="ring" aria-hidden="true">
+          <circle class="ring-bg" cx="120" cy="120" r="106"></circle>
+          <circle class="ring-fg" id="lpRing" cx="120" cy="120" r="106"
+                  stroke-dasharray="666.02" stroke-dashoffset="0"></circle>
+        </svg>
+        <div class="dial-center">
+          <div class="clock" id="lpClock">25:00</div>
+          <div class="dial-sub" id="lpSub">Boshlashga tayyor</div>
+        </div>
+      </div>
+
+      <div class="cycle-dots" id="lpDots"></div>
+
+      <div class="controls">
+        <button class="btn btn-primary btn-lg" type="button" id="lpMain">Boshlash</button>
+        <button class="btn btn-ghost" type="button" id="lpSkip"
+                title="Joriy bosqichni tugatib, keyingisiga o'tish">O'tkazish</button>
+        <button class="btn btn-ghost" type="button" id="lpStop"
+                title="Taymerni bekor qilish" disabled>To'xtatish</button>
+      </div>
+
+      <p class="lp-note">
+        Shu brauzerda tugallangan: <b id="lpDone">0</b> pomodoro.
+        Bu hisob <strong>saqlanmaydi</strong> — ro'yxatdan o'tsangiz har bir
+        pomodoro tarixga yoziladi va statistikaga qo'shiladi.
+      </p>
+
+    </div>
+
+  </section>
+
+  <!-- ═══════ Ro'yxatdan o'tgach nima ochiladi ═══════ -->
+  <section class="lp-unlock" id="imkoniyatlar">
+    <div class="lp-sec-head">
+      <h2>Ro'yxatdan o'tsangiz nima ochiladi</h2>
+      <p>Taymer — boshlanishi xolos. Hisob ochilgach quyidagilar ishga tushadi.</p>
+    </div>
+    <div class="lp-grid" id="lpGrid"></div>
+  </section>
+
+  <!-- ═══════ Yakuniy chaqiruv ═══════ -->
+  <section class="lp-cta">
+    <h2>Bugundan boshlang</h2>
+    <p>Hisob ochish bir daqiqa. Email yoki Google orqali.</p>
+    <a class="btn btn-primary btn-lg" href="/login.html#register">Bepul boshlash</a>
+    <p class="lp-cta-sub">Hisobingiz bormi? <a href="/login.html">Kirish</a></p>
+  </section>
+
+</main>
+
+<footer class="lp-foot">
+  <span>🍅 Pomodoro — ish jarayonini boshqarish tizimi</span>
+  <span>Ma'lumotlar o'z serveringizda saqlanadi</span>
+</footer>
+
+<script type="module" src="/js/landing.js"></script>
+</body>
+</html>

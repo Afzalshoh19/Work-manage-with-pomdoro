@@ -110,6 +110,9 @@ async function init() {
   if (params.get('error')) alertBox(params.get('error'));
   if (params.get('registered')) setMode('login');
 
+  // Taqdimot sahifasidagi «Ro'yxatdan o'tish» tugmasi shu yerga olib keladi
+  if (location.hash === '#register') setMode('register');
+
   // OAuth orqali kirdi, lekin hisobda 2FA yoqilgan
   const ticket = params.get('twofa');
   if (ticket) {
