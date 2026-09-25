@@ -2,7 +2,7 @@
 import { getDb, persist } from '../lib/db.js';
 import { buildReport, renderNotionBlocks, renderConfluence } from '../lib/report.js';
 import { resolvedConfig, noteIntegrationResult } from './profile.js';
-import { uid, isDate, clamp, str } from '../lib/util.js';
+import { uid, isDate, clamp, str, todayLocal } from '../lib/util.js';
 import * as jira from '../lib/integrations/jira.js';
 import * as notion from '../lib/integrations/notion.js';
 import * as confluence from '../lib/integrations/confluence.js';
@@ -46,7 +46,7 @@ export async function jiraImport({ user, body }) {
   const cfg = resolvedConfig(user, 'jira');
   if (!cfg?.token) return { error: 'Jira sozlanmagan', status: 400 };
 
-  const date = isDate(body.date) ? body.date : new Date().toISOString().slice(0, 10);
+  const date = isDate(body.date) ? body.date : todayLocal();
   const keys = Array.isArray(body.keys) ? body.keys : null;
 
   try {
@@ -180,7 +180,7 @@ function estimateToPomodoros(value, perPomodoro) {
 
 export function genericImport({ user, body }) {
   const db = getDb();
-  const date = isDate(body.date) ? body.date : new Date().toISOString().slice(0, 10);
+  const date = isDate(body.date) ? body.date : todayLocal();
   const perPomodoro = clamp(body.minutesPerPomodoro ?? 25, 5, 120);
   const fallback = clamp(body.defaultPomodoros ?? 2, 1, 20);
   const sourceName = str(body.source, 40) || 'import';

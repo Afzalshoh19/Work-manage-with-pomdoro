@@ -43,7 +43,12 @@ export async function downloadFile(url) {
   const cd = res.headers.get('content-disposition') || '';
   const m = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(cd);
   if (m) { try { name = decodeURIComponent(m[1]); } catch { name = m[1]; } }
-  if (!name) name = 'hisobot-' + new Date().toISOString().slice(0, 10);
+  // Mahalliy sana: `toISOString()` UTC beradi va yarim tundan keyin
+  // fayl kechagi kun nomi bilan saqlanardi
+  if (!name) {
+    const d = new Date();
+    name = 'hisobot-' + new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+  }
 
   const blob = await res.blob();
   if (!blob.size) throw new Error('Fayl bo\'sh qaytdi');

@@ -1,7 +1,7 @@
 import { getDb, persist, userSettings, daySetup, setDaySetup, TASK_STATUSES, STATUS_LABELS, userWorkSchedule } from '../lib/db.js';
 import { buildSchedule } from '../lib/plan.js';
 import { withActuals } from '../lib/actuals.js';
-import { uid, isDate, clamp, str, addDays } from '../lib/util.js';
+import { uid, isDate, clamp, str, addDays, todayLocal } from '../lib/util.js';
 
 const CATEGORIES = ['ish', 'oqish', 'loyiha', 'uy', 'sport', 'meet', 'uchrashuv', 'boshqa'];
 
@@ -89,7 +89,7 @@ function dayTasks(userId, date) {
  * jamlangan pauza qo'shiladi, shunda jadval rejadan emas — haqiqatdan quriladi.
  */
 export function getPlan({ query, user }) {
-  const date = isDate(query.date) ? query.date : new Date().toISOString().slice(0, 10);
+  const date = isDate(query.date) ? query.date : todayLocal();
   const setup = daySetup(user.id, date);
   const tasks = dayTasks(user.id, date).map(t => withActuals(t, date));
   const plan = buildSchedule(tasks, userSettings(user.id), setup);
@@ -130,7 +130,7 @@ export function checkLunch(lunchStart, lunchEnd, workStart, workEnd) {
  * uzun tanaffus oralig'i. Faqat yuborilgan maydonlar o'zgaradi.
  */
 export function setPlanWindow({ body, user }) {
-  const date = isDate(body.date) ? body.date : new Date().toISOString().slice(0, 10);
+  const date = isDate(body.date) ? body.date : todayLocal();
 
   if (body.reset) {
     setDaySetup(user.id, date, null);
@@ -174,7 +174,7 @@ export function setPlanWindow({ body, user }) {
 
 export function createTask({ body, user }) {
   const db = getDb();
-  const date = isDate(body.date) ? body.date : new Date().toISOString().slice(0, 10);
+  const date = isDate(body.date) ? body.date : todayLocal();
   const title = str(body.title, 200);
   if (!title) return { error: 'Vazifa nomi bo\'sh bo\'lmasligi kerak', status: 400 };
 
@@ -313,7 +313,7 @@ export function reorderTasks({ body, user }) {
 /** Boshqa kundagi rejani shu kunga nusxalash */
 export function copyPlan({ body, user }) {
   const db = getDb();
-  const to = isDate(body.to) ? body.to : new Date().toISOString().slice(0, 10);
+  const to = isDate(body.to) ? body.to : todayLocal();
   const from = isDate(body.from) ? body.from : addDays(to, -1);
   const source = dayTasks(user.id, from);
   if (!source.length) return { error: `${from} sanasida vazifa topilmadi`, status: 400 };
@@ -468,7 +468,7 @@ export function copyTasks({ body, user }) {
   const ids = Array.isArray(body.ids) ? body.ids : (body.id ? [body.id] : []);
   if (!ids.length) return { error: 'Nusxalanadigan vazifa tanlanmadi', status: 400 };
 
-  const to = isDate(body.to) ? body.to : addDays(new Date().toISOString().slice(0, 10), 1);
+  const to = isDate(body.to) ? body.to : addDays(todayLocal(), 1);
 
   // Tartibni asl ko'rinishida saqlaymiz
   const source = ids
@@ -510,7 +510,7 @@ export function copyTasks({ body, user }) {
 
 /** Bajarilmagan vazifalarni ertangi kunga ko'chirish */
 export function carryOver({ body, user }) {
-  const from = isDate(body.from) ? body.from : new Date().toISOString().slice(0, 10);
+  const from = isDate(body.from) ? body.from : todayLocal();
   const to = isDate(body.to) ? body.to : addDays(from, 1);
   const pending = dayTasks(user.id, from).filter(t => !t.done);
   if (!pending.length) return { error: 'Ko\'chiriladigan bajarilmagan vazifa yo\'q', status: 400 };
@@ -529,7 +529,7 @@ export function carryOver({ body, user }) {
 
 /** Bir necha kunning yuklamasi — haftalik rejalashtirish oynasi uchun */
 export function getPlanRange({ query, user }) {
-  const from = isDate(query.from) ? query.from : new Date().toISOString().slice(0, 10);
+  const from = isDate(query.from) ? query.from : todayLocal();
   const to = isDate(query.to) ? query.to : addDays(from, 6);
   const settings = userSettings(user.id);
 
@@ -612,7 +612,7 @@ export function bulkAddTasks({ body, user }) {
 
 /** Haftalik jadvaldagi ish kunlarini oraliqdan ajratib beradi */
 export function workdaysInRange({ query, user }) {
-  const from = isDate(query.from) ? query.from : new Date().toISOString().slice(0, 10);
+  const from = isDate(query.from) ? query.from : todayLocal();
   const to = isDate(query.to) ? query.to : addDays(from, 6);
   const week = userWorkSchedule(user.id);
   const out = [];

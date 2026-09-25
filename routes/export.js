@@ -1,5 +1,5 @@
 import { getDb, persist, userSettings, DEFAULT_SETTINGS } from '../lib/db.js';
-import { isDate, addDays, uid } from '../lib/util.js';
+import { isDate, addDays, uid, todayLocal } from '../lib/util.js';
 
 function csvCell(v) {
   const s = v === null || v === undefined ? '' : String(v);
@@ -9,7 +9,7 @@ const csvRow = (arr) => arr.map(csvCell).join(';');
 
 export function exportData({ query, user }) {
   const db = getDb();
-  const to = isDate(query.to) ? query.to : new Date().toISOString().slice(0, 10);
+  const to = isDate(query.to) ? query.to : todayLocal();
   const from = isDate(query.from) ? query.from : addDays(to, -364);
   const format = query.format === 'csv' ? 'csv' : 'json';
 

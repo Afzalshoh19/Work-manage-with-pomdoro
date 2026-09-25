@@ -1,12 +1,12 @@
 import { getDb, userSettings } from '../lib/db.js';
-import { isDate, addDays, daysBetween, clamp } from '../lib/util.js';
+import { isDate, addDays, daysBetween, clamp, todayLocal } from '../lib/util.js';
 import { streakOf } from '../lib/workcard.js';
 
 const round1 = (n) => Math.round(n * 10) / 10;
 
 export function getStats({ query, user }) {
   const db = getDb();
-  const date = isDate(query.date) ? query.date : new Date().toISOString().slice(0, 10);
+  const date = isDate(query.date) ? query.date : todayLocal();
   const days = clamp(query.days ?? 30, 7, 365);
   const from = addDays(date, -(days - 1));
 
@@ -111,7 +111,7 @@ export function getStats({ query, user }) {
 
 export function getHistory({ query, user }) {
   const db = getDb();
-  const to = isDate(query.to) ? query.to : new Date().toISOString().slice(0, 10);
+  const to = isDate(query.to) ? query.to : todayLocal();
   const from = isDate(query.from) ? query.from : addDays(to, -29);
 
   const dates = new Set([

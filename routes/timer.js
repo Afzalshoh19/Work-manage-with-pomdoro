@@ -9,7 +9,7 @@
  * ochiq bo'lsa manzil ko'rsatish shart emas.
  */
 import { getDb, persist, userSettings, userStateOf, daySetup } from '../lib/db.js';
-import { uid, isDate, clamp } from '../lib/util.js';
+import { uid, isDate, clamp, todayLocal } from '../lib/util.js';
 import { isMeet } from './tasks.js';
 
 export const MAX_TIMERS = 2;
@@ -181,7 +181,7 @@ export function startTimer({ body, user }) {
   const db = getDb();
   const list = timersOf(db, user.id);
   const mode = MODES.includes(body.mode) ? body.mode : 'work';
-  const date = isDate(body.date) ? body.date : new Date().toISOString().slice(0, 10);
+  const date = isDate(body.date) ? body.date : todayLocal();
   rollCycleIfNewDay(user.id, date);
 
   // Shu vazifa ustida allaqachon ishlanyaptimi
