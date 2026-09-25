@@ -21,3 +21,8 @@ dist/
 
 # Mahalliy tahrirlash vositalari sozlamasi
 .claude/
+
+# Python virtual muhiti va kesh
+backend/.venv/
+__pycache__/
+*.py[cod]

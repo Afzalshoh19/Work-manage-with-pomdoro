@@ -1,0 +1,15 @@
+# Backend bog'liqliklari.
+# O'rnatish:  backend/.venv/Scripts/python -m pip install -r backend/requirements.txt
+
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+
+# AES-256-GCM Python stdlib'da yo'q — mavjud shifrlangan kalitlarni
+# o'qish uchun shart (data/.secret bilan shifrlangan qiymatlar).
+cryptography==44.0.0
+
+# Tashqi API'lar: Jira, Notion, Confluence, OAuth token almashuvi
+httpx==0.28.1
+
+# .env o'qish — Node'dagi process.loadEnvFile o'rnida
+python-dotenv==1.0.1
