@@ -15,6 +15,43 @@ import uuid
 from datetime import datetime, timedelta, timezone
 
 
+def js_round(x):
+    """
+    JS `Math.round` — yarmi DOIM yuqoriga (+cheksizlik tomon).
+
+    Python `round()` bank yaxlitlashini qiladi: `round(0.5)` → 0, `round(2.5)` → 2.
+    JS esa 1 va 3 beradi. Hisobotdagi foizlar va daqiqalar shu yerdan
+    bir birlikka farq qilib ketardi.
+    """
+    if x != x or math.isinf(x):
+        return x
+    f = math.floor(x)
+    diff = x - f
+    if diff > 0.5:
+        return f + 1
+    if diff < 0.5:
+        return f
+    return f + 1
+
+
+def js_ready(o):
+    """
+    JS `JSON.stringify` butun qiymatli sonni `1.0` emas, `1` deb yozadi.
+
+    Python `json.dumps(1.0)` esa `1.0` beradi — natijada bir xil hisob
+    ikki xil javob bo'lib qolardi. Serializatsiyadan oldin tozalanadi.
+    """
+    if isinstance(o, bool):
+        return o
+    if isinstance(o, float):
+        return int(o) if o.is_integer() and abs(o) < 2 ** 53 else o
+    if isinstance(o, dict):
+        return {k: js_ready(v) for k, v in o.items()}
+    if isinstance(o, (list, tuple)):
+        return [js_ready(v) for v in o]
+    return o
+
+
 def uid() -> str:
     return str(uuid.uuid4())
 
@@ -71,7 +108,7 @@ def time_to_minutes(t) -> int:
 
 def minutes_to_time(mins) -> str:
     """540 → `"09:00"`. 24 soatdan oshsa keyingi kunga o'tadi."""
-    total = round(mins)
+    total = js_round(mins)
     h = (total // 60) % 24
     m = total % 60
     return f"{h:02d}:{m:02d}"

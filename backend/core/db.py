@@ -19,6 +19,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from ..config import DATA_DIR, DB_FILE, TMP_FILE, BACKUP_DIR
+from .util import js_ready
 
 SCHEMA_VERSION = 2
 
@@ -97,7 +98,7 @@ def _dumps(obj) -> str:
     Node `JSON.stringify(obj, null, 2)` bilan bir xil chiqish.
     `ensure_ascii=False` — o'zbekcha harflar `\\uXXXX` ga aylanmasin.
     """
-    return json.dumps(obj, indent=2, ensure_ascii=False)
+    return json.dumps(js_ready(obj), indent=2, ensure_ascii=False)
 
 
 def _write(path: Path, text: str) -> None:

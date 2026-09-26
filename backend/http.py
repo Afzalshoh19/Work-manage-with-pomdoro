@@ -21,6 +21,7 @@ from pathlib import Path
 from starlette.responses import Response
 
 from .config import HSTS_DAYS, PUBLIC_DIR
+from .core.util import js_ready
 from .core.net import is_secure_request
 
 # Node'dagi MIME jadvali (server.js:36-45). Zaxira: application/octet-stream
@@ -60,7 +61,7 @@ def dumps(data) -> str:
     Node `{"a":1}` yozadi, Python esa standart holda `{"a": 1}` — ajratgichlar
     aniq berilmasa `Content-Length` va tana Node'dan farq qiladi.
     """
-    return json.dumps(data, ensure_ascii=False, separators=(",", ":"))
+    return json.dumps(js_ready(data), ensure_ascii=False, separators=(",", ":"))
 
 
 def json_response(req, status: int, data, cookie: str | None = None) -> Response:
