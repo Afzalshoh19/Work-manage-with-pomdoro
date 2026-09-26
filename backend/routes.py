@@ -15,7 +15,10 @@ from __future__ import annotations
 from datetime import datetime, timezone
 
 from .core.db import SCHEMA_VERSION
+from .routers import export as Data
+from .routers import report as Report
 from .routers import settings as Settings
+from .routers import stats as Stats
 
 
 def _health(ctx):
@@ -38,9 +41,23 @@ ROUTES: list[dict] = [
     r("GET", "/api/settings", Settings.get_settings),
     r("PUT", "/api/settings", Settings.update_settings),
     r("POST", "/api/settings/reset", Settings.reset_settings),
+
+    # Statistika va tarix
+    r("GET", "/api/stats", Stats.get_stats),
+    r("GET", "/api/history", Stats.get_history),
+
+    # Hisobot
+    r("GET", "/api/report", Report.preview_report),
+    r("GET", "/api/report/download", Report.download_report),
+    r("GET", "/api/report/view", Report.view_report),
+
+    # Ma'lumotlar
+    r("GET", "/api/export", Data.export_data),
+    r("POST", "/api/import", Data.import_data),
+    r("POST", "/api/clear", Data.clear_data),
 ]
 
 # ═══════════ Hali ko'chirilmagan marshrutlar ═══════════
-# Node'da 79 ta bor. Qolganlari 4-bosqichda quyidagi tartibda qo'shiladi:
-#   report → export → stats → profile → timer → integrations → tasks → auth
+# Node'da 79 ta bor. Qolganlari shu tartibda qo'shiladi:
+#   profile → timer → integrations → tasks → auth
 # Har biri qo'shilgach tegishli test to'plami yurgiziladi.

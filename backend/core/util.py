@@ -34,19 +34,52 @@ def js_round(x):
     return f + 1
 
 
+class _Undefined:
+    """
+    JS `undefined` ning o'rnini bosuvchi.
+
+    Kerak, chunki `JSON.stringify` mavjud bo'lmagan maydonni butunlay
+    TASHLAB KETADI, Python `json.dumps` esa `None` ni `null` deb yozadi.
+    Ya'ni `{"done": undefined}` JS'da `{}`, Python'da esa `{"done": null}`
+    bo'lib qolardi — bu javobda ko'rinadigan farq.
+
+    `None` esa haqiqiy `null` bo'lib qoladi: ikkovi bir narsa emas.
+    """
+    __slots__ = ()
+
+    def __repr__(self):
+        return "undefined"
+
+    def __bool__(self):
+        return False
+
+
+UNDEFINED = _Undefined()
+
+
+def prop(d: dict, key: str):
+    """
+    JS `obj.key` ning aynan o'zi: maydon yo'q bo'lsa `UNDEFINED`,
+    bor bo'lsa qiymati (`None` ham qiymat).
+    """
+    return d[key] if (d is not None and key in d) else UNDEFINED
+
+
 def js_ready(o):
     """
-    JS `JSON.stringify` butun qiymatli sonni `1.0` emas, `1` deb yozadi.
-
-    Python `json.dumps(1.0)` esa `1.0` beradi — natijada bir xil hisob
-    ikki xil javob bo'lib qolardi. Serializatsiyadan oldin tozalanadi.
+    JS `JSON.stringify` ga moslash:
+      * butun qiymatli son `1.0` emas, `1` bo'lib yoziladi;
+      * `UNDEFINED` maydon obyektdan butunlay chiqariladi
+        (massivda esa `null` ga aylanadi — JS ham shunday qiladi).
     """
     if isinstance(o, bool):
         return o
+    if isinstance(o, _Undefined):
+        return None                 # massiv ichida: JS `[undefined]` → `[null]`
     if isinstance(o, float):
         return int(o) if o.is_integer() and abs(o) < 2 ** 53 else o
     if isinstance(o, dict):
-        return {k: js_ready(v) for k, v in o.items()}
+        return {k: js_ready(v) for k, v in o.items() if not isinstance(v, _Undefined)}
     if isinstance(o, (list, tuple)):
         return [js_ready(v) for v in o]
     return o

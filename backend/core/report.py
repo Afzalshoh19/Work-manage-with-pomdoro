@@ -14,7 +14,7 @@ from __future__ import annotations
 import calendar
 import math
 import re
-from datetime import datetime
+from datetime import datetime, timezone
 
 from .actuals import _parse_iso, with_actuals
 from .avatars import is_icon_avatar
@@ -377,8 +377,12 @@ def build_report(user: dict, opts: dict | None = None) -> dict:
             "completed": s.get("completed"),
         }
 
+    # Node `new Date().toISOString()` — UTC, millisekund, `Z` bilan.
+    # `astimezone().isoformat()` mahalliy vaqt va mikrosekund beradi —
+    # bu javobda ko'rinadigan maydon, shuning uchun aynan takrorlanadi.
+    _gen = datetime.now(timezone.utc)
     return {
-        "generatedAt": datetime.now().astimezone().isoformat(),
+        "generatedAt": _gen.strftime("%Y-%m-%dT%H:%M:%S.") + f"{_gen.microsecond // 1000:03d}Z",
         "workday": workday,
         # Hisobotda faqat emoji ko'rinadi: SVG belgining kaliti matn sifatida ma'nosiz
         "user": {
