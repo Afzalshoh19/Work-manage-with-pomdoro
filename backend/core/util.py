@@ -79,10 +79,46 @@ def js_ready(o):
     if isinstance(o, float):
         return int(o) if o.is_integer() and abs(o) < 2 ** 53 else o
     if isinstance(o, dict):
-        return {k: js_ready(v) for k, v in o.items() if not isinstance(v, _Undefined)}
+        items = [(k, v) for k, v in o.items() if not isinstance(v, _Undefined)]
+        return {k: js_ready(v) for k, v in _js_key_order(items)}
     if isinstance(o, (list, tuple)):
         return [js_ready(v) for v in o]
     return o
+
+
+def _index_key(k):
+    """
+    Kalit JS «massiv indeksi» bo'la oladimi: butun son yoki nolsiz boshlanuvchi
+    raqamli satr. Shunday bo'lsa raqamli qiymati, aks holda `None`.
+    """
+    if isinstance(k, bool):
+        return None
+    if isinstance(k, int):
+        return k if 0 <= k < 2 ** 32 - 1 else None
+    if isinstance(k, str) and k.isdigit() and (k == "0" or k[0] != "0"):
+        n = int(k)
+        return n if n < 2 ** 32 - 1 else None
+    return None
+
+
+def _js_key_order(items):
+    """
+    JS obyektlarida kalitlar tartibi: avval RAQAMLI kalitlar o'sish
+    bo'yicha, keyin qolganlari kiritilish tartibida.
+
+    Python lug'ati faqat kiritilish tartibini saqlaydi — haftalik jadval
+    `{1..6, 0}` bo'lib qolib, Node'dagi `{0..6}` dan farq qilardi.
+    """
+    raqamli = []
+    boshqa = []
+    for k, v in items:
+        idx = _index_key(k)
+        if idx is None:
+            boshqa.append((k, v))
+        else:
+            raqamli.append((idx, k, v))
+    raqamli.sort(key=lambda x: x[0])
+    return [(k, v) for _, k, v in raqamli] + boshqa
 
 
 def uid() -> str:

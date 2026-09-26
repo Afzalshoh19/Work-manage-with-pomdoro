@@ -16,6 +16,7 @@ from .crypto import random_token
 from .db import get_db, persist, find_user_by_id
 from .net import client_ip, describe_device, is_secure_request
 from .ratelimit import clear_all, locked_for, lock_message, note_all
+from .util import prop
 
 COOKIE = "pmd_sid"
 SESSION_DAYS = 30
@@ -242,22 +243,24 @@ def public_user(u):
         return None
     totp_cfg = u.get("totp") or {}
     yoqilgan = bool(totp_cfg.get("enabled"))
+    # `prop` — JS `u.x`: maydon yo'q bo'lsa javobdan butunlay chiqadi.
+    # `u.get()` bo'lsa `null` yozilib, Node javobidan farq qilardi.
     return {
-        "id": u.get("id"),
-        "email": u.get("email"),
-        "name": u.get("name"),
-        "avatar": u.get("avatar"),
+        "id": prop(u, "id"),
+        "email": prop(u, "email"),
+        "name": prop(u, "name"),
+        "avatar": prop(u, "avatar"),
         "photoUrl": avatar_url(u),
-        "color": u.get("color"),
+        "color": prop(u, "color"),
         "jobTitle": u.get("jobTitle") or "",
         "company": u.get("company") or "",
         "timezone": u.get("timezone") or "",
-        "provider": u.get("provider"),
+        "provider": prop(u, "provider"),
         "hasPassword": bool(u.get("passwordHash")),
         "linkedProviders": list((u.get("providerIds") or {}).keys()),
-        "role": u.get("role"),
+        "role": prop(u, "role"),
         "twoFactor": yoqilgan,
         "backupCodesLeft": len(totp_cfg.get("backupHashes") or []) if yoqilgan else 0,
-        "createdAt": u.get("createdAt"),
-        "lastLoginAt": u.get("lastLoginAt"),
+        "createdAt": prop(u, "createdAt"),
+        "lastLoginAt": prop(u, "lastLoginAt"),
     }
