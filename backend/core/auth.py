@@ -1,19 +1,21 @@
 """
-Sessiyalar va cookie'lar. Node'dagi `lib/auth.js` ning ko'chirmasi.
+Sessiyalar, cookie'lar, qurilmalar ro'yxati va kirishni cheklash.
 
-HOZIRCHA QISMAN: HTTP qatlami ishlashi uchun zarur qismlar ko'chirildi.
-Qurilmalar ro'yxati, kirish cheklovi va `publicUser` 3-bosqichda qo'shiladi.
+Node'dagi `lib/auth.js` ning ko'chirmasi.
 """
 from __future__ import annotations
 
+import math
 import uuid
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from urllib.parse import quote, unquote
 
 from ..config import SECURE_COOKIES
+from .avatars import avatar_url
 from .crypto import random_token
 from .db import get_db, persist, find_user_by_id
 from .net import client_ip, describe_device, is_secure_request
+from .ratelimit import clear_all, locked_for, lock_message, note_all
 
 COOKIE = "pmd_sid"
 SESSION_DAYS = 30
@@ -159,3 +161,103 @@ def has_session(req) -> bool:
     if not s or _ms(s.get("expiresAt")) < _now_ms():
         return False
     return find_user_by_id(s.get("userId")) is not None
+
+
+# ═══════════ Qurilmalar ro'yxati ═══════════
+
+def list_sessions(user_id, current_token=None) -> list:
+    """Foydalanuvchining ochiq seanslari — token hech qachon qaytarilmaydi."""
+    now = _now_ms()
+    out = []
+    for s in get_db()["authSessions"]:
+        if s.get("userId") != user_id or _ms(s.get("expiresAt")) <= now:
+            continue
+        out.append({
+            "id": s.get("id") or None,
+            "device": s.get("device") or describe_device(s.get("userAgent")),
+            "userAgent": s.get("userAgent") or "",
+            "ip": s.get("ip") or "",
+            "createdAt": s.get("createdAt"),
+            "lastSeenAt": s.get("lastSeenAt") or s.get("createdAt"),
+            "expiresAt": s.get("expiresAt"),
+            "current": bool(current_token) and s.get("token") == current_token,
+        })
+    # Eng yangi faollik yuqorida. JS `sort` barqaror — teng vaqtlarda tartib saqlanadi
+    out.sort(key=lambda x: -_ms(x["lastSeenAt"]))
+    return out
+
+
+def revoke_session(user_id, session_id, current_token=None) -> str:
+    """Bitta seansni yopadi. Qaytaradi: `ok` | `topilmadi` | `joriy`."""
+    db = get_db()
+    s = next((x for x in db["authSessions"]
+              if x.get("userId") == user_id and x.get("id") == session_id), None)
+    if not s:
+        return "topilmadi"
+    if current_token and s.get("token") == current_token:
+        return "joriy"
+    db["authSessions"] = [x for x in db["authSessions"] if x is not s]
+    persist()
+    return "ok"
+
+
+# ═══════════ Kirishni cheklash ═══════════
+# Hisob ham, IP ham alohida sanaladi: bitta IP'dan ko'p emailga urinish
+# ham, bitta emailga ko'p IP'dan urinish ham to'siladi.
+
+def _login_keys(email, ip):
+    return [["login", email], ["login-ip", ip]]
+
+
+def login_blocked(email, ip):
+    """Qulflangan bo'lsa xabar matnini qaytaradi, aks holda `None`."""
+    by_email = locked_for("login", email)
+    by_ip = locked_for("login-ip", ip)
+    sec = max(by_email, by_ip)
+    if not sec:
+        return None
+    if by_ip > by_email:
+        return f"Bu tarmoqdan juda ko'p urinish bo'ldi. {lock_message(sec)}"
+    return f"Juda ko'p urinish. {lock_message(sec)}"
+
+
+def note_login_failure(email, ip):
+    return note_all(_login_keys(email, ip))
+
+
+def clear_login_failures(email, ip):
+    return clear_all(_login_keys(email, ip))
+
+
+def login_locked(email) -> int:
+    """Eski nom — moslik uchun qoldirildi (daqiqada qaytaradi)."""
+    sec = locked_for("login", email)
+    return math.ceil(sec / 60) if sec else 0
+
+
+# ═══════════ Ommaviy foydalanuvchi ko'rinishi ═══════════
+
+def public_user(u):
+    if not u:
+        return None
+    totp_cfg = u.get("totp") or {}
+    yoqilgan = bool(totp_cfg.get("enabled"))
+    return {
+        "id": u.get("id"),
+        "email": u.get("email"),
+        "name": u.get("name"),
+        "avatar": u.get("avatar"),
+        "photoUrl": avatar_url(u),
+        "color": u.get("color"),
+        "jobTitle": u.get("jobTitle") or "",
+        "company": u.get("company") or "",
+        "timezone": u.get("timezone") or "",
+        "provider": u.get("provider"),
+        "hasPassword": bool(u.get("passwordHash")),
+        "linkedProviders": list((u.get("providerIds") or {}).keys()),
+        "role": u.get("role"),
+        "twoFactor": yoqilgan,
+        "backupCodesLeft": len(totp_cfg.get("backupHashes") or []) if yoqilgan else 0,
+        "createdAt": u.get("createdAt"),
+        "lastLoginAt": u.get("lastLoginAt"),
+    }
