@@ -10,6 +10,12 @@ Nega FastAPI'ning odatiy vositalari emas:
   * xavfsizlik sarlavhalari Node'da `__redirect` va `__html` javoblariga
     QO'YILMAYDI — bu ataylab, shuning uchun middleware'ga chiqarilmadi.
 Shu sababli javoblar qo'lda quriladi.
+
+NOM HAQIDA: bu fayl ilgari `http.py` edi va standart kutubxonadagi `http`
+paketini soya qilardi. `backend/` sys.path ga tushgan har qanday holatda
+(masalan shu papkadan `python -c` yurgizilganda) `import http.client` bizning
+faylga tushib, `httpx` ham, `starlette` ham import bo'lolmay qolardi.
+Nomi shuning uchun `http_layer` — qaytarib `http.py` qilinmasin.
 """
 from __future__ import annotations
 

@@ -13,3 +13,9 @@ httpx==0.28.1
 
 # .env o'qish — Node'dagi process.loadEnvFile o'rnida
 python-dotenv==1.0.1
+
+# Mahalliy vaqt zonasining IANA nomi ("Asia/Tashkent").
+# Windows'da Python o'zi faqat "West Asia Standard Time" kabi nom beradi,
+# Node esa IANA nomini yozadi — yangi hisobdagi `timezone` maydoni
+# ikki backendda boshqacha bo'lib qolardi.
+tzlocal==5.4.4

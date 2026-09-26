@@ -5,21 +5,23 @@ Format Node bilan bir xil: metod, yo'l, handler, `open` (autentifikatsiyasiz).
 Yo'llarda `:param` — FastAPI sintaksisi emas, chunki moslashtirish
 `main._match_route` da qo'lda qilinadi (aniq yo'l dinamikdan ustun).
 
-KO'CHIRISH HOLATI: bu yerda faqat Python'da TAYYOR handlerlar turadi.
-Hali ko'chirilmagan manzil so'ralsa Node'dagi kabi
-`404 {"error": "Bunday API manzili yoq"}` qaytadi — ya'ni yarim ishlagan
-javob emas, ochiq "yo'q" javobi. `parity.mjs` qaysi biri qolganini ko'rsatadi.
+HOLAT: 79/79 — Node'dagi barcha marshrutlar ko'chirildi.
+Moslik `parity.mjs` bilan o'lchanadi: har bir manzilga bir xil so'rov
+yuborilib, status, sarlavha va JSON tanasi solishtiriladi.
 """
 from __future__ import annotations
 
 from datetime import datetime, timezone
 
 from .core.db import SCHEMA_VERSION
+from .routers import auth as Auth
 from .routers import export as Data
+from .routers import integrations as Integrations
 from .routers import profile as Profile
 from .routers import report as Report
 from .routers import settings as Settings
 from .routers import stats as Stats
+from .routers import tasks as Tasks
 from .routers import timer as Timer
 
 
@@ -80,9 +82,66 @@ ROUTES: list[dict] = [
     r("POST", "/api/timer/stop", Timer.stop_timer),
     r("POST", "/api/timer/skip", Timer.skip_timer),
     r("POST", "/api/timer/cycle-reset", Timer.reset_cycle),
-]
 
-# ═══════════ Hali ko'chirilmagan marshrutlar ═══════════
-# Node'da 79 ta bor. Qolganlari shu tartibda qo'shiladi:
-#   integrations → tasks → auth
-# Har biri qo'shilgach tegishli test to'plami yurgiziladi.
+    # Vazifalar va reja
+    r("GET", "/api/plan", Tasks.get_plan),
+    r("POST", "/api/tasks", Tasks.create_task),
+    r("PATCH", "/api/tasks/:id", Tasks.update_task),
+    r("DELETE", "/api/tasks/:id", Tasks.delete_task),
+    r("POST", "/api/tasks/reorder", Tasks.reorder_tasks),
+    r("PUT", "/api/plan/window", Tasks.set_plan_window),
+    r("GET", "/api/plan/range", Tasks.get_plan_range),
+    r("GET", "/api/plan/workdays", Tasks.workdays_in_range),
+    r("POST", "/api/plan/bulk", Tasks.bulk_add_tasks),
+    r("GET", "/api/tasks/statuses", Tasks.status_list),
+    r("GET", "/api/tasks/categories", Tasks.category_list),
+    r("POST", "/api/plan/copy", Tasks.copy_plan),
+    r("POST", "/api/tasks/copy", Tasks.copy_tasks),
+    r("POST", "/api/tasks/:id/log", Tasks.log_pomodoros),
+    r("GET", "/api/tasks/reasons", Tasks.correction_reasons),
+    r("POST", "/api/plan/carry", Tasks.carry_over),
+
+    # Tashqi tizimlar.
+    # `/api/integrations/jira/preview` aniq yo'l bo'lgani uchun
+    # `/api/integrations/:name/...` dan ustun topiladi — `_match_route` shunday.
+    r("POST", "/api/integrations/:name/test", Integrations.test_integration),
+    r("GET", "/api/integrations/jira/preview", Integrations.jira_preview),
+    r("POST", "/api/integrations/jira/import", Integrations.jira_import),
+    r("POST", "/api/integrations/:name/export", Integrations.export_report),
+    r("POST", "/api/integrations/import", Integrations.generic_import),
+
+    # Autentifikatsiya. `open=True` — sessiyasiz ham kiriladi (13 ta).
+    r("GET", "/api/auth/config", Auth.auth_config, True),
+    r("POST", "/api/auth/register", Auth.register, True),
+    r("POST", "/api/auth/login", Auth.login, True),
+    r("POST", "/api/auth/logout", Auth.logout, True),
+    r("GET", "/api/auth/me", Auth.me, True),
+    r("GET", "/api/auth/start/:provider", Auth.oauth_start, True),
+    r("GET", "/api/auth/callback/:provider", Auth.oauth_callback, True),
+    r("POST", "/api/auth/password", Auth.change_password),
+    r("POST", "/api/auth/verify", Auth.verify_email, True),
+    r("POST", "/api/auth/resend-code", Auth.resend_code, True),
+    r("POST", "/api/auth/forgot", Auth.forgot_password, True),
+    r("POST", "/api/auth/reset", Auth.reset_password, True),
+
+    # Ikki bosqichli tasdiqlash
+    r("POST", "/api/auth/2fa/verify", Auth.two_factor_verify, True),
+    r("GET", "/api/auth/2fa", Auth.two_factor_status),
+    r("POST", "/api/auth/2fa/setup", Auth.two_factor_setup),
+    r("POST", "/api/auth/2fa/enable", Auth.two_factor_enable),
+    r("POST", "/api/auth/2fa/disable", Auth.two_factor_disable),
+    r("POST", "/api/auth/2fa/cancel", Auth.two_factor_cancel),
+    r("POST", "/api/auth/2fa/backup-codes", Auth.two_factor_backup_codes),
+
+    # Qurilmalar, SMTP va OAuth sozlamalari.
+    # `/api/auth/sessions/revoke-others` `/api/auth/sessions/:id` dan ustun —
+    # aniq yo'l dinamikdan oldin topiladi.
+    r("GET", "/api/auth/sessions", Auth.my_sessions),
+    r("POST", "/api/auth/sessions/revoke-others", Auth.revoke_other_sessions),
+    r("DELETE", "/api/auth/sessions/:id", Auth.revoke_my_session),
+    r("GET", "/api/auth/smtp", Auth.get_smtp_settings),
+    r("PUT", "/api/auth/smtp", Auth.save_smtp_settings),
+    r("POST", "/api/auth/smtp/test", Auth.test_smtp),
+    r("GET", "/api/auth/oauth-settings", Auth.get_oauth_settings),
+    r("PUT", "/api/auth/oauth-settings", Auth.save_oauth_settings),
+]

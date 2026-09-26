@@ -13,6 +13,7 @@ import math
 import re
 import uuid
 from datetime import datetime, timedelta, timezone
+from urllib.parse import quote
 
 
 def js_round(x):
@@ -119,6 +120,18 @@ def _js_key_order(items):
             raqamli.append((idx, k, v))
     raqamli.sort(key=lambda x: x[0])
     return [(k, v) for _, k, v in raqamli] + boshqa
+
+
+def encode_uri_component(s) -> str:
+    """
+    JS `encodeURIComponent` ning aynan o'zi.
+
+    Python `quote(s, safe="")` dan farqi: JS `! ~ * ' ( )` belgilarini
+    KODLAMAYDI. Shu sababli "Noma'lum provayder" Node'da `Noma'lum%20...`,
+    Python'da esa `Noma%27lum%20...` bo'lib, yo'naltirish manzillari
+    farq qilardi.
+    """
+    return quote(str(s), safe="!~*'()")
 
 
 def uid() -> str:

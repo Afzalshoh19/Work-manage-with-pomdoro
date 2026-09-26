@@ -38,7 +38,7 @@ from starlette.responses import Response  # noqa: E402
 from . import config  # noqa: E402
 from .core import db as DB  # noqa: E402
 from .core.auth import has_session, user_from_request  # noqa: E402
-from .http import (  # noqa: E402
+from .http_layer import (  # noqa: E402
     MAX_BODY, build_response, json_response, origin_allowed, serve_static,
 )
 from .routes import ROUTES  # noqa: E402
