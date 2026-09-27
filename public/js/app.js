@@ -1998,7 +1998,7 @@ async function init() {
     setConn(true);
   } catch {
     setConn(false);
-    toast('Serverga ulanib bo\'lmadi. `node server.js` ishlab turibdimi?', 'err');
+    toast('Serverga ulanib bo\'lmadi. Server ishlab turibdimi?', 'err');
     return;
   }
   // Bosh manzilga — u yerda mehmon taqdimot sahifasini ko'radi

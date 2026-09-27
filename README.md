@@ -4,27 +4,49 @@ Kun tartibini kiritish, har bir vazifaga ketadigan vaqtni pomodoro usulida rejal
 o'sha vaqtni taymer bilan sarflash, tanaffuslarni avtomatik hisoblash va natijani hisobot
 qilib chiqarish uchun to'liq tizim.
 
-**Frontend + Backend + ma'lumotlar bazasi + autentifikatsiya + integratsiyalar** — hammasi bitta papkada,
-tashqi kutubxonalarsiz.
+**Frontend + Backend + ma'lumotlar bazasi + autentifikatsiya + integratsiyalar** — hammasi
+bitta papkada. Backend — Python (FastAPI), baza — oddiy JSON fayl: alohida ma'lumotlar
+bazasi serveri kerak emas.
 
 ---
 
 ## Ishga tushirish
 
-Node.js 18+ o'rnatilgan bo'lishi kifoya (`npm install` **kerak emas**).
+Kerak: **Python 3.11+**.
 
 ```bash
-node server.js
+python -m venv backend/.venv
+backend/.venv/Scripts/python -m pip install -r backend/requirements.txt   # Linux/macOS: backend/.venv/bin/python
+backend/.venv/Scripts/python -m backend.main
 ```
 
 Brauzerda oching: **http://127.0.0.1:4123**
 
-Birinchi ochganingizda ro'yxatdan o'tish sahifasi chiqadi. **Birinchi ro'yxatdan o'tgan
+Windows'da qisqaroq yo'l: **`ishga-tushirish.bat`** faylini ikki marta bosing — u virtual
+muhitni tekshiradi, serverni ko'taradi va brauzerni ochadi. Server to'xtab qolsa o'zi
+qayta ishga tushiradi.
+
+Birinchi ochganingizda taqdimot sahifasi chiqadi. **Birinchi ro'yxatdan o'tgan
 foydalanuvchi tizim egasi (owner)** bo'ladi va kirish usullarini sozlash huquqiga ega bo'ladi.
 
-Boshqa portda: `PORT=5000 node server.js` · Tarmoqdagi boshqa qurilmalar uchun: `HOST=0.0.0.0 node server.js`
+Boshqa portda: `PORT=5000 …` · Tarmoqdagi boshqa qurilmalar uchun: `HOST=0.0.0.0 …`
 
-Windows'da `ishga-tushirish.bat` faylini ikki marta bosing.
+> **Bitta jarayon.** Baza har yozuvda butunlay qayta yoziladi, shuning uchun
+> `uvicorn --workers N` ISHLATILMAYDI — ikki jarayon bir vaqtda yozsa birining
+> o'zgarishi yo'qoladi. `python -m backend.main` har doim bitta jarayon ko'taradi.
+
+### Tashqaridan kirish uchun havola
+
+Kimgadir havola yuborib, u ro'yxatdan o'tishi kerak bo'lsa: **`havola-ochish.bat`**.
+U Cloudflare tunnel orqali vaqtinchalik `https://…trycloudflare.com` manzil beradi —
+router sozlash yoki oq IP kerak emas. Tafsilotlar: `tools/OQING.md`.
+
+### Ko'rinish uslublari
+
+To'rtta uslub bor: **Glassmorphism** (sukut), **Claymorphism**, **Skeuomorphism**,
+**Neumorphism**, ustiga klassik qorong'i va yorug'. Profil → Ko'rinish bo'limidan
+tanlanadi, tanlov hisobga saqlanadi. Taqdimot sahifasida uslub har daqiqada o'zi
+almashadi. Maketlar `design/` papkasida.
 
 ---
 
@@ -285,27 +307,31 @@ Vaqt bahosi `2h`, `90m`, `1.5` (soat) kabi ko'rinishlarda tushuniladi va pomodor
 
 ```
 pomodoro/
-├── server.js                    HTTP server, router, autentifikatsiya darvozasi
-├── lib/
-│   ├── db.js                    JSON baza, v1→v2 migratsiya, zaxiralash
-│   ├── auth.js                  sessiyalar, cookie, kirishni cheklash
-│   ├── crypto.js                parol xeshi, token shifrlash
-│   ├── plan.js                  kun jadvali va tanaffuslar hisobi
-│   ├── report.js                hisobot modeli: HTML / MD / CSV / Notion / Confluence
-│   ├── util.js
-│   └── integrations/
-│       ├── jira.js              JQL qidiruv, masalalarni vazifaga aylantirish
-│       ├── notion.js            sahifa yaratish (Notion API)
-│       └── confluence.js        sahifa yaratish (Confluence REST)
-├── routes/                      auth · profile · tasks · timer · settings · stats · report · integrations · export
-├── public/
-│   ├── index.html · login.html
-│   ├── css/style.css · css/extra.css
-│   └── js/  app.js · features.js · api.js · charts.js · sound.js · login.js
-└── data/
-    ├── db.json · .secret
-    └── backups/
+├── backend/                     Python backend (FastAPI + Uvicorn)
+│   ├── main.py                  ASGI ilova, marshrut dispetcheri, statik fayllar
+│   ├── routes.py                79 ta marshrut jadvali
+│   ├── config.py                yo'llar, bayroqlar, .env dan maxfiy kalitlar
+│   ├── http_layer.py            javob shakllari, ETag, xavfsizlik sarlavhalari
+│   ├── build.py                 dist-py/ yig'uvchi
+│   ├── requirements.txt
+│   ├── core/                    db · crypto · auth · plan · report · totp · verify · mailer …
+│   │   └── integrations/        jira.py · notion.py · confluence.py
+│   └── routers/                 auth · profile · tasks · timer · settings · stats · report ·
+│                                integrations · export
+├── public/                      Frontend — tashqi kutubxonasiz
+│   ├── index.html · login.html · landing.html
+│   ├── css/  style.css · themes.css (4 uslub) · plan.css · landing.css …
+│   └── js/   app.js · theme.js · features.js · api.js · charts.js · landing.js …
+├── design/                      Maketlar: glass · clay · skeuo · neu (har birida 8 ekran)
+├── tools/                       cloudflared (git'ga tushmaydi) — tools/OQING.md
+├── data/                        db.json · .secret · backups/   ← git'ga TUSHMAYDI
+├── ishga-tushirish.bat          serverni ko'tarish
+├── havola-ochish.bat            tashqi havola (Cloudflare tunnel)
+└── DEPLOY.md                    serverga joylashtirish
 ```
+
+Ma'lumotlar `data/` papkasida qoladi va hech qachon repozitoriyga tushmaydi. Yangi
+kompyuterda loyiha bo'sh baza bilan ishga tushadi.
 
 ## API
 

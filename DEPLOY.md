@@ -3,11 +3,6 @@
 Backend **Python 3.13 + FastAPI/Uvicorn**. Baza — oddiy JSON fayl, ma'lumotlar
 bazasi serveri kerak emas.
 
-> **Ko'chirish davom etyapti.** Node backendi (`server.js`, `lib/`, `routes/`)
-> hali loyihada turadi va ishlashda davom etadi. Ikkisi ham bir xil bazani
-> o'qiydi — bir vaqtda faqat BITTASI ishga tushirilishi kerak. Node uchun
-> ko'rsatma oxirgi bo'limda. Node o'chirilgach o'sha bo'lim ham o'chadi.
-
 ## 1. `dist-py/` yig'ish
 
 ```bash
@@ -47,14 +42,14 @@ worker kerak bo'lsa avval PostgreSQL'ga o'tish kerak.
 | `HOST` | `127.0.0.1` | **Serverda `0.0.0.0` qilinishi shart**, aks holda tashqaridan ulanib bo'lmaydi |
 | `DATA_DIR` | `./data` | Baza saqlanadigan papka. Alohida diskda (volume) bo'lishi kerak |
 | `APP_ENV` | — | `production` qilinsa `SECURE_COOKIES` o'zi yoqiladi |
-| `NODE_ENV` | — | `APP_ENV` bilan bir xil ishlaydi. Node davridan qolgan nom — mavjud `.env` fayllari buzilmasin deb qoldirilgan |
+| `NODE_ENV` | — | `APP_ENV` bilan bir xil ishlaydi. Eski nom, mavjud `.env` fayllari buzilmasin deb qoldirilgan |
 | `SECURE_COOKIES` | production bo'lsa yoqiq | Cookie'ga `Secure` bayrog'ini **majburan** qo'yadi. Odatda kerak emas — ulanish HTTPS ekani so'rovning o'zidan aniqlanadi |
 | `TRUST_PROXY` | `0` | Teskari proksi (nginx, Caddy, Traefik) orqasida **majburiy**. Yoqilsa `X-Forwarded-Proto` va `X-Forwarded-For` o'qiladi |
 | `TLS_KEY` | — | O'z sertifikati bilan HTTPS: yopiq kalit fayli (`.pem`) |
 | `TLS_CERT` | — | Sertifikat fayli (`.pem`). `TLS_KEY` bilan birga berilsa server HTTPS'da ko'tariladi |
 | `TLS_CA` | — | Oraliq sertifikatlar zanjiri (kerak bo'lsa) |
 | `HSTS_DAYS` | `180` | HSTS muddati kunda. `0` — o'chirish. Sarlavha **faqat HTTPS orqali kelgan so'rovga** qo'yiladi |
-| `FORCE_HTTPS` | HTTPS yoqilgan bo'lsa `1` | Python variantida **ta'siri yo'q** — faqat Node'dagi HTTP→HTTPS yo'naltiruvchini yoqardi. Yo'naltirishni proksi qiladi |
+| `FORCE_HTTPS` | HTTPS yoqilgan bo'lsa `1` | Hozir **ta'siri yo'q** — HTTP→HTTPS yo'naltirishni proksi (nginx/Caddy) qiladi |
 | `ENV_FILE` | `<ildiz>/.env` | Maxfiy kalitlar fayli. Boshqa joyda tursa shu bilan ko'rsatiladi |
 | `PYTHONUNBUFFERED` | — | `1` qo'yilsa jurnal darhol yoziladi. `Dockerfile` va `pomodoro.service` da allaqachon bor |
 
@@ -255,24 +250,3 @@ sudo systemctl start pomodoro
 - `DATA_DIR` ni faqat xizmat foydalanuvchisi o'qiy oladigan qiling (`chmod 700`).
 - Tashqi API so'rovlariga (Jira, Notion, Confluence, OAuth) 15 soniyalik
   timeout qo'yilgan — javob bermagan xizmat so'rovni cheksiz ushlab turmaydi.
-
----
-
-## Node backendi (o'chirilishi kutilyapti)
-
-Ko'chirish tugaguncha Node varianti ham ishlaydi va o'z `dist/` papkasiga
-yig'iladi. **Ikkisini bir vaqtda ishga tushirmang** — bir xil `db.json` ga
-yozadi.
-
-```bash
-node build.mjs                 # dist/ yig'ish
-cd dist && NODE_ENV=production node server.js
-```
-
-Farqlari faqat shu ikkitasi:
-
-- `APP_ENV` o'rniga `NODE_ENV` ishlatiladi (Python ikkovini ham tushunadi);
-- `REDIRECT_PORT` — HTTP→HTTPS yo'naltiruvchi alohida port. Python variantida
-  yo'q: proksi (nginx/Caddy) buni o'zi qiladi.
-
-Node o'chirilgach `build.mjs`, `dist/` va shu bo'lim ham o'chadi.

@@ -144,7 +144,7 @@ async function init() {
       $('firstUserNote').hidden = false;
     }
   } catch {
-    alertBox('Serverga ulanib bo\'lmadi. `node server.js` ishlab turibdimi?');
+    alertBox('Serverga ulanib bo\'lmadi. Server ishlab turibdimi?');
   }
 
   document.querySelectorAll('.auth-tab').forEach(t =>
