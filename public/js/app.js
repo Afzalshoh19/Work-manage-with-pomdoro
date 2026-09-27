@@ -1487,7 +1487,18 @@ function bindEvents() {
   $('userBtn').addEventListener('click', e => {
     e.stopPropagation();
     $('userMenu').hidden = !$('userMenu').hidden;
+    if (!$('userMenu').hidden) placeUserMenu();
   });
+  // Menyu tugmaning tagida, o'ng chetiga tekislangan holda ochiladi —
+  // sarlavha markazda turgani uchun ekran chetiga yopishtirib bo'lmaydi
+  function placeUserMenu() {
+    const r = $('userBtn').getBoundingClientRect();
+    const m = $('userMenu');
+    m.style.top = Math.round(r.bottom + 8) + 'px';
+    m.style.right = Math.max(10, Math.round(window.innerWidth - r.right)) + 'px';
+    m.style.left = 'auto';
+  }
+  window.addEventListener('resize', () => { if (!$('userMenu').hidden) placeUserMenu(); });
   document.addEventListener('click', e => {
     if (!$('userMenu').hidden && !e.target.closest('#userMenu') && !e.target.closest('#userBtn')) {
       $('userMenu').hidden = true;

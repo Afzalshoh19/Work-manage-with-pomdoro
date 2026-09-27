@@ -393,3 +393,25 @@ html:not([data-theme="skeuo"]) .mode-pills #btnMinTimer { top: 136px; }
 .fold-card > .card { background: none !important; border: 0 !important; box-shadow: none !important; padding: 0 !important; margin: 0 !important; backdrop-filter: none !important; }
 .fold-card.is-collapsed { padding-top: 18px; padding-bottom: 18px; }
 .report-preview-card.is-collapsed { padding-top: 18px; padding-bottom: 18px; }
+
+/* ─────────── Glass: modal va menyular o'qiladigan bo'lsin ───────────
+   Yarim shaffof karta foni modal ostidagi sahifani ko'rsatib qo'yardi.
+   Modal va ochiluvchi menyu — deyarli to'q shisha, orqa fon kuchliroq xiralanadi. */
+[data-theme="glass"] .overlay { background: rgba(5,7,15,.62); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+[data-theme="glass"] .overlay .modal,
+[data-theme="glass"] .overlay .modal-box {
+  background: linear-gradient(180deg, rgba(30,34,52,.94), rgba(18,21,34,.96));
+  border: 1px solid rgba(255,255,255,.18);
+  backdrop-filter: blur(28px); -webkit-backdrop-filter: blur(28px);
+  box-shadow: 0 40px 80px rgba(0,0,0,.55), inset 0 1px 0 rgba(255,255,255,.18);
+}
+[data-theme="glass"] .overlay .modal :is(.wp-day, .card, .dv-item) { background-color: rgba(255,255,255,.05); }
+[data-theme="glass"] .menu {
+  background: rgba(22,26,42,.96); border: 1px solid rgba(255,255,255,.16);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 24px 48px rgba(0,0,0,.5);
+}
+/* Boshqa uslublarda ham menyu fonsiz qolmasin */
+[data-theme="clay"] .menu { background: #FFFAF4; border: 0; border-radius: 22px; box-shadow: 12px 16px 32px rgba(140,110,80,.25), inset 3px 3px 6px #fff; }
+[data-theme="neu"] .menu { background: #E4E8EF; border: 0; border-radius: 20px; box-shadow: 10px 10px 20px #C2C8D2, -10px -10px 20px #FFFFFF; }
+[data-theme="skeuo"] .menu { background: #FBF7EE; border: 1px solid #C9BFA8; border-radius: 6px; box-shadow: 0 20px 40px rgba(0,0,0,.55); }
