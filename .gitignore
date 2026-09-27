@@ -28,3 +28,7 @@ dist-py/
 backend/.venv/
 __pycache__/
 *.py[cod]
+
+# Tashqi dasturlar (cloudflared va h.k.) — git'ga tushmasin, kattaligi 50 MB dan ortiq.
+# Kerak bo'lsa qaytadan yuklab olinadi: tools/OQING.md
+tools/*.exe
