@@ -464,3 +464,211 @@ html:not([data-theme="skeuo"]) .mode-pills #btnMinTimer { top: 136px; }
   border-radius: 20px; border: 1px solid var(--line);
   background: var(--card); box-shadow: var(--shadow);
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBIL (≤ 760px) — telefon uchun tuzilish
+   · sarlavha ixcham: belgi + nom, o'ngda mavzu va avatar
+   · bo'limlar (Bugun / Statistika / Hisobot / Tarix) — pastki panel
+   · vazifa qatori ikki qator: nom va amallar, ostida pomodoro va vaqt
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 760px) {
+  body { padding-bottom: calc(92px + env(safe-area-inset-bottom)); }
+  .wrap { padding: 14px 12px; }
+
+  /* Sarlavha */
+  :is([data-theme]) .topbar {
+    top: 8px; height: 60px; margin: 8px 10px 0; padding: 0 8px 0 10px;
+    flex-wrap: nowrap; gap: 8px; border-radius: 18px;
+  }
+  :is([data-theme]) .topbar .brand { height: 44px; min-width: 0; gap: 10px; }
+  .topbar .brand small { display: none; }
+  .topbar .brand strong { font-size: 16px; }
+  .topbar .brand-mark { width: 38px; height: 38px; }
+  .topbar-right { min-width: 0; gap: 6px; }
+  .conn > span:last-child { display: none; }
+  #themeToggle { width: 40px; height: 40px; }
+  :is([data-theme]) #userBtn { height: 44px; padding: 4px; gap: 0; }
+  #userBtn .user-name, #userBtn > span:last-child:not(.avatar) { display: none; }
+
+  /* backdrop-filter «fixed» bolalar uchun o'rab oluvchi blok yaratadi —
+     pastki panel sarlavhaga yopishib qolmasligi uchun sarlavhada o'chiriladi */
+  :is([data-theme]) .topbar { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; filter: none; transform: none; }
+  [data-theme="glass"] .topbar { background: rgba(22,26,42,.9); }
+
+  /* Bo'limlar — pastki panel */
+  :is([data-theme]) .topbar .tabs {
+    position: fixed; left: 10px; right: 10px; bottom: calc(10px + env(safe-area-inset-bottom));
+    z-index: 55; height: 66px; margin: 0; padding: 6px; gap: 4px;
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    border-radius: 22px; background: var(--card); border: 1px solid var(--line);
+    box-shadow: 0 -6px 30px rgba(0,0,0,.25), var(--raise);
+    backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  }
+  :is([data-theme]) .topbar .tab {
+    height: 54px; padding: 0 4px; flex-direction: column; justify-content: center; gap: 3px;
+    font-size: 11px; border-radius: 16px;
+  }
+  .topbar .tab .tab-label { display: inline !important; }
+  .topbar .tab .tab-ico svg { width: 20px; height: 20px; }
+  [data-theme="glass"] .topbar .tabs { background: rgba(20,24,40,.82); border-color: rgba(255,255,255,.16); }
+  [data-theme="clay"] .topbar .tabs { background: #FFFAF4; border: 0; box-shadow: 0 -8px 26px rgba(140,110,80,.22), inset 3px 3px 6px #fff; }
+  [data-theme="skeuo"] .topbar .tabs { background: linear-gradient(180deg, #2E2A27, #1C1A18); border: 1px solid #0D0C0B; }
+  [data-theme="neu"] .topbar .tabs { background: #E4E8EF; border: 0; box-shadow: 0 -6px 18px #C2C8D2, 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF; }
+
+  /* Menyu — ekran kengligida */
+  .menu { left: 10px !important; right: 10px !important; min-width: 0; }
+
+  /* Bugun */
+  #view-today .layout { gap: 16px; }
+  .day-head { flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
+  .day-head .dh-left { width: 100%; gap: 8px; flex-wrap: wrap; }
+  .day-head .dh-text { order: -1; flex: 0 0 100%; }
+  .day-head #dateToday { margin-left: auto; }
+  .day-head .dh-sub { max-width: none; font-size: 12px; }
+  .day-head .dh-date { font-size: 26px; }
+  .day-head .dh-pick { display: block; }
+  .day-head .dh-actions { width: 100%; display: grid; grid-template-columns: 1fr 1fr; }
+  .day-head .dh-actions .btn { justify-content: center; padding: 0 10px; }
+  .summary { gap: 10px; }
+  .ds-collapse { padding: 10px 12px; }
+  .ds-collapse .collapse-note { display: none; }
+  .day-setup .ds-actions { width: 100%; margin-left: 0; }
+  .list-head { flex-wrap: wrap; row-gap: 4px; }
+
+  /* Vazifa qatori */
+  .task {
+    grid-template-columns: 20px minmax(0, 1fr) auto;
+    grid-template-areas: "dot main more" ". pomos count" "actions actions actions";
+    column-gap: 12px; row-gap: 8px; padding: 12px 12px 12px 14px;
+  }
+  .task .t-grip { display: none; }
+  .task .t-dot { grid-area: dot; align-self: start; margin-top: 4px; }
+  .task .t-main { grid-area: main; }
+  .task .t-more { grid-area: more; align-self: start; justify-self: end; opacity: 1; width: 40px; height: 40px; }
+  .task .t-pomos { grid-area: pomos; align-self: center; }
+  .task .t-count { grid-area: count; min-width: 0; display: flex; gap: 6px; align-items: baseline; justify-self: end; }
+  .task .t-count small { display: inline; }
+  .task.is-open .t-actions, .task .t-actions { grid-area: actions; grid-column: 1 / -1; }
+  .task.is-open .t-actions { justify-content: space-between; }
+  .task.is-open .t-actions .t-btn { width: 44px; height: 44px; }
+  .task.st-qabulga:not(.is-open) .t-actions { grid-column: 1 / -1; justify-content: flex-end; }
+  .t-title { font-size: 15px; word-break: normal; overflow-wrap: anywhere; }
+  .t-meta { flex-wrap: wrap; }
+
+  /* Taymer tugmalari: O'tkazish va To'xtatish yonma-yon */
+  :is([data-theme="glass"],[data-theme="clay"],[data-theme="dark"],[data-theme="light"]) .timer-card .controls {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  :is([data-theme="glass"],[data-theme="clay"],[data-theme="dark"],[data-theme="light"]) .timer-card .controls #btnMain { grid-column: 1 / -1; }
+
+  /* Sahifa sarlavhalari */
+  .page-head { flex-direction: column; align-items: stretch; gap: 12px; margin-bottom: 14px; }
+  .ph-title { font-size: 28px; }
+  .ph-row { gap: 10px; }
+  .ph-row .export-bar { width: 100%; }
+  .page-head .seg { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .page-head .report-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .page-head .report-bar .btn { grid-column: 1 / -1; justify-content: center; }
+  .page-head .head-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .page-head .head-actions .field.inline { display: flex; flex-direction: column; align-items: stretch; gap: 4px; }
+  .page-head .head-actions input { width: 100%; }
+  .page-head .head-actions .btn { grid-column: 1 / -1; justify-content: center; }
+
+  .kpi-cards { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 10px; }
+  .kpi-cards .kpi { padding: 14px; }
+  .kpi-cards .kpi-val { font-size: 24px; }
+  .three-col, .rep-layout { grid-template-columns: 1fr; gap: 14px; }
+  .three-col > .card:last-child { grid-column: auto; }
+  .rep-side .split-actions { grid-template-columns: 1fr; }
+  .report-preview iframe { height: 480px; }
+  [data-theme="skeuo"] .rep-main > .card:first-child::after { width: 78px; height: 78px; font-size: 10px; right: 12px; top: 10px; }
+  [data-theme="skeuo"] .rep-main > .card:first-child #repHighlights { padding-right: 80px; }
+
+  /* Tarix */
+  .hist-card { padding: 12px; }
+  .hday summary { grid-template-columns: 1fr 1fr; gap: 8px 12px; padding: 14px; }
+  .hday summary .hday-date, .hday-bar { grid-column: 1 / -1; }
+  .hday-stat { font-size: 13px; white-space: normal; }
+  .hday-body { padding: 10px 12px 14px; }
+  .hrow { display: grid; grid-template-columns: 1fr auto; gap: 4px 10px; }
+  .hrow > span:first-child { grid-column: 1 / -1; }
+
+  /* Sozlamalar */
+  .switch-row { font-size: 13.5px; }
+  #psec-taymer .switch-row:not([style]) { padding: 12px; }
+  .collapse-note { display: none; }
+
+  /* Modallar — ekranga sig'sin */
+  .overlay { align-items: end; padding: 0; }
+  .overlay .modal { width: 100%; max-width: none !important; max-height: 92vh; overflow-y: auto; box-sizing: border-box;
+    border-radius: 24px 24px 0 0 !important; padding: 20px 16px calc(20px + env(safe-area-inset-bottom)); }
+
+  /* Kirish */
+  .auth-card { padding: 22px 18px; border-radius: 26px; }
+}
+
+/* Skeuo: «Kun sozlamalari» bloki daftar hoshiyasidan o'ngda turadi */
+[data-theme="skeuo"] .ds-collapse { margin: 14px 32px 0 100px; border-color: #C9BFA8; background: rgba(201,216,234,.14); }
+@media (max-width: 760px) {
+  [data-theme="skeuo"] .plan-card::after { left: 30px; }
+  [data-theme="skeuo"] .ds-collapse { margin: 12px 12px 0 42px; }
+  [data-theme="skeuo"] .plan-wrap { padding: 4px 12px 0 42px; }
+  [data-theme="skeuo"] .timeline-wrap { padding: 0 12px 16px 42px; }
+  [data-theme="skeuo"] .task-list { background: none; }
+  [data-theme="skeuo"] .task { border-bottom: 1px solid #C9D8EA; padding: 10px 0; column-gap: 10px; }
+  [data-theme="skeuo"] .t-title { font-size: 22px; }
+  [data-theme="skeuo"] .list-head h3 { font-size: 26px; }
+  [data-theme="skeuo"] .task .t-dot { margin-top: 2px; }
+}
+@media (max-width: 760px) {
+  /* Telefonda karta ichidagi bo'shliq kichikroq — vazifa nomiga joy qolsin */
+  :is([data-theme="glass"],[data-theme="clay"],[data-theme="neu"],[data-theme="dark"],[data-theme="light"]) .plan-card { padding: 14px 12px; }
+  :is([data-theme="clay"],[data-theme="neu"]) .task { padding: 12px; }
+  .card { padding: 16px 14px; }
+  /* iOS'da «fixed» fon ishlamaydi — oddiy fon, butun sahifa bo'ylab takrorlanadi */
+  [data-theme="skeuo"] body, [data-theme="skeuo"] { background-attachment: scroll !important; }
+}
+@media (max-width: 760px) {
+  /* Landing */
+  .lp-top { margin: 8px 10px 0; padding: 8px 8px 8px 12px; gap: 8px; }
+  .lp-top .lp-brand { font-size: 16px; min-width: 0; }
+  .lp-top-actions { gap: 6px; flex-shrink: 0; }
+  .lp-top-actions :is(a, .btn) { padding: 0 12px; height: 40px; font-size: 13px; display: inline-flex; align-items: center; white-space: nowrap; }
+  .lp-hero { display: flex; flex-direction: column; }
+  .lp-hero-text { order: -1; text-align: left; }
+  .lp-hero-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .lp-hero-actions :is(a, .btn) { justify-content: center; }
+  .lp-grid { grid-template-columns: 1fr !important; }
+  .lp-foot { flex-direction: column; gap: 6px; text-align: center; }
+
+  /* Ko'p kunlik reja */
+  .wp-range { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; align-items: end; }
+  .wp-range label, .wp-range .field { display: flex; flex-direction: column; align-items: stretch; gap: 4px; }
+  .wp-range input { width: 100%; }
+  .wp-days { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; max-height: none !important; }
+  .wp-form-row { grid-template-columns: 1fr 1fr !important; }
+  .wp-form-row > :first-child { grid-column: 1 / -1; }
+  .wp-form-actions { flex-direction: column; align-items: stretch; gap: 8px; }
+  .wp-form-actions .btn { justify-content: center; }
+
+  /* Profil sarlavhasi */
+  .profile-head { flex-wrap: wrap; }
+  .profile-head #profEditOpen { order: 3; width: 100%; justify-content: center; }
+}
+@media (max-width: 760px) { .wp-range .btn { justify-content: center; } .wp-range .hint { grid-column: 1 / -1; } }
+@media (max-width: 760px) {
+  .overlay .modal-xl { display: block; width: 100%; }
+  .overlay .modal-xl .wp-days { overflow: visible; flex: none; }
+}
+@media (max-width: 420px) {
+  .lp-top .lp-brand { font-size: 0; gap: 0; }
+}
+/* Planshet (761–1180px): bo'limlar sarlavhaning ikkinchi qatorida */
+@media (min-width: 761px) and (max-width: 1180px) {
+  :is([data-theme]) .topbar { height: auto; min-height: 68px; flex-wrap: wrap; padding: 10px 12px 10px 16px; row-gap: 10px; margin-left: 16px; margin-right: 16px; }
+  :is([data-theme]) .topbar .tabs { order: 3; width: 100%; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  :is([data-theme]) .topbar .tab { justify-content: center; }
+  .topbar .tab .tab-label { display: inline !important; }
+  #view-today .layout > .timer-card { top: 150px; }
+}
+@media (max-width: 1080px) { #view-today .layout > .timer-card { position: relative; top: 0; } }
