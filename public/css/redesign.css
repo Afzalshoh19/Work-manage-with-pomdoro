@@ -216,7 +216,7 @@ html:not([data-theme="skeuo"]) .mode-pills #btnMinTimer { top: 136px; }
 /* ═══════════════ Uslubga xos farqlar ═══════════════ */
 
 /* Glass */
-[data-theme="glass"] { --picker-filter: invert(1); }
+[data-theme="glass"] { --picker-filter: none; }
 [data-theme="glass"] .hday-bar i { background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
 [data-theme="glass"] .task.is-active { background: rgba(255,107,91,.16); border-color: rgba(255,140,120,.45); }
 
@@ -415,3 +415,46 @@ html:not([data-theme="skeuo"]) .mode-pills #btnMinTimer { top: 136px; }
 [data-theme="clay"] .menu { background: #FFFAF4; border: 0; border-radius: 22px; box-shadow: 12px 16px 32px rgba(140,110,80,.25), inset 3px 3px 6px #fff; }
 [data-theme="neu"] .menu { background: #E4E8EF; border: 0; border-radius: 20px; box-shadow: 10px 10px 20px #C2C8D2, -10px -10px 20px #FFFFFF; }
 [data-theme="skeuo"] .menu { background: #FBF7EE; border: 1px solid #C9BFA8; border-radius: 6px; box-shadow: 0 20px 40px rgba(0,0,0,.55); }
+
+/* ─────────── Sarlavha (header) — hamma uslubda bir xil geometriya ───────────
+   Uslub almashganda sarlavha kengayib-torayib, balandligi sakramasin:
+   o'lcham va joylashuv shu yerda qat'iy belgilanadi, uslublar faqat
+   rang/soya/yuzani beradi. */
+:is([data-theme="glass"],[data-theme="clay"],[data-theme="skeuo"],[data-theme="neu"]) .topbar {
+  position: sticky; top: 14px; z-index: 50;
+  box-sizing: border-box; width: auto; max-width: 1360px; height: 68px;
+  margin: 14px auto 0; padding: 0 12px 0 16px;
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+}
+:is([data-theme="glass"],[data-theme="clay"],[data-theme="skeuo"],[data-theme="neu"]) .topbar .brand { height: 48px; }
+:is([data-theme="glass"],[data-theme="clay"],[data-theme="skeuo"],[data-theme="neu"]) .topbar .tabs {
+  box-sizing: border-box; height: 48px; padding: 4px; margin: 0 auto; gap: 4px;
+  display: flex; align-items: stretch;
+}
+:is([data-theme="glass"],[data-theme="clay"],[data-theme="skeuo"],[data-theme="neu"]) .topbar .tab {
+  box-sizing: border-box; height: 40px; padding: 0 18px; font-size: 14px;
+  display: inline-flex; align-items: center; gap: 8px;
+}
+:is([data-theme="glass"],[data-theme="clay"],[data-theme="skeuo"],[data-theme="neu"]) #userBtn {
+  box-sizing: border-box; height: 44px; padding: 4px 12px 4px 4px; transform: none;
+}
+:is([data-theme="glass"],[data-theme="clay"],[data-theme="skeuo"],[data-theme="neu"]) #userBtn .avatar { width: 34px; height: 34px; }
+@media (max-width: 1400px) {
+  :is([data-theme="glass"],[data-theme="clay"],[data-theme="skeuo"],[data-theme="neu"]) .topbar { margin-left: 20px; margin-right: 20px; }
+}
+
+/* ─────────── Glass: kalendar belgisi qorong'i fonda ko'rinsin ─────────── */
+[data-theme="glass"] input[type="date"]::-webkit-calendar-picker-indicator,
+[data-theme="glass"] input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: none; opacity: .9; cursor: pointer;
+}
+[data-theme="glass"] input[type="date"]::-webkit-calendar-picker-indicator:hover { opacity: 1; }
+/* color-scheme: dark belgini oq qiladi; ilgari ustiga invert qo'yilgani uchun qora bo'lib ko'rinmay qolardi */
+[data-theme="glass"] input[type="date"], [data-theme="glass"] input[type="time"] { color-scheme: dark; }
+/* Glass sarlavhasi ham boshqalar kabi suzuvchi shisha panel (maketdagidek) */
+[data-theme="glass"] .topbar {
+  border-radius: 22px; border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.07);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+  box-shadow: 0 20px 40px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.18);
+}
