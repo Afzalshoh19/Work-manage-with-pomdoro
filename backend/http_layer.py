@@ -106,8 +106,28 @@ def origin_allowed(req) -> bool:
 # ═══════════ Statik fayllar ═══════════
 
 def _etag(st) -> str:
-    """Node: `'"' + mtimeMs.toString(36) + '-' + size.toString(36) + '"'`."""
-    return '"' + js_to_string_36(st.st_mtime * 1000) + "-" + js_to_string_36(st.st_size) + '"'
+    """
+    Node: `'"' + mtimeMs.toString(36) + '-' + size.toString(36) + '"'`.
+
+    ETag mtime'ning KASRLI qismidan ham quriladi, shuning uchun uni Node
+    bergan `double` ning AYNAN o'zi qilib hisoblash kerak. Uchta yo'lning
+    faqat bittasi to'g'ri:
+
+        st_mtime * 1000                  -> c981eaf6240e7a42   (1 ULP xato)
+        st_mtime_ns / 1e6                -> c981eaf6240e7a42   (1 ULP xato)
+        ns // 10**6 + (ns % 10**6) / 1e6 -> ca81eaf6240e7a42   (Node bilan bir xil)
+
+    Sabab: `st_mtime_ns` ~1.8e18, ya'ni 2**53 dan katta. Uni butunligicha
+    float'ga o'girish past bitlarni yo'qotadi. Butun millisekund va kasr
+    qismini alohida hisoblasak, ikkalasi ham aniqlik chegarasida qoladi.
+
+    Bir ULP farq base36 da ko'rinadigan farq beradi ("...e8" va "...e7n"),
+    ya'ni Node keshlagan faylni Python qaytadan yuklatardi. Hamma mtime'da
+    emas, faqat ba'zilarida — shuning uchun uzoq sezilmay qolgan.
+    """
+    ns = st.st_mtime_ns
+    mtime_ms = ns // 10 ** 6 + (ns % 10 ** 6) / 1e6
+    return '"' + js_to_string_36(mtime_ms) + "-" + js_to_string_36(st.st_size) + '"'
 
 
 _B36 = "0123456789abcdefghijklmnopqrstuvwxyz"

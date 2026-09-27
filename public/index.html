@@ -18,7 +18,7 @@
 
 <header class="topbar">
   <div class="brand">
-    <span class="brand-logo">🍅</span>
+    <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2"/><path d="M9 2h6"/></svg></span>
     <div>
       <strong>Pomodoro</strong>
       <small>Ish jarayoni boshqaruvi</small>
@@ -117,50 +117,61 @@
       </div>
 
       <!-- Kun tartibi -->
-      <div class="card plan-card">
-        <div class="card-head">
-          <div class="date-nav">
-            <button class="icon-btn" id="datePrev" title="Oldingi kun">‹</button>
-            <input type="date" id="datePicker">
-            <button class="icon-btn" id="dateNext" title="Keyingi kun">›</button>
-            <button class="btn btn-mini" id="dateToday">Bugun</button>
-          </div>
-          <div class="head-actions">
-            <button class="btn btn-mini" id="btnAddTask" title="Shu kunga yangi vazifa qo'shish"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Vazifa qo'shish</button>
-            <button class="btn btn-mini btn-ghost" id="btnWeekPlan" title="Bir necha kunga birdaniga reja tuzish"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg> Ko'p kunlik reja</button>
-            <span class="ha-sep" aria-hidden="true"></span>
-            <button class="btn btn-mini btn-ghost" id="btnCopyYesterday" title="Kechagi rejani shu kunga nusxalash"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/></svg> Kechagidan</button>
-            <button class="btn btn-mini btn-ghost" id="btnCarry" title="Bajarilmaganlarni ertaga ko'chirish">Ertaga <svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <div class="plan-col">
 
+        <!-- Sana sarlavhasi — chizmadagidek kartadan tashqarida -->
+        <div class="day-head">
+          <div class="dh-left">
+            <button class="icon-btn" id="datePrev" title="Oldingi kun" aria-label="Oldingi kun">‹</button>
+            <div class="dh-text">
+              <div class="dh-sub" id="dhSub">—</div>
+              <h1 class="dh-date" id="dhDate">—</h1>
+            </div>
+            <button class="icon-btn" id="dateNext" title="Keyingi kun" aria-label="Keyingi kun">›</button>
+            <label class="dh-pick" title="Sanani tanlash">
+              <span class="visually-hidden">Sana</span>
+              <input type="date" id="datePicker">
+            </label>
+            <button class="btn btn-mini btn-ghost" id="dateToday">Bugun</button>
           </div>
-        </div>
-
-        <!-- Shu kunning ish rejimi: qiymatlar faqat ko'rsatiladi, tahrirlash o'ngdagi tugmadan -->
-        <div class="day-setup" id="daySetup">
-          <div class="ds-view" id="dsView"></div>
-          <div class="ds-actions">
-            <button class="btn btn-mini" id="dsEdit" title="Pomodoro va tanaffus vaqtlarini shu kunga to'g'rlash"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1v.3a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-2.8-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3.5 15a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.1-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.8-1.1V4a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.8h.1a2 2 0 1 1 0 4z"/></svg> To'g'rlash</button>
-            <button class="btn btn-mini btn-ghost" id="dsReset" hidden title="Shu kun uchun kiritilgan o'zgarishlarni bekor qilib, profildagi qiymatlarga qaytarish">↺ Standart</button>
+          <div class="dh-actions">
+            <button class="btn btn-ghost" id="btnWeekPlan" title="Bir necha kunga birdaniga reja tuzish"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg> Ko'p kunlik reja</button>
+            <button class="btn" id="btnAddTask" title="Shu kunga yangi vazifa qo'shish"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg> Vazifa qo'shish</button>
           </div>
         </div>
 
-
+        <!-- Xulosa kartochkalari: chizmada to'rtta, alohida kartalar -->
         <div class="summary" id="summary"></div>
 
-        <details class="plan-wrap" id="planWrap" open>
-          <summary class="list-head">
-            <span class="lh-chev">▾</span>
-            <h3>Kun tartibi</h3>
-            <span class="lh-count" id="planCount"></span>
-            <span class="hint">Tartibni o'zgartirish uchun ushlab suring</span>
-          </summary>
-          <ul class="task-list" id="taskList"></ul>
-        </details>
+        <div class="card plan-card">
+          <!-- Shu kunning ish rejimi: qiymatlar faqat ko'rsatiladi, tahrirlash o'ngdagi tugmadan -->
+          <div class="day-setup" id="daySetup">
+            <div class="ds-view" id="dsView"></div>
+            <div class="ds-actions">
+              <button class="btn btn-mini btn-ghost" id="btnCopyYesterday" title="Kechagi rejani shu kunga nusxalash"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/></svg> Kechagidan</button>
+              <button class="btn btn-mini btn-ghost" id="btnCarry" title="Bajarilmaganlarni ertaga ko'chirish">Ertaga <svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+              <button class="btn btn-mini" id="dsEdit" title="Pomodoro va tanaffus vaqtlarini shu kunga to'g'rlash"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1v.3a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-2.8-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3.5 15a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.1-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.8-1.1V4a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.8h.1a2 2 0 1 1 0 4z"/></svg> To'g'rlash</button>
+              <button class="btn btn-mini btn-ghost" id="dsReset" hidden title="Shu kun uchun kiritilgan o'zgarishlarni bekor qilib, profildagi qiymatlarga qaytarish">↺ Standart</button>
+            </div>
+          </div>
 
-        <details class="timeline-wrap" id="timelineWrap">
-          <summary>Kun jadvali (vaqt bo'yicha taqsimot)</summary>
-          <div class="timeline" id="timeline"></div>
-        </details>
+          <details class="plan-wrap" id="planWrap" open>
+            <summary class="list-head">
+              <span class="lh-chev">▾</span>
+              <h3>Kun tartibi</h3>
+              <span class="lh-count" id="planCount"></span>
+              <span class="lh-spacer"></span>
+              <span class="lh-prog">Kun bajarilishi <b id="dayPct">0%</b></span>
+            </summary>
+            <div class="day-bar" id="dayBar"><i></i></div>
+            <ul class="task-list" id="taskList"></ul>
+          </details>
+
+          <details class="timeline-wrap" id="timelineWrap">
+            <summary>Kun jadvali (vaqt bo'yicha taqsimot)</summary>
+            <div class="timeline" id="timeline"></div>
+          </details>
+        </div>
       </div>
     </div>
   </section>

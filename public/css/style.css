@@ -58,7 +58,17 @@ code { background: var(--card-2); padding: 1px 6px; border-radius: 5px; font-siz
   border-bottom: 1px solid var(--line);
 }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 210px; }
-.brand-logo { font-size: 26px; filter: drop-shadow(0 3px 8px rgba(255,95,86,.4)); }
+/* Chizmadagi belgi: gradientli kvadrat ichida soat ikonkasi.
+   Ilgari 🍅 emoji edi — u har tizimda boshqacha chiziladi va
+   uslublarga moslashmaydi. */
+.brand-mark {
+  width: 36px; height: 36px; flex-shrink: 0;
+  display: grid; place-items: center;
+  border-radius: 12px; color: #fff;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 45%, transparent);
+}
+.brand-mark svg { width: 19px; height: 19px; }
 .brand strong { display: block; font-size: 16px; }
 .brand small { color: var(--txt-3); font-size: 11.5px; }
 
@@ -92,7 +102,7 @@ code { background: var(--card-2); padding: 1px 6px; border-radius: 5px; font-siz
 .view.is-active { display: block; }
 @keyframes fade { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 
-.layout { display: grid; grid-template-columns: 380px 1fr; gap: 20px; align-items: start; }
+.layout { display: grid; grid-template-columns: 420px 1fr; gap: 24px; align-items: start; }
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 
 .card {
@@ -115,7 +125,7 @@ code { background: var(--card-2); padding: 1px 6px; border-radius: 5px; font-siz
 .pill:hover { color: var(--txt); }
 .pill.is-active { background: var(--mode); color: #fff; }
 
-.dial { position: relative; width: 240px; height: 240px; margin: 0 auto 6px; }
+.dial { position: relative; width: 280px; height: 280px; margin: 0 auto 6px; }
 .ring { width: 100%; height: 100%; transform: rotate(-90deg); }
 .ring-bg { fill: none; stroke: var(--card-2); stroke-width: 12; }
 .ring-fg {
@@ -124,7 +134,7 @@ code { background: var(--card-2); padding: 1px 6px; border-radius: 5px; font-siz
   filter: drop-shadow(0 0 10px color-mix(in srgb, var(--mode) 45%, transparent));
 }
 .dial-center { position: absolute; inset: 0; display: grid; place-content: center; gap: 4px; }
-.clock { font-size: 54px; font-weight: 300; font-variant-numeric: tabular-nums; letter-spacing: -1px; line-height: 1; }
+.clock { font-size: 60px; font-weight: 300; font-variant-numeric: tabular-nums; letter-spacing: -1px; line-height: 1; }
 .dial-sub { color: var(--txt-3); font-size: 12.5px; }
 .is-running .clock { color: var(--mode); }
 

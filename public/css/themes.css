@@ -93,7 +93,8 @@ h1, h2, h3, .clock { font-family: var(--font-display); }
 [data-theme="glass"] .modal-box,
 [data-theme="glass"] .lp-try,
 [data-theme="glass"] .lp-feat,
-[data-theme="glass"] .lp-cta {
+[data-theme="glass"] .lp-cta,
+[data-theme="glass"] .lp-top {
   backdrop-filter: blur(var(--glass));
   -webkit-backdrop-filter: blur(var(--glass));
 }
@@ -469,7 +470,16 @@ body, .topbar, .card, .mini, .tabs, .tab, .btn, .pill,
 [data-theme="neu"] .lp-feat:hover { box-shadow: var(--inset); transform: none; }
 [data-theme="neu"] .lp-foot { border-top: 0; }
 
-[data-theme="skeuo"] .lp-top { color: #F3E6CF; }
+/* Yuqori qator endi panel: skeuo'da u ilovadagi kabi qora yog'och
+   ustidagi metall lavha bo'ladi, aks holda krem fonda krem matn qolardi */
+[data-theme="skeuo"] .lp-top {
+  background: linear-gradient(180deg, #2E2A27, #1C1A18);
+  border: 1px solid #0D0C0B; border-radius: 14px; color: #F3E6CF;
+  box-shadow: 0 8px 18px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.12);
+}
+[data-theme="skeuo"] .lp-badge {
+  background: rgba(243,230,207,.1); border-color: rgba(243,230,207,.28); color: #F3E6CF;
+}
 [data-theme="skeuo"] .lp-try,
 [data-theme="skeuo"] .lp-feat,
 [data-theme="skeuo"] .lp-cta {
@@ -494,3 +504,116 @@ body, .topbar, .card, .mini, .tabs, .tab, .btn, .pill,
    uchun bu noto'g'ri: uning butun ma'nosi — BITTA tekis yuza, soyalar
    esa shakl beradi. Rangli yoyilma soyalarni yo'q qilib yuboradi. */
 [data-theme="neu"] .lp-body { background: var(--bg); }
+
+[data-theme="neu"] .lp-top { border: 0; box-shadow: var(--raise); }
+[data-theme="clay"] .lp-top { border: 0; border-radius: 26px; }
+[data-theme="neu"] .lp-badge { border: 0; box-shadow: var(--inset); }
+[data-theme="clay"] .lp-badge { border: 0; box-shadow: var(--inset); }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   GLASSMORPHISM — chizmaga aniq moslash
+   Qiymatlar `Main.dc.html` va `Land-Glass.dc.html` dan olingan.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Chizmada uchta dog': urg'u (chapda), binafsha (yuqori o'ngda),
+   firuza (pastki o'ngda). Uchinchisi `html` ga biriktirildi —
+   `body` da ikkitagina psevdo-element bor. */
+[data-theme="glass"] html::after {
+  content: ""; position: fixed; z-index: -1; pointer-events: none;
+  width: 480px; height: 480px; right: -80px; bottom: -120px;
+  border-radius: 50%; background: #1FC7B6; filter: blur(150px); opacity: .32;
+}
+
+/* Tugmalar: gradient + yuqoridan oq ingichka yo'l (chizmadagi «shisha») */
+[data-theme="glass"] .btn,
+[data-theme="glass"] .btn-primary {
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.3);
+  background: linear-gradient(135deg, var(--accent), #FF8F6B);
+  box-shadow: 0 12px 30px rgba(255,107,91,.45), inset 0 1px 0 rgba(255,255,255,.4);
+}
+[data-theme="glass"] .btn:hover,
+[data-theme="glass"] .btn-primary:hover {
+  background: linear-gradient(135deg, #FF7D6E, #FFA07D);
+}
+[data-theme="glass"] .btn-ghost {
+  background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.16);
+  color: var(--txt); box-shadow: none;
+}
+[data-theme="glass"] .btn-ghost:hover { background: rgba(255,255,255,.14); }
+[data-theme="glass"] .btn-mini { border-radius: 14px; }
+[data-theme="glass"] .btn-danger {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  box-shadow: none;
+}
+
+/* Bo'limlar qatori: ichki idish + oq faol yorliq */
+[data-theme="glass"] .tabs {
+  background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.1);
+  border-radius: 16px; padding: 4px;
+}
+[data-theme="glass"] .tab { border-radius: 12px; }
+
+/* Vazifa qatorlari: faol — urg'u tusida, qolganlari deyarli shaffof */
+[data-theme="glass"] .task {
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-left-width: 3px;
+  border-radius: 18px;
+}
+[data-theme="glass"] .task:hover { background: rgba(255,255,255,.09); transform: none; }
+[data-theme="glass"] .task.is-active {
+  background: rgba(255,107,91,.16);
+  border-color: rgba(255,140,120,.45);
+  box-shadow: none;
+}
+[data-theme="glass"] .task.is-done .t-title { color: var(--txt-3); }
+
+/* Xulosa kartochkalari — chizmadagi 22px radius va shisha yuzasi */
+[data-theme="glass"] .sum-item {
+  border-radius: 22px; padding: 18px;
+  background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.16);
+  backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px);
+}
+[data-theme="glass"] .sum-item:hover { transform: none; border-color: rgba(255,255,255,.28); }
+
+/* Soat: chizmada yupqa Sora */
+[data-theme="glass"] .clock { font-weight: 300; letter-spacing: -.03em; }
+
+/* Kun bajarilishi yo'lagi */
+[data-theme="glass"] .day-bar { background: rgba(255,255,255,.1); }
+[data-theme="glass"] .day-bar > i { background: linear-gradient(90deg, var(--accent), #FFB36B); }
+
+
+/* ── Glass: xulosa kartochkalari chizmadagidek ──
+   Chizmada tartib teskari: avval kichik kulrang YORLIQ, ostida katta oq
+   SON. Ikonka va chap chetdagi rangli yo'l yo'q, to'rtala karta bir xil
+   neytral shishada — rang faqat urg'u halqasi va tugmalarda qoladi. */
+
+[data-theme="glass"] .sum-item { display: flex; flex-direction: column; }
+[data-theme="glass"] .sum-item::before { display: none; }
+[data-theme="glass"] .sum-item .si-ico { display: none; }
+[data-theme="glass"] .sum-item .si-label {
+  order: 1; margin: 0; font-size: 13px; font-weight: 500; color: var(--txt-2);
+}
+[data-theme="glass"] .sum-item b {
+  order: 2; margin-top: 8px; max-width: 100%;
+  font-family: var(--font-display); font-size: 30px; font-weight: 600;
+  color: var(--txt);
+}
+[data-theme="glass"] .sum-item b small { font-size: 18px; color: var(--txt-3); }
+[data-theme="glass"] .sum-item b i { color: var(--txt-3); }
+[data-theme="glass"] .sum-item .si-sub { order: 3; margin-top: 6px; font-size: 11.5px; }
+
+/* Rejim tugmalari: chizmada faol tugma oq emas, ozgina yorug'roq yuza */
+[data-theme="glass"] .pill.is-active {
+  background: rgba(255,255,255,.16); color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.3);
+}
+[data-theme="glass"] .mode-pills { border-radius: 16px; padding: 4px; }
+[data-theme="glass"] .pill { border-radius: 12px; }
+
+/* Rejim tugmalari 420px ustunda uch ustunga sig'sin — chizmadagi kabi
+   har biri bitta qatorda */
+[data-theme="glass"] .pill { padding: 10px 6px; font-size: 13.5px; }

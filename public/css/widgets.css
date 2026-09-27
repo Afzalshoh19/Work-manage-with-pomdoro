@@ -12,9 +12,20 @@
 .card-min:hover { color: var(--accent); background: var(--card-2); border-color: color-mix(in srgb, var(--accent) 45%, transparent); }
 .card-min .bi { width: 15px; height: 15px; }
 
-/* Taymerdagi tugmalar pill qatorining o'ng chetiga suriladi */
-.mode-pills #btnPipTimer { margin-left: auto; }
-.mode-pills .card-min + .card-min { margin-left: 0; }
+/* Taymerdagi tugmalar kartaning YUQORI O'NG burchagida turadi.
+   Ilgari ular rejim tugmalari qatorida edi va uchta tugmadan ~90px
+   joy olib qo'yardi — «Qisqa tanaffus» ikki qatorga bo'linib ketardi.
+   Chizmada bu qator faqat uchta teng tugmadan iborat. */
+.timer-card { position: relative; }
+.mode-pills #btnPipTimer,
+.mode-pills #btnMinTimer {
+  position: absolute; top: 14px; z-index: 2;
+  width: 28px; height: 28px; border-radius: 9px;
+  background: color-mix(in srgb, var(--card) 80%, transparent);
+}
+.mode-pills #btnPipTimer { right: 50px; }
+.mode-pills #btnMinTimer { right: 16px; }
+.mode-pills .card-min .bi { width: 14px; height: 14px; }
 
 /* Taymer yig'ilganda reja butun kenglikni egallaydi */
 .layout.no-timer { grid-template-columns: 1fr; }

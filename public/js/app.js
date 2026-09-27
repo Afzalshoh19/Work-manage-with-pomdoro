@@ -58,11 +58,37 @@ function fmtDuration(min) {
   const h = Math.floor(min / 60), m = min % 60;
   return m ? `${h} soat ${m} daq` : `${h} soat`;
 }
+/**
+ * Ixcham davomiylik: "1s 15d".
+ *
+ * Xulosa kartochkalari uchun. To'liq shakl ("1 soat 15 daq") tor kartada
+ * ikki qatorga bo'linib, kartochkalar balandligini buzardi — chizmada esa
+ * ular bir xil balandlikda turadi.
+ */
+function fmtDurationShort(min) {
+  min = Math.round(min);
+  if (min < 60) return `${min} daq`;
+  const h = Math.floor(min / 60), m = min % 60;
+  return m ? `${h}s ${m}d` : `${h}s`;
+}
+
 /** Yarim tundan oshgan vaqtga "+1" belgisi qo'shadi */
 function tm(time, dayOffset) {
   if (!time) return '—';
   return dayOffset > 0 ? `${time}⁺¹` : time;
 }
+/** "28-sentabr" — sarlavhadagi katta yozuv (chizmadagi ko'rinish) */
+function fmtDateShort(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  const months = ['yanvar', 'fevral', 'mart', 'aprel', 'may', 'iyun', 'iyul', 'avgust', 'sentabr', 'oktabr', 'noyabr', 'dekabr'];
+  return `${d.getDate()}-${months[d.getMonth()]}`;
+}
+/** "Dushanba" */
+function weekdayName(dateStr) {
+  const d = new Date(dateStr + 'T12:00:00');
+  return ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'][d.getDay()];
+}
+
 function fmtDateLong(dateStr) {
   const d = new Date(dateStr + 'T12:00:00');
   const days = ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'];
@@ -771,6 +797,9 @@ function renderPlan() {
   const pct = Math.min(100, summary.progressPercent);
   const busy = summary.utilizationPercent;
 
+  /* Chizmada to'rtta karta: Pomodoro · Sof ish vaqti · Tanaffuslar · Vazifalar.
+     Oldin oltita edi — «Kun jadvali» va «Ish vaqti bandligi» yo'qolmadi,
+     ular sana sarlavhasi ostidagi qatorga ko'chdi (`dhSub`). */
   $('summary').innerHTML =
     card({
       tone: 'accent', ico: icon('pomodoro'),
@@ -779,33 +808,20 @@ function renderPlan() {
       sub: summary.remainingPomodoros ? `${summary.remainingPomodoros} ta qoldi` : 'Reja to\'liq bajarildi'
     })
   + card({
-      ico: icon('focus'), value: fmtDuration(summary.workMinutes), label: 'Sof ish vaqti',
+      ico: icon('focus'), value: fmtDurationShort(summary.workMinutes), label: 'Sof ish vaqti',
       sub: summary.pauseMinutes
-        ? `${summary.totalPomodoros} × ${summary.workMinutesUsed} daq · ⏸ ${fmtDuration(summary.pauseMinutes)} pauza`
+        ? `⏸ ${fmtDuration(summary.pauseMinutes)} pauza`
         : summary.totalPomodoros ? `${summary.totalPomodoros} × ${summary.workMinutesUsed} daq` : 'Reja bo\'sh'
     })
   + card({
-      tone: 'green', ico: icon('coffee'), value: fmtDuration(summary.breakMinutes), label: 'Tanaffuslar',
+      tone: 'green', ico: icon('coffee'), value: fmtDurationShort(summary.breakMinutes), label: 'Tanaffuslar',
       sub: `${summary.shortBreaks} qisqa · ${summary.longBreaks} uzun`
         + (summary.lunch?.enabled ? ` · tushlik ${summary.lunch.start}` : '')
     })
   + card({
-      tone: 'blue', ico: icon('calendar'), twoLine: true,
-      value: `<span>${summary.dayStart}</span><span><i>→</i>${tm(summary.dayEnd, summary.dayEndOffset)}</span>`,
-      label: 'Kun jadvali',
-      sub: fmtDuration(summary.totalMinutes) + (summary.overnight ? ' · ertasi kunga o\'tadi' : '')
-    })
-  + card({
-      tone: summary.fits ? '' : 'warn', ico: icon(summary.fits ? 'gauge' : 'warn'),
-      value: busy, unit: '%', label: 'Ish vaqti bandligi',
-      sub: summary.fits
-        ? `Bo'sh: ${fmtDuration(summary.freeMinutes)} · sig'imi ${summary.capacityPomodoros} ta`
-        : `${fmtDuration(summary.overflowMinutes)} oshdi · ${summary.extraPomodoros} ta sig'maydi`
-    })
-  + card({
       tone: 'purple', ico: icon('check'),
       value: summary.doneTaskCount, unit: `/${summary.taskCount}`,
-      label: 'Vazifalar bajarildi',
+      label: 'Vazifalar',
       sub: tasks.length
         ? `<span class="si-dots">`
           + (cnt.reja ? `<i class="d-reja" title="Rejalashtirilgan">○ ${cnt.reja}</i>` : '')
@@ -814,14 +830,19 @@ function renderPlan() {
           + (cnt.bajarildi ? `<i class="d-bajarildi" title="Bajarildi">✔ ${cnt.bajarildi}</i>` : '')
           + `</span>`
         : 'Vazifa yo\'q'
-    })
-  + `<div class="sum-bar">
-       <div class="sum-bar-head">
-         <span>Kun bajarilishi</span>
-         <b>${pct}%</b>
-       </div>
-       <div class="bar"><i style="width:${pct}%"></i></div>
-     </div>`;
+    });
+
+  /* — Sana sarlavhasi (chizmadagi katta yozuv) — */
+  $('dhDate').textContent = fmtDateShort(S.date);
+  const bandlik = summary.fits
+    ? `bandlik ${busy}%`
+    : `${fmtDuration(summary.overflowMinutes)} oshdi`;
+  $('dhSub').innerHTML = `${weekdayName(S.date)} · Ish vaqti ${summary.dayStart}–${tm(summary.dayEnd, summary.dayEndOffset)}`
+    + ` · <span class="${summary.fits ? '' : 'dh-warn'}">${bandlik}</span>`;
+
+  /* — Kun bajarilishi — */
+  $('dayPct').textContent = pct + '%';
+  $('dayBar').firstElementChild.style.width = pct + '%';
 
   /* — Vazifalar — */
   const qoldi = tasks.filter(t => (t.status || (t.done ? 'bajarildi' : 'reja')) !== 'bajarildi').length;

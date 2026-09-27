@@ -138,7 +138,7 @@
 /* ═══════════ Xulosa kartochkalari ═══════════ */
 .summary {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);   /* 6 kartochka = 3 qator */
+  grid-template-columns: repeat(2, 1fr);   /* 4 kartochka = 2 qator */
   gap: 10px;
   margin-bottom: 18px;
 }
@@ -147,7 +147,7 @@
 
 /* Ustunlar soni kartochkalar joylashgan blok kengligiga qarab tanlanadi —
    oyna kengligiga emas. Shunda 6 ta karta joy yetganda bitta qatorda turadi. */
-.plan-card { container-type: inline-size; container-name: plan; }
+.plan-col { container-type: inline-size; container-name: plan; }
 
 .sum-item {
   position: relative;
@@ -247,10 +247,11 @@
    Bu qoidalar fayl oxirida turishi shart — yuqoridagi .sum-item qoidalarini
    qayta yozishi kerak.                                                      */
 @container plan (min-width: 470px) {
-  .summary { grid-template-columns: repeat(3, 1fr); }
+  .summary { grid-template-columns: repeat(2, 1fr); }
 }
-@container plan (min-width: 820px) {
-  .summary { grid-template-columns: repeat(6, 1fr); }
+@container plan (min-width: 720px) {
+  /* Chizmadagidek: to'rttasi bitta qatorda */
+  .summary { grid-template-columns: repeat(4, 1fr); }
 
   /* Tor kartochkada matn kesilmasin: ixcham o'lcham + qatorga bo'linish */
   .sum-item { padding: 12px 11px 11px; }
@@ -541,4 +542,62 @@
 
 @media (max-width: 620px) {
   .meet-row { grid-template-columns: 1fr 1fr; }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   Sana sarlavhasi — chizmadagidek kartadan TASHQARIDA
+   Chap tomonda kun va katta sana, o'ngda ikkita asosiy tugma.
+   Sana o'qlari va «Bugun» shu yerda qoldi: chizmada ular yo'q,
+   lekin ularsiz boshqa kunga o'tib bo'lmaydi.
+   ═══════════════════════════════════════════════════════════════ */
+
+.day-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; margin-bottom: 18px;
+}
+.dh-left { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.dh-text { min-width: 0; }
+.dh-sub {
+  font-size: 13px; color: var(--txt-2);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.dh-warn { color: var(--amber); font-weight: var(--w-mid, 550); }
+.dh-date {
+  margin: 2px 0 0; font-size: 32px; line-height: 1.05;
+  font-weight: var(--w-bold, 650); letter-spacing: -.02em;
+}
+.dh-pick { display: block; width: 150px; }
+.dh-pick input { padding: 7px 10px; font-size: 12.5px; }
+.dh-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* Ekran tor bo'lsa sana o'z qatoriga tushadi */
+@media (max-width: 720px) {
+  .dh-date { font-size: 26px; }
+  .dh-pick { display: none; }
+}
+
+/* ═══════════ «Kun bajarilishi» — ro'yxat sarlavhasida ═══════════
+   Oldin alohida `.sum-bar` kartochkasi edi; chizmada u «Kun tartibi»
+   sarlavhasining o'ng chetida turadi va ostida yo'lak bo'ladi. */
+
+.lh-spacer { flex-grow: 1; }
+.lh-prog { font-size: 12.5px; color: var(--txt-3); white-space: nowrap; }
+.lh-prog b { color: var(--txt); font-variant-numeric: tabular-nums; }
+
+.day-bar {
+  height: 8px; border-radius: 8px; overflow: hidden;
+  background: var(--card-2); box-shadow: var(--inset, none);
+  margin: 0 0 14px;
+}
+.day-bar > i {
+  display: block; height: 100%; width: 0; border-radius: 8px;
+  background: linear-gradient(90deg, var(--accent), var(--amber));
+  transition: width .3s ease;
+}
+
+/* Ekran o'quvchilari uchun matn — ko'rinmaydi, lekin o'qiladi */
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px;
+  padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
