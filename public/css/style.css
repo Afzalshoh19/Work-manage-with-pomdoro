@@ -290,7 +290,12 @@ output { display: block; background: var(--card-2); font-weight: 600; color: var
 .seg button { border: 0; background: transparent; color: var(--txt-2); padding: 6px 13px; border-radius: 7px; cursor: pointer; font: inherit; font-size: 12.5px; }
 .seg button.is-active { background: var(--accent); color: #fff; }
 
-.kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 12px; }
+/* Maketlarda (to'rtala uslubda ham) KPI kartochkalari TO'RT ustunda.
+   Ilgari `auto-fit` edi: keng ekranda yettita qatorga tizilib,
+   oxirgisi yolg'iz qolib ketardi. */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+@media (max-width: 980px) { .kpi-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .kpi-grid { grid-template-columns: 1fr; } }
 .kpi { background: var(--card-2); border: 1px solid var(--line); border-radius: 12px; padding: 15px; }
 .kpi-val { font-size: 27px; font-weight: 620; font-variant-numeric: tabular-nums; line-height: 1.1; }
 .kpi-lbl { font-size: 11.5px; color: var(--txt-3); margin-top: 4px; }

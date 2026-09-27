@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="uz"><head>
+<meta charset="utf-8">
+<title>Sozlamalar — Glassmorphism</title>
+<script src="60c30d48-8ed1-407b-a85d-2e85bf860f25"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* shriftlar olib tashlandi */</style>
+<style>
+body{margin:0;font-family:Manrope,system-ui,sans-serif;background:#0B0E1A;color:#F4F6FF}
+a{color:#FFB4A8}a:hover{color:#FFD2CB}
+button,input{font-family:inherit}
+button{cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1440px; height: 2100px; position: relative; overflow: hidden; background: #0B0E1A">
+<div style="position: absolute; width: 640px; height: 640px; left: -160px; top: 100px; border-radius: 50%; background: {{accent}}; filter: blur(170px); opacity: 0.4"></div>
+<div style="position: absolute; width: 640px; height: 640px; left: 900px; top: 700px; border-radius: 50%; background: #7B5CFF; filter: blur(170px); opacity: 0.45"></div>
+<div style="position: absolute; width: 600px; height: 600px; left: 200px; top: 1500px; border-radius: 50%; background: #1FC7B6; filter: blur(170px); opacity: 0.3"></div>
+<div style="position: relative; display: flex; flex-direction: column; gap: 24px; padding: 24px 40px 40px; box-sizing: border-box; height: 100%">
+<header style="display: flex; align-items: center; justify-content: space-between; height: 64px; padding: 0 12px 0 20px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); border-radius: 22px; backdrop-filter: blur(24px)">
+<div style="font-family: Sora, sans-serif; font-weight: 700; font-size: 18px">Pomodoro</div>
+<nav style="display: flex; gap: 4px; padding: 4px; background: rgba(255,255,255,0.06); border-radius: 16px; border: 1px solid rgba(255,255,255,0.1)">
+<a href="Main.dc.html" style="padding: 10px 20px; border-radius: 12px; color: rgba(244,246,255,0.75); font-weight: 600; font-size: 14px; text-decoration: none">Bugun</a>
+<a href="Stat-Glass.dc.html" style="padding: 10px 20px; border-radius: 12px; color: rgba(244,246,255,0.75); font-weight: 600; font-size: 14px; text-decoration: none">Statistika</a>
+<a href="Rep-Glass.dc.html" style="padding: 10px 20px; border-radius: 12px; color: rgba(244,246,255,0.75); font-weight: 600; font-size: 14px; text-decoration: none">Hisobot</a>
+<a href="Hist-Glass.dc.html" style="padding: 10px 20px; border-radius: 12px; color: rgba(244,246,255,0.75); font-weight: 600; font-size: 14px; text-decoration: none">Tarix</a>
+</nav>
+<div style="padding: 8px 14px; border-radius: 14px; background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.2); font-size: 14px; font-weight: 700">Foydalanuvchi I.</div>
+</header>
+
+<div style="display: flex; gap: 24px; align-items: flex-start">
+<aside style="width: 250px; flex-shrink: 0; display: flex; flex-direction: column; gap: 4px; padding: 16px; box-sizing: border-box; border-radius: 26px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); backdrop-filter: blur(24px)">
+<div style="padding: 6px 12px; font-size: 11px; letter-spacing: 0.14em; color: rgba(244,246,255,0.55)">PROFIL</div>
+<sc-for list="{{nav1}}" as="n" hint-placeholder-count="3"><a href="#{{n.id}}" style="padding: 11px 14px; border-radius: 14px; font-size: 15px; font-weight: 600; text-decoration: none; {{n.st}}">{{n.t}}</a></sc-for>
+<div style="padding: 14px 12px 6px; font-size: 11px; letter-spacing: 0.14em; color: rgba(244,246,255,0.55)">HISOB</div>
+<sc-for list="{{nav2}}" as="n" hint-placeholder-count="3"><a href="#{{n.id}}" style="padding: 11px 14px; border-radius: 14px; font-size: 15px; font-weight: 600; text-decoration: none; {{n.st}}">{{n.t}}</a></sc-for>
+</aside>
+
+<main style="flex-grow: 1; display: flex; flex-direction: column; gap: 20px; min-width: 0">
+<section id="umumiy" style="display: flex; align-items: center; gap: 20px; padding: 24px; border-radius: 28px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); backdrop-filter: blur(28px)">
+<div style="width: 72px; height: 72px; border-radius: 22px; background: linear-gradient(135deg,#7B5CFF,#1FC7B6); display: flex; align-items: center; justify-content: center; font-family: Sora, sans-serif; font-weight: 700; font-size: 24px">AA</div>
+<div style="flex-grow: 1"><div style="font-family: Sora, sans-serif; font-size: 22px; font-weight: 700">Foydalanuvchi Ismi</div><div style="margin-top: 4px; display: flex; align-items: center; gap: 10px; font-size: 14px; color: rgba(244,246,255,0.7)">ism@kompaniya.uz<span style="padding: 2px 10px; border-radius: 999px; background: rgba(255,197,107,0.18); border: 1px solid rgba(255,197,107,0.5); color: #FFD08A; font-size: 11px; font-weight: 800; letter-spacing: 0.08em">TIZIM EGASI</span></div></div>
+<button style="height: 44px; padding: 0 18px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.3); background: linear-gradient(135deg, {{accent}}, #FF8F6B); color: #fff; font-weight: 700; font-size: 14px">Tahrirlash</button>
+</section>
+
+<section id="jadval" style="display: flex; flex-direction: column; gap: 18px; padding: 24px; border-radius: 28px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); backdrop-filter: blur(28px)">
+<div style="display: flex; justify-content: space-between; align-items: center"><div><h2 style="margin: 0; font-family: Sora, sans-serif; font-size: 19px; font-weight: 600">Haftalik ish jadvali</h2><div style="margin-top: 4px; font-size: 13px; color: rgba(244,246,255,0.7)">Kun tartibi shu vaqtlar asosida quriladi.</div></div>
+<div style="display: flex; gap: 4px; padding: 4px; border-radius: 14px; background: rgba(0,0,0,0.2)"><button style="padding: 8px 16px; border: 0; border-radius: 10px; background: rgba(255,255,255,0.16); color: #fff; font-weight: 700; font-size: 13px">Umumiy</button><button style="padding: 8px 16px; border: 0; border-radius: 10px; background: transparent; color: rgba(244,246,255,0.7); font-weight: 600; font-size: 13px">Har kuni alohida</button></div></div>
+<div style="display: flex; gap: 24px; align-items: flex-end">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: rgba(244,246,255,0.7)">Ish vaqti<div style="display: flex; align-items: center; gap: 8px"><input value="10:00" style="width: 100px; height: 46px; padding: 0 14px; box-sizing: border-box; border-radius: 14px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #F4F6FF; font-size: 15px">–<input value="19:00" style="width: 100px; height: 46px; padding: 0 14px; box-sizing: border-box; border-radius: 14px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #F4F6FF; font-size: 15px"></div></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: rgba(244,246,255,0.7)">Tushlik<div style="display: flex; align-items: center; gap: 8px"><input value="13:00" style="width: 100px; height: 46px; padding: 0 14px; box-sizing: border-box; border-radius: 14px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #F4F6FF; font-size: 15px">–<input value="14:00" style="width: 100px; height: 46px; padding: 0 14px; box-sizing: border-box; border-radius: 14px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #F4F6FF; font-size: 15px"></div></label>
+<div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: rgba(244,246,255,0.7)">Ish kunlari<div style="display: flex; gap: 6px"><sc-for list="{{wd}}" as="w" hint-placeholder-count="7"><button aria-pressed="{{w.on}}" style="width: 46px; height: 46px; border-radius: 14px; font-weight: 700; font-size: 13px; {{w.st}}">{{w.t}}</button></sc-for></div></div>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; font-size: 13px"><span style="padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(127,178,255,0.5); color: #9FC4FF">5 ish kuni</span><span style="padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.2)">Kuniga 8 soat</span><span style="padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.2)">1 soat tushlik</span><span style="padding: 6px 12px; border-radius: 999px; border: 1px solid rgba(59,224,166,0.5); color: #6FF0C2">Haftasiga 40 soat</span><button style="margin-left: auto; height: 42px; padding: 0 18px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.3); background: linear-gradient(135deg, {{accent}}, #FF8F6B); color: #fff; font-weight: 700; font-size: 14px">Jadvalni saqlash</button></div>
+</section>
+
+<section id="taymer" style="display: flex; flex-direction: column; gap: 18px; padding: 24px; border-radius: 28px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); backdrop-filter: blur(28px)">
+<div><h2 style="margin: 0; font-family: Sora, sans-serif; font-size: 19px; font-weight: 600">Pomodoro sozlamalari</h2><div style="margin-top: 4px; font-size: 13px; color: rgba(244,246,255,0.7)">Barcha yangi kunlar uchun standart. Alohida kunni «Bugun»dagi «To'g'rlash» orqali o'zgartirasiz.</div></div>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 14px">
+<sc-for list="{{nums}}" as="f" hint-placeholder-count="5"><label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: rgba(244,246,255,0.7)">{{f.l}}<input value="{{f.v}}" style="height: 46px; padding: 0 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #F4F6FF; font-size: 16px; font-weight: 600"></label></sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 8px; font-size: 13px; color: rgba(244,246,255,0.7)">Tayyor shablonlar:<sc-for list="{{presets}}" as="p" hint-placeholder-count="4"><button style="height: 38px; padding: 0 14px; border-radius: 12px; font-weight: 700; font-size: 13px; {{p.st}}">{{p.t}}</button></sc-for></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="4"><div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-radius: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); font-size: 14px"><span>{{t.l}}</span><span role="switch" aria-checked="{{t.on}}" style="width: 44px; height: 26px; border-radius: 13px; position: relative; {{t.track}}"><span style="position: absolute; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; {{t.knob}}"></span></span></div></sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 16px; font-size: 13px; color: rgba(244,246,255,0.7)">Ovoz balandligi<div style="flex-grow: 1; height: 8px; border-radius: 4px; background: rgba(255,255,255,0.12)"><div style="width: 80%; height: 100%; border-radius: 4px; background: {{accent}}"></div></div><button style="height: 38px; padding: 0 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #F4F6FF; font-weight: 600; font-size: 13px">Ovozni sinash</button></div>
+</section>
+
+<section id="xavfsizlik" style="display: flex; flex-direction: column; gap: 16px; padding: 24px; border-radius: 28px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); backdrop-filter: blur(28px)">
+<h2 style="margin: 0; font-family: Sora, sans-serif; font-size: 19px; font-weight: 600">Xavfsizlik</h2>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; gap: 12px; align-items: flex-end">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: rgba(244,246,255,0.7)">Joriy parol<input type="password" value="••••••••" style="height: 46px; padding: 0 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #F4F6FF"></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: rgba(244,246,255,0.7)">Yangi parol<input placeholder="Kamida 8 belgi" style="height: 46px; padding: 0 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #F4F6FF"></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: rgba(244,246,255,0.7)">Takrorlang<input style="height: 46px; padding: 0 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #F4F6FF"></label>
+<button style="height: 46px; padding: 0 18px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.3); background: linear-gradient(135deg, {{accent}}, #FF8F6B); color: #fff; font-weight: 700; font-size: 14px">Yangilash</button>
+</div>
+<div style="display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 18px; background: rgba(255,197,107,0.1); border: 1px solid rgba(255,197,107,0.35)"><div style="flex-grow: 1"><div style="font-weight: 700; font-size: 15px">Ikki bosqichli tasdiqlash · <span style="color: #FFD08A">O'chiq</span></div><div style="font-size: 13px; color: rgba(244,246,255,0.7)">Google Authenticator, Authy, 1Password — hammasi ishlaydi.</div></div><button style="height: 42px; padding: 0 16px; border-radius: 14px; border: 1px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.9); color: #0B0E1A; font-weight: 700; font-size: 14px">Sozlashni boshlash</button></div>
+<sc-for list="{{sessions}}" as="s" hint-placeholder-count="4"><div style="display: flex; align-items: center; gap: 12px; padding: 10px 4px; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 14px"><b>Chrome · Windows</b><sc-if value="{{s.cur}}" hint-placeholder-val="{{false}}"><span style="padding: 2px 8px; border-radius: 999px; border: 1px solid rgba(59,224,166,0.5); color: #6FF0C2; font-size: 11px; font-weight: 800">SHU QURILMA</span></sc-if><span style="color: rgba(244,246,255,0.6)">{{s.d}}</span><span style="margin-left: auto; color: rgba(244,246,255,0.6)">{{s.ago}}</span><sc-if value="{{s.other}}" hint-placeholder-val="{{true}}"><button style="height: 34px; padding: 0 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #F4F6FF; font-weight: 600; font-size: 13px">Yopish</button></sc-if></div></sc-for>
+</section>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px">
+<section id="integratsiyalar" style="display: flex; flex-direction: column; gap: 10px; padding: 24px; border-radius: 28px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); backdrop-filter: blur(28px)">
+<h2 style="margin: 0 0 4px; font-family: Sora, sans-serif; font-size: 19px; font-weight: 600">Integratsiyalar</h2>
+<sc-for list="{{ints}}" as="i" hint-placeholder-count="4"><div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1)"><span style="width: 32px; height: 32px; border-radius: 10px; background: {{i.c}}"></span><div style="flex-grow: 1"><div style="font-weight: 700; font-size: 14px">{{i.n}}</div><div style="font-size: 12px; color: rgba(244,246,255,0.6)">{{i.d}}</div></div><span style="padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; {{i.st}}">{{i.s}}</span></div></sc-for>
+</section>
+<section id="malumotlar" style="display: flex; flex-direction: column; gap: 14px; padding: 24px; border-radius: 28px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,107,91,0.35); backdrop-filter: blur(28px)">
+<h2 style="margin: 0; font-family: Sora, sans-serif; font-size: 19px; font-weight: 600">Ma'lumotlar</h2>
+<div style="font-size: 13px; color: rgba(244,246,255,0.7)">Barcha ma'lumotlar data/db.json faylida saqlanadi va har kuni zaxiralanadi.</div>
+<div style="display: flex; flex-wrap: wrap; gap: 10px"><button style="height: 42px; padding: 0 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #F4F6FF; font-weight: 600; font-size: 13px">Sozlamalarni tiklash</button><button style="height: 42px; padding: 0 14px; border-radius: 12px; border: 1px solid rgba(255,107,91,0.5); background: rgba(255,107,91,0.12); color: #FFB4A8; font-weight: 700; font-size: 13px">Sessiyalar tarixini tozalash</button><button style="height: 42px; padding: 0 14px; border-radius: 12px; border: 1px solid rgba(255,107,91,0.5); background: rgba(255,107,91,0.12); color: #FFB4A8; font-weight: 700; font-size: 13px">Hammasini o'chirish</button></div>
+<div style="margin-top: 6px; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.1); font-weight: 700; font-size: 15px">Hisobni o'chirish</div>
+<div style="display: flex; gap: 10px"><input type="password" aria-label="Tasdiqlash uchun parol" placeholder="Parolingiz" style="flex-grow: 1; height: 44px; padding: 0 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #F4F6FF"><button style="height: 44px; padding: 0 16px; border-radius: 12px; border: 1px solid rgba(255,107,91,0.6); background: rgba(255,107,91,0.2); color: #FFB4A8; font-weight: 700; font-size: 13px">Hisobimni o'chirish</button></div>
+</section>
+</div>
+</main>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#FF6B5B&quot;,&quot;options&quot;:[&quot;#FF6B5B&quot;,&quot;#7B5CFF&quot;,&quot;#1FC7B6&quot;,&quot;#FFB020&quot;]},&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:2100}}">
+class Component extends DCLogic {
+renderVals() {
+var accent = this.props.accent ?? '#FF6B5B';
+var on = 'background: rgba(255,255,255,0.14); color: #fff; border: 1px solid rgba(255,255,255,0.22);';
+var off = 'color: rgba(244,246,255,0.75);';
+var nav = function (arr, act) { return arr.map(function (a) { return { id: a[0], t: a[1], st: a[0] === act ? on : off }; }); };
+return {
+accent: accent,
+nav1: nav([['umumiy','Umumiy'],['jadval','Ish jadvali'],['taymer','Taymer']], 'umumiy'),
+nav2: nav([['xavfsizlik','Xavfsizlik'],['integratsiyalar','Integratsiyalar'],['malumotlar','Ma‘lumotlar']], ''),
+wd: ['Du','Se','Ch','Pa','Ju','Sh','Ya'].map(function (d, i) { var a = i < 5; return { t: d, on: a ? 'true' : 'false', st: a ? 'border: 1px solid rgba(255,140,120,0.6); background: rgba(255,107,91,0.2); color: #FFB4A8;' : 'border: 1px solid rgba(255,255,255,0.14); background: rgba(255,255,255,0.04); color: rgba(244,246,255,0.55);' }; }),
+nums: [{ l: 'Pomodoro (daq)', v: '25' }, { l: 'Qisqa tanaffus', v: '5' }, { l: 'Uzun tanaffus', v: '15' }, { l: 'Uzun tanaffus har', v: '4' }, { l: 'Kunlik maqsad', v: '8' }],
+presets: ['Klassik 25/5/15','Chuqur ish 50/10/30','Ultradian 90/20','Qisqa 15/3/10'].map(function (p, i) { return { t: p, st: i === 0 ? 'border: 1px solid rgba(255,255,255,0.3); background: linear-gradient(135deg,' + accent + ',#FF8F6B); color: #fff;' : 'border: 1px solid rgba(255,255,255,0.16); background: rgba(255,255,255,0.06); color: #F4F6FF;' }; }),
+toggles: [['Pomodorodan keyin tanaffus avtomatik',true],['Tanaffusdan keyin pomodoro avtomatik',false],['Ovozli signal',true],['Brauzer bildirishnomalari',true]].map(function (t) { return { l: t[0], on: t[1] ? 'true' : 'false', track: t[1] ? 'background: ' + accent + ';' : 'background: rgba(255,255,255,0.18);', knob: t[1] ? 'left: 21px;' : 'left: 3px;' }; }),
+sessions: [
+{ d: '127.0.0.1 · 25-09 19:39', ago: '4 daqiqa oldin', cur: true, other: false },
+{ d: 'kirilgan: 08-09 11:39', ago: '18 kun oldin', cur: false, other: true },
+{ d: 'kirilgan: 07-09 10:07', ago: '19 kun oldin', cur: false, other: true },
+{ d: 'kirilgan: 06-09 16:30', ago: '20 kun oldin', cur: false, other: true }
+],
+ints: [
+{ n: 'Jira', d: 'Vazifalarni JQL bo‘yicha yuklash', c: '#3B7BFF', s: 'O‘chirilgan', st: 'border: 1px solid rgba(255,255,255,0.2); color: rgba(244,246,255,0.7);' },
+{ n: 'Notion', d: 'Hisobotni sahifa sifatida yuborish', c: '#E6E6E6', s: 'Ulangan', st: 'border: 1px solid rgba(59,224,166,0.5); background: rgba(59,224,166,0.14); color: #6FF0C2;' },
+{ n: 'Confluence', d: 'Hisobotni sahifa sifatida yuborish', c: '#9C6BFF', s: 'O‘chirilgan', st: 'border: 1px solid rgba(255,255,255,0.2); color: rgba(244,246,255,0.7);' },
+{ n: 'Boshqa tizimlar', d: 'Trello, Asana, Todoist, ClickUp', c: '#FF9A6B', s: 'CSV / JSON', st: 'border: 1px solid rgba(255,255,255,0.2); color: rgba(244,246,255,0.7);' }
+]
+};
+}
+}
+</script>
+
+
+</body></html>

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="uz"><head>
+<meta charset="utf-8">
+<title>Sozlamalar — Neumorphism</title>
+<script src="abe477ca-9033-42e3-a971-eecd9efaa48b"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* shriftlar olib tashlandi */</style>
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#E4E8EF;color:#2E3647}
+a{color:#B8372B}a:hover{color:#8A2419}
+button,input{font-family:inherit}
+button{cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1440px; height: 2100px; box-sizing: border-box; background: #E4E8EF; display: flex; flex-direction: column; gap: 26px; padding: 28px 44px 44px; overflow: hidden">
+<header style="display: flex; align-items: center; justify-content: space-between; height: 64px">
+<div style="font-weight: 800; font-size: 20px">Pomodoro</div>
+<nav style="display: flex; gap: 6px; padding: 6px; border-radius: 20px; box-shadow: inset 5px 5px 10px #C2C8D2, inset -5px -5px 10px #FFFFFF">
+<a href="Neu.dc.html" style="padding: 11px 22px; border-radius: 15px; color: #56607A; font-weight: 700; font-size: 14px; text-decoration: none">Bugun</a>
+<a href="Stat-Neu.dc.html" style="padding: 11px 22px; border-radius: 15px; color: #56607A; font-weight: 700; font-size: 14px; text-decoration: none">Statistika</a>
+<a href="Rep-Neu.dc.html" style="padding: 11px 22px; border-radius: 15px; color: #56607A; font-weight: 700; font-size: 14px; text-decoration: none">Hisobot</a>
+<a href="Hist-Neu.dc.html" style="padding: 11px 22px; border-radius: 15px; color: #56607A; font-weight: 700; font-size: 14px; text-decoration: none">Tarix</a>
+</nav>
+<div style="padding: 10px 16px; border-radius: 16px; font-weight: 700; font-size: 14px; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF">Foydalanuvchi I.</div>
+</header>
+
+<div style="display: flex; gap: 32px; align-items: flex-start">
+<aside style="width: 250px; flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; padding: 18px; box-sizing: border-box; border-radius: 30px; background: #E4E8EF; box-shadow: 10px 10px 20px #C2C8D2, -10px -10px 20px #FFFFFF">
+<div style="padding: 6px 12px; font-size: 11px; font-weight: 800; letter-spacing: 0.14em; color: #56607A">PROFIL</div>
+<sc-for list="{{nav1}}" as="n" hint-placeholder-count="3"><a href="#{{n.id}}" style="padding: 12px 16px; border-radius: 16px; font-size: 14px; font-weight: 700; text-decoration: none; {{n.st}}">{{n.t}}</a></sc-for>
+<div style="padding: 14px 12px 6px; font-size: 11px; font-weight: 800; letter-spacing: 0.14em; color: #56607A">HISOB</div>
+<sc-for list="{{nav2}}" as="n" hint-placeholder-count="3"><a href="#{{n.id}}" style="padding: 12px 16px; border-radius: 16px; font-size: 14px; font-weight: 700; text-decoration: none; {{n.st}}">{{n.t}}</a></sc-for>
+</aside>
+
+<main style="flex-grow: 1; display: flex; flex-direction: column; gap: 28px; min-width: 0">
+<section id="umumiy" style="display: flex; align-items: center; gap: 20px; padding: 24px; border-radius: 30px; background: #E4E8EF; box-shadow: 10px 10px 20px #C2C8D2, -10px -10px 20px #FFFFFF">
+<div style="width: 76px; height: 76px; border-radius: 50%; box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF; display: flex; align-items: center; justify-content: center"><div style="width: 58px; height: 58px; border-radius: 50%; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 20px; color: #56607A">AA</div></div>
+<div style="flex-grow: 1"><div style="font-size: 22px; font-weight: 800">Foydalanuvchi Ismi</div><div style="margin-top: 4px; display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; color: #56607A">ism@kompaniya.uz<span style="padding: 3px 10px; border-radius: 999px; color: #8A5A00; font-size: 11px; font-weight: 800; box-shadow: inset 2px 2px 4px #C2C8D2, inset -2px -2px 4px #FFFFFF">TIZIM EGASI</span></div></div>
+<button style="height: 46px; padding: 0 20px; border: 0; border-radius: 16px; background: #E4E8EF; color: #B8372B; font-weight: 800; font-size: 14px; box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF">Tahrirlash</button>
+</section>
+
+<section id="jadval" style="display: flex; flex-direction: column; gap: 18px; padding: 26px; border-radius: 30px; background: #E4E8EF; box-shadow: 10px 10px 20px #C2C8D2, -10px -10px 20px #FFFFFF">
+<div style="display: flex; justify-content: space-between; align-items: center"><div><h2 style="margin: 0; font-size: 19px; font-weight: 800">Haftalik ish jadvali</h2><div style="font-size: 13px; font-weight: 600; color: #56607A">Kun tartibi shu vaqtlar asosida quriladi.</div></div>
+<div style="display: flex; gap: 6px; padding: 5px; border-radius: 16px; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF"><button style="padding: 9px 16px; border: 0; border-radius: 12px; background: #E4E8EF; color: #B8372B; font-weight: 800; font-size: 13px; box-shadow: 3px 3px 6px #C2C8D2, -3px -3px 6px #FFFFFF">Umumiy</button><button style="padding: 9px 16px; border: 0; border-radius: 12px; background: transparent; color: #56607A; font-weight: 700; font-size: 13px">Har kuni alohida</button></div></div>
+<div style="display: flex; gap: 28px; align-items: flex-end">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #56607A">Ish vaqti<div style="display: flex; align-items: center; gap: 8px"><input value="10:00" style="width: 100px; height: 48px; padding: 0 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: #E4E8EF; color: #2E3647; font-size: 16px; font-weight: 700; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF">–<input value="19:00" style="width: 100px; height: 48px; padding: 0 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: #E4E8EF; color: #2E3647; font-size: 16px; font-weight: 700; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF"></div></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #56607A">Tushlik<div style="display: flex; align-items: center; gap: 8px"><input value="13:00" style="width: 100px; height: 48px; padding: 0 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: #E4E8EF; color: #2E3647; font-size: 16px; font-weight: 700; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF">–<input value="14:00" style="width: 100px; height: 48px; padding: 0 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: #E4E8EF; color: #2E3647; font-size: 16px; font-weight: 700; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF"></div></label>
+<div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #56607A">Ish kunlari<div style="display: flex; gap: 10px"><sc-for list="{{wd}}" as="w" hint-placeholder-count="7"><button aria-pressed="{{w.on}}" style="width: 48px; height: 48px; border: 0; border-radius: 15px; background: #E4E8EF; font-weight: 800; font-size: 13px; {{w.st}}">{{w.t}}</button></sc-for></div></div>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 700; color: #3E4760"><span style="padding: 7px 14px; border-radius: 999px; box-shadow: inset 2px 2px 4px #C2C8D2, inset -2px -2px 4px #FFFFFF">5 ish kuni</span><span style="padding: 7px 14px; border-radius: 999px; box-shadow: inset 2px 2px 4px #C2C8D2, inset -2px -2px 4px #FFFFFF">Kuniga 8 soat</span><span style="padding: 7px 14px; border-radius: 999px; box-shadow: inset 2px 2px 4px #C2C8D2, inset -2px -2px 4px #FFFFFF">1 soat tushlik</span><span style="padding: 7px 14px; border-radius: 999px; color: #1F7A52; box-shadow: inset 2px 2px 4px #C2C8D2, inset -2px -2px 4px #FFFFFF">Haftasiga 40 soat</span><button style="margin-left: auto; height: 46px; padding: 0 20px; border: 0; border-radius: 16px; background: {{accent}}; color: #fff; font-weight: 800; font-size: 14px; box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF">Jadvalni saqlash</button></div>
+</section>
+
+<section id="taymer" style="display: flex; flex-direction: column; gap: 18px; padding: 26px; border-radius: 30px; background: #E4E8EF; box-shadow: 10px 10px 20px #C2C8D2, -10px -10px 20px #FFFFFF">
+<div><h2 style="margin: 0; font-size: 19px; font-weight: 800">Pomodoro sozlamalari</h2><div style="font-size: 13px; font-weight: 600; color: #56607A">Barcha yangi kunlar uchun standart.</div></div>
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 18px">
+<sc-for list="{{nums}}" as="f" hint-placeholder-count="5"><label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #56607A">{{f.l}}<input value="{{f.v}}" style="height: 48px; padding: 0 16px; border: 0; border-radius: 16px; background: #E4E8EF; color: #2E3647; font-size: 18px; font-weight: 800; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF"></label></sc-for>
+</div>
+<div style="display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 700; color: #56607A">Shablonlar:<sc-for list="{{presets}}" as="p" hint-placeholder-count="4"><button style="height: 40px; padding: 0 16px; border: 0; border-radius: 14px; background: #E4E8EF; font-weight: 800; font-size: 13px; {{p.st}}">{{p.t}}</button></sc-for></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px">
+<sc-for list="{{toggles}}" as="t" hint-placeholder-count="4"><div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; border-radius: 18px; box-shadow: 5px 5px 10px #C2C8D2, -5px -5px 10px #FFFFFF; font-size: 14px; font-weight: 700"><span>{{t.l}}</span><span role="switch" aria-checked="{{t.on}}" style="width: 54px; height: 30px; border-radius: 15px; position: relative; box-shadow: inset 3px 3px 6px #C2C8D2, inset -3px -3px 6px #FFFFFF"><span style="position: absolute; top: 4px; width: 22px; height: 22px; border-radius: 50%; {{t.knob}}"></span></span></div></sc-for>
+</div>
+</section>
+
+<section id="xavfsizlik" style="display: flex; flex-direction: column; gap: 16px; padding: 26px; border-radius: 30px; background: #E4E8EF; box-shadow: 10px 10px 20px #C2C8D2, -10px -10px 20px #FFFFFF">
+<h2 style="margin: 0; font-size: 19px; font-weight: 800">Xavfsizlik</h2>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)) auto; gap: 16px; align-items: flex-end">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #56607A">Joriy parol<input type="password" value="••••••••" style="height: 48px; padding: 0 16px; border: 0; border-radius: 16px; background: #E4E8EF; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF"></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #56607A">Yangi parol<input placeholder="Kamida 8 belgi" style="height: 48px; padding: 0 16px; border: 0; border-radius: 16px; background: #E4E8EF; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF"></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #56607A">Takrorlang<input style="height: 48px; padding: 0 16px; border: 0; border-radius: 16px; background: #E4E8EF; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF"></label>
+<button style="height: 48px; padding: 0 20px; border: 0; border-radius: 16px; background: {{accent}}; color: #fff; font-weight: 800; font-size: 14px; box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF">Yangilash</button>
+</div>
+<div style="display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 20px; box-shadow: inset 5px 5px 10px #C2C8D2, inset -5px -5px 10px #FFFFFF"><div style="flex-grow: 1"><div style="font-weight: 800; font-size: 15px">Ikki bosqichli tasdiqlash · <span style="color: #8A5A00">O'chiq</span></div><div style="font-size: 13px; font-weight: 600; color: #56607A">Google Authenticator, Authy, 1Password — hammasi ishlaydi.</div></div><button style="height: 44px; padding: 0 18px; border: 0; border-radius: 15px; background: #E4E8EF; color: #B8372B; font-weight: 800; font-size: 13px; box-shadow: 5px 5px 10px #C2C8D2, -5px -5px 10px #FFFFFF">Sozlashni boshlash</button></div>
+<sc-for list="{{sessions}}" as="s" hint-placeholder-count="4"><div style="display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-radius: 16px; box-shadow: 4px 4px 8px #C2C8D2, -4px -4px 8px #FFFFFF; font-size: 14px; font-weight: 600"><b>Chrome · Windows</b><sc-if value="{{s.cur}}" hint-placeholder-val="{{false}}"><span style="padding: 2px 8px; border-radius: 999px; color: #1F7A52; font-size: 11px; font-weight: 800; box-shadow: inset 2px 2px 3px #C2C8D2, inset -2px -2px 3px #FFFFFF">SHU QURILMA</span></sc-if><span style="color: #56607A">{{s.d}}</span><span style="margin-left: auto; color: #56607A">{{s.ago}}</span><sc-if value="{{s.other}}" hint-placeholder-val="{{true}}"><button style="height: 34px; padding: 0 12px; border: 0; border-radius: 12px; background: #E4E8EF; color: #3E4760; font-weight: 700; font-size: 12px; box-shadow: 3px 3px 6px #C2C8D2, -3px -3px 6px #FFFFFF">Yopish</button></sc-if></div></sc-for>
+</section>
+
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px">
+<section id="integratsiyalar" style="display: flex; flex-direction: column; gap: 12px; padding: 24px; border-radius: 30px; background: #E4E8EF; box-shadow: 10px 10px 20px #C2C8D2, -10px -10px 20px #FFFFFF">
+<h2 style="margin: 0 0 4px; font-size: 19px; font-weight: 800">Integratsiyalar</h2>
+<sc-for list="{{ints}}" as="i" hint-placeholder-count="4"><div style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 18px; box-shadow: inset 3px 3px 6px #C2C8D2, inset -3px -3px 6px #FFFFFF"><span style="width: 12px; height: 12px; border-radius: 50%; background: {{i.c}}"></span><div style="flex-grow: 1"><div style="font-weight: 800; font-size: 14px">{{i.n}}</div><div style="font-size: 12px; font-weight: 600; color: #56607A">{{i.d}}</div></div><span style="font-size: 12px; font-weight: 800; color: {{i.sc}}">{{i.s}}</span></div></sc-for>
+</section>
+<section id="malumotlar" style="display: flex; flex-direction: column; gap: 14px; padding: 24px; border-radius: 30px; background: #E4E8EF; box-shadow: 10px 10px 20px #C2C8D2, -10px -10px 20px #FFFFFF">
+<h2 style="margin: 0; font-size: 19px; font-weight: 800">Ma'lumotlar</h2>
+<div style="font-size: 13px; font-weight: 600; color: #56607A">Barcha ma'lumotlar data/db.json faylida saqlanadi va har kuni zaxiralanadi.</div>
+<div style="display: flex; flex-wrap: wrap; gap: 12px"><button style="height: 42px; padding: 0 14px; border: 0; border-radius: 14px; background: #E4E8EF; color: #3E4760; font-weight: 700; font-size: 13px; box-shadow: 4px 4px 8px #C2C8D2, -4px -4px 8px #FFFFFF">Sozlamalarni tiklash</button><button style="height: 42px; padding: 0 14px; border: 0; border-radius: 14px; background: #E4E8EF; color: #B8372B; font-weight: 800; font-size: 13px; box-shadow: 4px 4px 8px #C2C8D2, -4px -4px 8px #FFFFFF">Tarixni tozalash</button><button style="height: 42px; padding: 0 14px; border: 0; border-radius: 14px; background: #E4E8EF; color: #B8372B; font-weight: 800; font-size: 13px; box-shadow: 4px 4px 8px #C2C8D2, -4px -4px 8px #FFFFFF">Hammasini o'chirish</button></div>
+<div style="margin-top: 6px; font-weight: 800; font-size: 15px">Hisobni o'chirish</div>
+<div style="display: flex; gap: 12px"><input type="password" aria-label="Tasdiqlash uchun parol" placeholder="Parolingiz" style="flex-grow: 1; height: 46px; padding: 0 16px; border: 0; border-radius: 16px; background: #E4E8EF; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF"><button style="height: 46px; padding: 0 16px; border: 0; border-radius: 16px; background: #B8372B; color: #fff; font-weight: 800; font-size: 13px; box-shadow: 5px 5px 10px #C2C8D2, -5px -5px 10px #FFFFFF">Hisobimni o'chirish</button></div>
+</section>
+</div>
+</main>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#E8594C&quot;,&quot;options&quot;:[&quot;#E8594C&quot;,&quot;#5B7CF0&quot;,&quot;#2FA37A&quot;,&quot;#E0A030&quot;]},&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:2100}}">
+class Component extends DCLogic {
+renderVals() {
+var accent = this.props.accent ?? '#E8594C';
+var on = 'background: #E4E8EF; color: #B8372B; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF;';
+var off = 'color: #3E4760;';
+var nav = function (arr, act) { return arr.map(function (a) { return { id: a[0], t: a[1], st: a[0] === act ? on : off }; }); };
+return {
+accent: accent,
+nav1: nav([['umumiy','Umumiy'],['jadval','Ish jadvali'],['taymer','Taymer']], 'umumiy'),
+nav2: nav([['xavfsizlik','Xavfsizlik'],['integratsiyalar','Integratsiyalar'],['malumotlar','Ma‘lumotlar']], ''),
+wd: ['Du','Se','Ch','Pa','Ju','Sh','Ya'].map(function (d, i) { var a = i < 5; return { t: d, on: a ? 'true' : 'false', st: a ? 'color: #B8372B; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF;' : 'color: #56607A; box-shadow: 4px 4px 8px #C2C8D2, -4px -4px 8px #FFFFFF;' }; }),
+nums: [{ l: 'Pomodoro (daq)', v: '25' }, { l: 'Qisqa tanaffus', v: '5' }, { l: 'Uzun tanaffus', v: '15' }, { l: 'Uzun har', v: '4' }, { l: 'Kunlik maqsad', v: '8' }],
+presets: ['Klassik 25/5/15','Chuqur ish 50/10/30','Ultradian 90/20','Qisqa 15/3/10'].map(function (p, i) { return { t: p, st: i === 0 ? 'color: #B8372B; box-shadow: inset 3px 3px 6px #C2C8D2, inset -3px -3px 6px #FFFFFF;' : 'color: #3E4760; box-shadow: 4px 4px 8px #C2C8D2, -4px -4px 8px #FFFFFF;' }; }),
+toggles: [['Tanaffus avtomatik boshlansin',true],['Pomodoro avtomatik boshlansin',false],['Ovozli signal',true],['Brauzer bildirishnomalari',true]].map(function (t) { return { l: t[0], on: t[1] ? 'true' : 'false', knob: t[1] ? 'left: 28px; background: ' + accent + '; box-shadow: 2px 2px 4px #C2C8D2;' : 'left: 4px; background: #E4E8EF; box-shadow: 2px 2px 4px #C2C8D2, -2px -2px 4px #FFFFFF;' }; }),
+sessions: [
+{ d: '127.0.0.1 · 25-09 19:39', ago: '4 daqiqa oldin', cur: true, other: false },
+{ d: 'kirilgan: 08-09 11:39', ago: '18 kun oldin', cur: false, other: true },
+{ d: 'kirilgan: 07-09 10:07', ago: '19 kun oldin', cur: false, other: true },
+{ d: 'kirilgan: 06-09 16:30', ago: '20 kun oldin', cur: false, other: true }
+],
+ints: [
+{ n: 'Jira', d: 'JQL bo‘yicha vazifa yuklash', c: '#9AA3B5', s: 'O‘chirilgan', sc: '#56607A' },
+{ n: 'Notion', d: 'Hisobotni sahifa qilib yuborish', c: '#2FA37A', s: 'Ulangan', sc: '#1F7A52' },
+{ n: 'Confluence', d: 'Hisobotni sahifa qilib yuborish', c: '#9AA3B5', s: 'O‘chirilgan', sc: '#56607A' },
+{ n: 'Boshqa tizimlar', d: 'Trello, Asana, Todoist, ClickUp', c: '#E0A030', s: 'CSV / JSON', sc: '#8A5A00' }
+]
+};
+}
+}
+</script>
+
+
+</body></html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="uz"><head>
+<meta charset="utf-8">
+<title>Kirish — Skeuomorphism</title>
+<script src="53680f4c-3f41-43cd-aacf-22e3bb3bad7a"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* shriftlar olib tashlandi */</style>
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#2B1D15;color:#2A2420}
+a{color:#B63A2C}a:hover{color:#7A1C12}
+button,input{font-family:inherit}
+button{cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; overflow: hidden; background: repeating-linear-gradient(92deg, #4A3224 0px, #553A2A 6px, #4A3224 11px, #3F2A1E 18px, #4A3224 26px); display: flex; align-items: center; justify-content: space-between; padding: 0 120px">
+<div style="width: 560px; display: flex; flex-direction: column; gap: 26px">
+<div style="display: flex; align-items: center; gap: 12px"><div style="width: 44px; height: 44px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #FF8A6E, {{accent}} 55%, #8E2418); box-shadow: 0 4px 8px rgba(0,0,0,0.6)"></div><div style="font-family: 'Libre Baskerville', serif; font-weight: 700; font-size: 22px; color: #F3E6CF">Pomodoro</div></div>
+<h1 style="margin: 0; font-family: 'Libre Baskerville', serif; font-size: 56px; line-height: 1.1; color: #F8EEDC; text-shadow: 0 3px 4px rgba(0,0,0,0.6)">Ish vaqtingizni boshqaring</h1>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #E6D8C0">Kun tartibini tuzing, har bir vazifaga ketadigan vaqtni pomodoro usulida rejalashtiring va tanaffuslarni tizim o'zi hisoblasin.</p>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<sc-for list="{{feats}}" as="f" hint-placeholder-count="4">
+<div style="display: flex; align-items: center; gap: 14px; color: #F3E6CF"><span style="width: 36px; height: 36px; border-radius: 50%; background: radial-gradient(circle at 40% 30%, #FAFAF8, #BDBEB9 70%, #9C9D98); border: 1px solid #7C7D78; box-shadow: 0 3px 5px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center"><svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="#3A3B36" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="{{f.icon}}"></path></svg></span><span style="font-weight: 700; font-size: 15px">{{f.t}}</span><span style="font-size: 14px; color: #D9CCB4">— {{f.d}}</span></div>
+</sc-for>
+</div>
+</div>
+<form style="position: relative; width: 460px; display: flex; flex-direction: column; gap: 16px; padding: 44px 36px 32px; box-sizing: border-box; border-radius: 4px; background: #FBF7EE; box-shadow: 0 30px 50px rgba(0,0,0,0.6), 4px 4px 0 #EDE5D4, 8px 8px 0 #DDD3BF">
+<div style="position: absolute; left: 50%; top: -16px; width: 120px; height: 34px; margin-left: -60px; border-radius: 6px; background: linear-gradient(180deg, #D9DAD6, #9C9D98); border: 1px solid #6E6F6A; box-shadow: 0 3px 5px rgba(0,0,0,0.4), inset 0 1px 0 #fff"></div>
+<div style="display: flex; gap: 0; border-bottom: 2px solid #2A2420">
+<button type="button" style="padding: 10px 18px; border: 2px solid #2A2420; border-bottom: 0; border-radius: 6px 6px 0 0; background: #FBF7EE; margin-bottom: -2px; font-family: 'Libre Baskerville', serif; font-weight: 700; font-size: 15px; color: #2A2420">Kirish</button>
+<button type="button" style="padding: 10px 18px; border: 0; background: transparent; font-family: 'Libre Baskerville', serif; font-size: 15px; color: #7A6F60">Ro'yxatdan o'tish</button>
+</div>
+<button type="button" style="height: 48px; border-radius: 8px; border: 1px solid #8A7F6E; background: linear-gradient(180deg, #FFFFFF, #E4DED2); color: #2A2420; font-weight: 700; font-size: 15px; box-shadow: inset 0 1px 0 #fff, 0 2px 4px rgba(0,0,0,0.2)">G &nbsp;Google bilan davom etish</button>
+<div style="text-align: center; font-family: Caveat, cursive; font-size: 22px; color: #7A6F60">— yoki —</div>
+<label style="display: flex; flex-direction: column; gap: 4px; font-family: Caveat, cursive; font-size: 22px; font-weight: 700; color: #2A2A6E">Email<input value="ism@kompaniya.uz" style="height: 40px; padding: 0 4px; border: 0; border-bottom: 2px solid #2A2420; background: transparent; font-size: 16px; color: #2A2420"></label>
+<label style="display: flex; flex-direction: column; gap: 4px; font-family: Caveat, cursive; font-size: 22px; font-weight: 700; color: #2A2A6E">Parol<input type="password" value="••••••••••••" style="height: 40px; padding: 0 4px; border: 0; border-bottom: 2px solid #2A2420; background: transparent; font-size: 16px; color: #2A2420"></label>
+<a href="#" style="align-self: flex-end; font-size: 13px; font-weight: 600">Parolni unutdingizmi?</a>
+<button type="submit" style="height: 52px; border-radius: 8px; border: 1px solid #6E1A10; background: linear-gradient(180deg, #FF8C78, {{accent}} 50%, #C23B2B); color: #fff; font-weight: 700; font-size: 16px; text-shadow: 0 -1px 0 rgba(0,0,0,0.35); box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 4px 8px rgba(0,0,0,0.3)">Kirish</button>
+<div style="text-align: center; font-size: 12px; color: #7A6F60">Ma'lumotlaringiz shu kompyuterdagi serverda saqlanadi.</div>
+</form>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#E5533F&quot;,&quot;options&quot;:[&quot;#E5533F&quot;,&quot;#2F7DD1&quot;,&quot;#2FAE3A&quot;,&quot;#D9982B&quot;]},&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+renderVals() {
+return {
+accent: this.props.accent ?? '#E5533F',
+feats: [
+{ icon: 'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4', t: 'Aqlli jadval', d: 'kun jadvali o‘zi quriladi' },
+{ icon: 'M5 20V10M12 20V4M19 20v-7', t: 'Statistika va hisobot', d: 'HTML, MD, CSV, JSON' },
+{ icon: 'M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1', t: 'Integratsiyalar', d: 'Jira, Notion, Confluence' },
+{ icon: 'M6 11V8a6 6 0 0 1 12 0v3M5 11h14v10H5z', t: 'Ma‘lumot sizda', d: 'o‘z serveringizda' }
+]
+};
+}
+}
+</script>
+
+
+</body></html>

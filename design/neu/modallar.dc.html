@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="uz"><head>
+<meta charset="utf-8">
+<title>Modallar — Neumorphism</title>
+<script src="3e104dec-bcc4-4b70-b7a2-61cc988c192e"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* shriftlar olib tashlandi */</style>
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#E4E8EF;color:#2E3647}
+a{color:#B8372B}a:hover{color:#8A2419}
+button,input,select{font-family:inherit}
+button{cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; position: relative; overflow: hidden; background: #DDE1E8">
+<div style="position: relative; display: flex; gap: 36px; padding: 40px 30px; box-sizing: border-box; height: 100%">
+
+<div role="dialog" aria-label="Ko'p kunlik reja" style="width: 800px; flex-shrink: 0; display: flex; flex-direction: column; gap: 18px; padding: 28px; box-sizing: border-box; border-radius: 36px; background: #E4E8EF; box-shadow: 18px 18px 36px #BCC2CC, -18px -18px 36px #FFFFFF">
+<div style="display: flex; justify-content: space-between; align-items: flex-start"><div><h2 style="margin: 0; font-size: 22px; font-weight: 800">Ko'p kunlik reja</h2><div style="font-size: 13px; font-weight: 600; color: #56607A">Vazifani bir necha kunga birdaniga qo'shing.</div></div><button aria-label="Yopish" style="width: 42px; height: 42px; border: 0; border-radius: 14px; background: #E4E8EF; color: #56607A; font-size: 18px; font-weight: 800; box-shadow: 4px 4px 8px #C2C8D2, -4px -4px 8px #FFFFFF">×</button></div>
+<div style="display: flex; gap: 12px; align-items: center"><input value="21.09.2026" aria-label="Dan" style="width: 130px; height: 44px; padding: 0 14px; box-sizing: border-box; border: 0; border-radius: 14px; background: #E4E8EF; font-weight: 700; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF"><b style="color: #56607A">→</b><input value="27.09.2026" aria-label="Gacha" style="width: 130px; height: 44px; padding: 0 14px; box-sizing: border-box; border: 0; border-radius: 14px; background: #E4E8EF; font-weight: 700; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF"><button style="height: 44px; padding: 0 16px; border: 0; border-radius: 14px; background: #E4E8EF; color: #B8372B; font-weight: 800; font-size: 13px; box-shadow: inset 3px 3px 6px #C2C8D2, inset -3px -3px 6px #FFFFFF">Shu hafta</button><button style="height: 44px; padding: 0 16px; border: 0; border-radius: 14px; background: #E4E8EF; color: #3E4760; font-weight: 700; font-size: 13px; box-shadow: 4px 4px 8px #C2C8D2, -4px -4px 8px #FFFFFF">Keyingi hafta</button></div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+<sc-for list="{{days}}" as="d" hint-placeholder-count="7">
+<div style="display: flex; flex-direction: column; gap: 8px; padding: 14px; border-radius: 22px; min-height: 170px; box-sizing: border-box; {{d.card}}">
+<div style="display: flex; align-items: center; gap: 8px"><span role="checkbox" aria-checked="{{d.sel}}" style="width: 18px; height: 18px; border-radius: 6px; {{d.cb}}"></span><b style="font-size: 14px; font-weight: 800">{{d.l}}</b></div>
+<div style="font-size: 12px; font-weight: 600; color: #56607A">{{d.h}}</div>
+<div style="height: 10px; padding: 2px; box-sizing: border-box; border-radius: 6px; box-shadow: inset 2px 2px 4px #C2C8D2, inset -2px -2px 4px #FFFFFF"><div style="height: 100%; border-radius: 4px; width: {{d.w}}%; background: {{d.bc}}"></div></div>
+<div style="font-size: 12px; font-weight: 700; color: #3E4760">{{d.load}} <span style="color: #8A5A00">{{d.note}}</span></div>
+<sc-for list="{{d.tasks}}" as="t" hint-placeholder-count="2"><div style="display: flex; justify-content: space-between; gap: 6px; padding: 6px 9px; border-radius: 10px; font-size: 12px; font-weight: 600; box-shadow: inset 2px 2px 4px #C2C8D2, inset -2px -2px 4px #FFFFFF; {{t.st}}"><span style="overflow: hidden; white-space: nowrap; text-overflow: ellipsis">{{t.n}}</span><span style="color: #56607A; white-space: nowrap">{{t.p}}</span></div></sc-for>
+</div>
+</sc-for>
+</div>
+<div style="margin-top: auto; display: grid; grid-template-columns: 1fr 130px 140px 140px; gap: 14px; align-items: flex-end">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #56607A">Vazifa nomi<input placeholder="masalan: Kunlik hisobotni tekshirish" style="height: 48px; padding: 0 16px; border: 0; border-radius: 16px; background: #E4E8EF; font-size: 14px; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF"></label>
+<div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #56607A">Pomodoro<div style="display: flex; align-items: center; justify-content: space-between; height: 48px; padding: 0 6px; border-radius: 16px; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF"><button aria-label="Kamaytirish" style="width: 34px; height: 34px; border: 0; border-radius: 10px; background: #E4E8EF; box-shadow: 3px 3px 6px #C2C8D2, -3px -3px 6px #FFFFFF">−</button><b style="font-size: 16px; color: #2E3647">2</b><button aria-label="Oshirish" style="width: 34px; height: 34px; border: 0; border-radius: 10px; background: #E4E8EF; box-shadow: 3px 3px 6px #C2C8D2, -3px -3px 6px #FFFFFF">+</button></div></div>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #56607A">Kategoriya<sc-raw-select style="height: 48px; padding: 0 12px; border: 0; border-radius: 16px; background: #E4E8EF; font-weight: 700; box-shadow: 4px 4px 8px #C2C8D2, -4px -4px 8px #FFFFFF"><option>Ish</option></sc-raw-select></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #56607A">Muhimlik<sc-raw-select style="height: 48px; padding: 0 12px; border: 0; border-radius: 16px; background: #E4E8EF; font-weight: 700; box-shadow: 4px 4px 8px #C2C8D2, -4px -4px 8px #FFFFFF"><option>O'rta</option></sc-raw-select></label>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-size: 13px; font-weight: 600; color: #56607A">5 kun tanlangan · har biriga 2 pomodoro (50 daq)</span><button style="height: 50px; padding: 0 22px; border: 0; border-radius: 16px; background: {{accent}}; color: #fff; font-weight: 800; font-size: 14px; box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF">+ Tanlangan kunlarga qo'shish</button></div>
+</div>
+
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 32px">
+<div role="dialog" aria-label="Yangi vazifa qo'shish" style="display: flex; flex-direction: column; gap: 16px; padding: 26px; border-radius: 32px; background: #E4E8EF; box-shadow: 16px 16px 32px #BCC2CC, -16px -16px 32px #FFFFFF">
+<div><h2 style="margin: 0; font-size: 20px; font-weight: 800">Yangi vazifa</h2><div style="font-size: 13px; font-weight: 600; color: #56607A">26-sentabr, Shanba kuniga qo'shiladi</div></div>
+<input aria-label="Vazifa nomi" placeholder="Vazifa nomi — masalan: Oylik hisobot" style="height: 52px; padding: 0 18px; border: 0; border-radius: 18px; background: #E4E8EF; font-size: 15px; box-shadow: inset 5px 5px 10px #C2C8D2, inset -5px -5px 10px #FFFFFF, 0 0 0 2px {{accent}}">
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #56607A">Pomodoro<div style="height: 44px; border-radius: 14px; box-shadow: inset 3px 3px 6px #C2C8D2, inset -3px -3px 6px #FFFFFF; display: flex; align-items: center; justify-content: space-around; font-weight: 800; color: #2E3647">−<span>2</span>+</div></div>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #56607A">Kategoriya<sc-raw-select style="height: 44px; padding: 0 10px; border: 0; border-radius: 14px; background: #E4E8EF; font-weight: 700; box-shadow: 3px 3px 6px #C2C8D2, -3px -3px 6px #FFFFFF"><option>Ish</option></sc-raw-select></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #56607A">Muhimlik<sc-raw-select style="height: 44px; padding: 0 10px; border: 0; border-radius: 14px; background: #E4E8EF; font-weight: 700; box-shadow: 3px 3px 6px #C2C8D2, -3px -3px 6px #FFFFFF"><option>O'rta</option></sc-raw-select></label>
+<div style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #56607A">Taxminiy<div style="height: 44px; border-radius: 14px; box-shadow: inset 3px 3px 6px #C2C8D2, inset -3px -3px 6px #FFFFFF; display: flex; align-items: center; justify-content: center; color: #3A54B8; font-weight: 800; font-size: 15px">50 daq</div></div>
+</div>
+<div style="display: flex; justify-content: flex-end; gap: 14px"><button style="height: 46px; padding: 0 20px; border: 0; border-radius: 15px; background: #E4E8EF; color: #3E4760; font-weight: 700; font-size: 14px; box-shadow: 5px 5px 10px #C2C8D2, -5px -5px 10px #FFFFFF">Yopish</button><button style="height: 46px; padding: 0 22px; border: 0; border-radius: 15px; background: {{accent}}; color: #fff; font-weight: 800; font-size: 14px; box-shadow: 5px 5px 10px #C2C8D2, -5px -5px 10px #FFFFFF">+ Qo'shish</button></div>
+</div>
+
+<div role="dialog" aria-label="Pomodoroni to'g'rlash" style="display: flex; flex-direction: column; gap: 16px; padding: 26px; border-radius: 32px; background: #E4E8EF; box-shadow: 16px 16px 32px #BCC2CC, -16px -16px 32px #FFFFFF">
+<div><h2 style="margin: 0; font-size: 20px; font-weight: 800">Pomodoroni to'g'rlash</h2><div style="font-size: 13px; font-weight: 600; color: #56607A">Faqat 26-sentabr, Shanba kuniga qo'llanadi.</div></div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{fields}}" as="f" hint-placeholder-count="4"><label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #56607A">{{f.l}}<input value="{{f.v}}" style="height: 46px; padding: 0 14px; border: 0; border-radius: 14px; background: #E4E8EF; font-size: 17px; font-weight: 800; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF"></label></sc-for>
+</div>
+<div style="display: flex; gap: 10px; flex-wrap: wrap"><sc-for list="{{presets}}" as="p" hint-placeholder-count="4"><button style="height: 36px; padding: 0 12px; border: 0; border-radius: 12px; background: #E4E8EF; color: #3E4760; font-weight: 700; font-size: 12px; box-shadow: 3px 3px 6px #C2C8D2, -3px -3px 6px #FFFFFF">{{p}}</button></sc-for></div>
+<div style="display: flex; gap: 6px; align-items: center; padding: 6px; border-radius: 14px; box-shadow: inset 3px 3px 6px #C2C8D2, inset -3px -3px 6px #FFFFFF"><sc-for list="{{cycle}}" as="c" hint-placeholder-count="8"><span style="height: 28px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; {{c.st}}">{{c.v}}</span></sc-for></div>
+<div style="font-size: 12px; font-weight: 600; color: #56607A">Bir sikl = <b style="color: #2E3647">2 soat 10 daq</b> · sof ish 1 soat 40 daq</div>
+<div style="display: flex; justify-content: flex-end; gap: 14px"><button style="height: 46px; padding: 0 20px; border: 0; border-radius: 15px; background: #E4E8EF; color: #3E4760; font-weight: 700; font-size: 14px; box-shadow: 5px 5px 10px #C2C8D2, -5px -5px 10px #FFFFFF">Bekor qilish</button><button style="height: 46px; padding: 0 22px; border: 0; border-radius: 15px; background: {{accent}}; color: #fff; font-weight: 800; font-size: 14px; box-shadow: 5px 5px 10px #C2C8D2, -5px -5px 10px #FFFFFF">Saqlash</button></div>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#E8594C&quot;,&quot;options&quot;:[&quot;#E8594C&quot;,&quot;#5B7CF0&quot;,&quot;#2FA37A&quot;,&quot;#E0A030&quot;]},&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1000}}">
+class Component extends DCLogic {
+renderVals() {
+var accent = this.props.accent ?? '#E8594C';
+var raw = [
+['Du, 21-sen', 0, true, []],
+['Se, 22-sen', 16, true, [['2-son BMSM guruh','4 ta',0],['INV modernizatsiya','3 ta',0]]],
+['Ch, 23-sen', 12, true, [['MI/IM soatlar','4 ta',1],['Texnik qo‘llab','3 ta',1]]],
+['Pa, 24-sen', 12, true, [['2-Son BMSM guruh','4 ta',0],['MI/IM guruhlar','3 ta',0]]],
+['Ju, 25-sen', 11, true, [['MI/IM analitika','4 ta',0],['2-son bmsms guruh','4 ta',0]]],
+['Sh, 26-sen', 0, false, []],
+['Ya, 27-sen', 0, false, []]
+];
+return {
+accent: accent,
+days: raw.map(function (r) {
+var sel = r[2], n = r[1], tot = sel ? n + 2 : n, over = tot > 15;
+return {
+l: r[0], sel: sel ? 'true' : 'false', h: sel ? '10:00–19:00' : 'Dam olish kuni',
+w: Math.min(100, Math.round(tot / 15 * 100)), bc: over ? '#E0A030' : accent,
+load: sel ? n + ' +2 / 15 ta' : '0 / 15 ta', note: over ? 'sig‘maydi' : '',
+card: !sel ? 'background: #E4E8EF; opacity: 0.55; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF;' : over ? 'background: #E4E8EF; box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF, inset 0 0 0 2px #E0A030;' : 'background: #E4E8EF; box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF;',
+cb: sel ? 'background: ' + accent + '; box-shadow: 2px 2px 4px #C2C8D2;' : 'box-shadow: inset 2px 2px 4px #C2C8D2, inset -2px -2px 4px #FFFFFF;',
+tasks: r[3].map(function (t) { return { n: t[0], p: t[1], st: t[2] ? 'text-decoration: line-through; opacity: 0.55;' : '' }; })
+};
+}),
+fields: [{ l: 'Pomodoro', v: '25' }, { l: 'Qisqa', v: '5' }, { l: 'Uzun', v: '15' }, { l: 'Uzun har', v: '4' }],
+presets: ['Klassik 25/5/15','Chuqur 50/10/30','Ultradian 90/20','Qisqa 15/3/10'],
+cycle: ['25','5','25','5','25','5','25','15'].map(function (v, i) { var w = i % 2 === 0; var last = i === 7; return { v: v, st: last ? 'flex-grow: 1.4; background: #5B7CF0; color: #fff;' : w ? 'flex-grow: 2; background: ' + accent + '; color: #fff;' : 'flex-grow: 1; background: #2FA37A; color: #fff;' }; })
+};
+}
+}
+</script>
+
+
+</body></html>

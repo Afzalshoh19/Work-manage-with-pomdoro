@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="uz"><head>
+<meta charset="utf-8">
+<title>Modallar — Skeuomorphism</title>
+<script src="290a30d1-ccbe-475c-be52-3101577fb969"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* shriftlar olib tashlandi */</style>
+<style>
+body{margin:0;font-family:'IBM Plex Sans',system-ui,sans-serif;background:#2B1D15;color:#2A2420}
+a{color:#B63A2C}a:hover{color:#7A1C12}
+button,input,select{font-family:inherit}
+button{cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; position: relative; overflow: hidden; background: repeating-linear-gradient(92deg, #3A281C 0px, #44301F 6px, #3A281C 11px, #322218 18px, #3A281C 26px)">
+<div style="position: relative; display: flex; gap: 32px; padding: 40px 30px; box-sizing: border-box; height: 100%">
+
+<div role="dialog" aria-label="Ko'p kunlik reja" style="width: 800px; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; padding: 28px 30px; box-sizing: border-box; border-radius: 4px; background: #F2E8D2; box-shadow: 0 30px 60px rgba(0,0,0,0.6)">
+<div style="display: flex; justify-content: space-between; align-items: flex-start"><div><div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.16em; color: #7A6F60">HAFTALIK REJA</div><h2 style="margin: 4px 0 0; font-family: 'Libre Baskerville', serif; font-size: 24px">Ko'p kunlik reja</h2></div><button aria-label="Yopish" style="width: 38px; height: 38px; border-radius: 50%; border: 1px solid #6E6F6A; background: radial-gradient(circle at 40% 30%, #FAFAF8, #BDBEB9 70%, #9C9D98); font-weight: 700; box-shadow: 0 3px 5px rgba(0,0,0,0.35)">×</button></div>
+<div style="display: flex; gap: 10px; align-items: center"><input value="21.09.2026" aria-label="Dan" style="width: 120px; height: 38px; padding: 0 10px; box-sizing: border-box; border: 1px solid #A89C85; border-radius: 4px; background: #FBF7EE; box-shadow: inset 0 2px 3px rgba(0,0,0,0.15)"><span style="font-family: Caveat, cursive; font-size: 22px">→</span><input value="27.09.2026" aria-label="Gacha" style="width: 120px; height: 38px; padding: 0 10px; box-sizing: border-box; border: 1px solid #A89C85; border-radius: 4px; background: #FBF7EE; box-shadow: inset 0 2px 3px rgba(0,0,0,0.15)"><button style="height: 38px; padding: 0 14px; border-radius: 6px; border: 1px solid #0D0C0B; background: linear-gradient(180deg, #4A4541, #2E2A27); color: #F3E6CF; font-weight: 700; font-size: 13px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.15)">Shu hafta</button><button style="height: 38px; padding: 0 14px; border-radius: 6px; border: 1px solid #8A7F6E; background: linear-gradient(180deg, #F4EDE0, #CFC4AE); font-weight: 600; font-size: 13px; box-shadow: inset 0 1px 0 #fff">Keyingi hafta</button></div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px">
+<sc-for list="{{days}}" as="d" hint-placeholder-count="7">
+<div style="position: relative; display: flex; flex-direction: column; gap: 6px; padding: 18px 12px 12px; min-height: 176px; box-sizing: border-box; box-shadow: 0 6px 10px rgba(0,0,0,0.25); {{d.card}}">
+<div style="position: absolute; left: 50%; top: -7px; width: 14px; height: 14px; margin-left: -7px; border-radius: 50%; {{d.pin}}"></div>
+<div style="display: flex; align-items: center; gap: 8px"><span role="checkbox" aria-checked="{{d.sel}}" style="width: 16px; height: 16px; border: 2px solid #2A2420; border-radius: 2px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; color: #B63A2C">{{d.tick}}</span><b style="font-family: 'Libre Baskerville', serif; font-size: 14px">{{d.l}}</b></div>
+<div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #7A6F60">{{d.h}}</div>
+<div style="height: 10px; border: 1.5px solid #2A2420; box-sizing: border-box"><div style="height: 100%; width: {{d.w}}%; background: repeating-linear-gradient(135deg, {{d.bc}} 0 4px, transparent 4px 6px)"></div></div>
+<div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px">{{d.load}} <b style="color: #B63A2C">{{d.note}}</b></div>
+<sc-for list="{{d.tasks}}" as="t" hint-placeholder-count="2"><div style="font-family: Caveat, cursive; font-size: 19px; font-weight: 700; color: #2A2A6E; line-height: 1.1; {{t.st}}">— {{t.n}} ({{t.p}})</div></sc-for>
+</div>
+</sc-for>
+</div>
+<div style="margin-top: auto; display: grid; grid-template-columns: 1fr 130px 140px 140px; gap: 14px; align-items: flex-end">
+<label style="display: flex; flex-direction: column; gap: 4px; font-family: Caveat, cursive; font-size: 22px; font-weight: 700; color: #2A2A6E">Vazifa nomi<input placeholder="Kunlik hisobotni tekshirish" style="height: 40px; border: 0; border-bottom: 2px solid #2A2420; background: transparent; font-family: 'IBM Plex Sans', sans-serif; font-size: 15px"></label>
+<div style="display: flex; flex-direction: column; gap: 4px; font-family: Caveat, cursive; font-size: 22px; font-weight: 700; color: #2A2A6E">Pomodoro<div style="display: flex; align-items: center; justify-content: space-between; height: 40px; padding: 0 4px; border-radius: 6px; background: #1A1A18; box-shadow: inset 0 2px 4px rgba(0,0,0,0.9)"><button aria-label="Kamaytirish" style="width: 30px; height: 30px; border-radius: 4px; border: 1px solid #6E6F6A; background: linear-gradient(180deg, #FAFAF8, #BDBEB9)">−</button><span style="font-family: 'Share Tech Mono', monospace; font-size: 20px; color: #FFB85C">02</span><button aria-label="Oshirish" style="width: 30px; height: 30px; border-radius: 4px; border: 1px solid #6E6F6A; background: linear-gradient(180deg, #FAFAF8, #BDBEB9)">+</button></div></div>
+<label style="display: flex; flex-direction: column; gap: 4px; font-family: Caveat, cursive; font-size: 22px; font-weight: 700; color: #2A2A6E">Kategoriya<sc-raw-select style="height: 40px; padding: 0 8px; border-radius: 6px; border: 1px solid #8A7F6E; background: linear-gradient(180deg, #F4EDE0, #CFC4AE); font-family: 'IBM Plex Sans', sans-serif; font-weight: 600"><option>Ish</option></sc-raw-select></label>
+<label style="display: flex; flex-direction: column; gap: 4px; font-family: Caveat, cursive; font-size: 22px; font-weight: 700; color: #2A2A6E">Muhimlik<sc-raw-select style="height: 40px; padding: 0 8px; border-radius: 6px; border: 1px solid #8A7F6E; background: linear-gradient(180deg, #F4EDE0, #CFC4AE); font-family: 'IBM Plex Sans', sans-serif; font-weight: 600"><option>O'rta</option></sc-raw-select></label>
+</div>
+<div style="display: flex; justify-content: space-between; align-items: center"><span style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #5E554A">5 KUN · 2 POM/KUN · 50 DAQ</span><button style="height: 48px; padding: 0 22px; border-radius: 8px; border: 1px solid #6E1A10; background: linear-gradient(180deg, #FF8C78, {{accent}} 50%, #C23B2B); color: #fff; font-weight: 700; font-size: 15px; text-shadow: 0 -1px 0 rgba(0,0,0,0.35); box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 4px 8px rgba(0,0,0,0.3)">+ Tanlangan kunlarga qo'shish</button></div>
+</div>
+
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 28px">
+<div role="dialog" aria-label="Yangi vazifa qo'shish" style="position: relative; display: flex; flex-direction: column; gap: 14px; padding: 30px 26px 24px; border-radius: 3px; background: #FFF6B8; box-shadow: 0 20px 40px rgba(0,0,0,0.5); transform: rotate(-0.6deg)">
+<div style="position: absolute; left: 50%; top: -12px; width: 110px; height: 26px; margin-left: -55px; background: rgba(240,225,170,0.8); box-shadow: 0 1px 2px rgba(0,0,0,0.2)"></div>
+<div><h2 style="margin: 0; font-family: Caveat, cursive; font-size: 34px; font-weight: 700; color: #2A2A6E">Yangi vazifa</h2><div style="font-size: 13px; color: #5E554A">26-sentabr, Shanba kuniga qo'shiladi</div></div>
+<input aria-label="Vazifa nomi" placeholder="Oylik hisobotni tayyorlash" style="height: 44px; border: 0; border-bottom: 2px solid #2A2420; background: transparent; font-family: Caveat, cursive; font-size: 26px; color: #2A2A6E">
+<div style="display: flex; gap: 16px; align-items: center; font-size: 14px"><span>Pomodoro: <b style="font-family: 'Share Tech Mono', monospace; font-size: 18px">2</b></span><span>Kategoriya: <b>Ish</b></span><span>Muhimlik: <b>O'rta</b></span><span style="margin-left: auto; font-family: Caveat, cursive; font-size: 24px; font-weight: 700; color: #B63A2C">≈ 50 daq</span></div>
+<div style="display: flex; justify-content: flex-end; gap: 10px"><button style="height: 44px; padding: 0 18px; border-radius: 8px; border: 1px solid #8A7F6E; background: linear-gradient(180deg, #F4EDE0, #CFC4AE); font-weight: 600; font-size: 14px; box-shadow: inset 0 1px 0 #fff">Yopish</button><button style="height: 44px; padding: 0 20px; border-radius: 8px; border: 1px solid #6E1A10; background: linear-gradient(180deg, #FF8C78, {{accent}} 50%, #C23B2B); color: #fff; font-weight: 700; font-size: 14px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.5)">+ Qo'shish</button></div>
+</div>
+
+<div role="dialog" aria-label="Pomodoroni to'g'rlash" style="display: flex; flex-direction: column; gap: 16px; padding: 24px; border-radius: 18px; background: linear-gradient(180deg, #E9E9E6 0%, #C9CAC6 48%, #B8B9B4 52%, #D6D7D3 100%); border: 1px solid #7C7D78; box-shadow: 0 24px 44px rgba(0,0,0,0.55), inset 0 1px 0 #fff">
+<div style="display: flex; justify-content: space-between; align-items: center"><div style="font-size: 12px; font-weight: 700; letter-spacing: 0.2em; color: #45463F; text-shadow: 0 1px 0 rgba(255,255,255,0.8)">POMODORONI TO'G'RLASH · 26-SEN</div><span style="width: 10px; height: 10px; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #FFB3A8, {{accent}}); box-shadow: 0 0 8px {{accent}}"></span></div>
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{fields}}" as="f" hint-placeholder-count="4"><div style="display: flex; flex-direction: column; align-items: center; gap: 6px"><div style="width: 72px; height: 72px; border-radius: 50%; background: radial-gradient(circle at 40% 30%, #FAFAF8, #BDBEB9 70%, #9C9D98); border: 1px solid #6E6F6A; box-shadow: 0 5px 8px rgba(0,0,0,0.35), inset 0 -3px 5px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; font-family: 'Share Tech Mono', monospace; font-size: 24px">{{f.v}}</div><div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: #45463F">{{f.l}}</div></div></sc-for>
+</div>
+<div style="display: flex; gap: 3px; padding: 8px; border-radius: 6px; background: #1A1A18; box-shadow: inset 0 2px 5px rgba(0,0,0,0.9), 0 1px 0 rgba(255,255,255,0.7)"><sc-for list="{{cycle}}" as="c" hint-placeholder-count="8"><span style="height: 26px; display: flex; align-items: center; justify-content: center; font-family: 'Share Tech Mono', monospace; font-size: 13px; {{c.st}}">{{c.v}}</span></sc-for></div>
+<div style="font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: #2A2420">SIKL: 2:10 · SOF ISH 1:40</div>
+<div style="display: flex; justify-content: flex-end; gap: 10px"><button style="height: 44px; padding: 0 18px; border-radius: 8px; border: 1px solid #8A7F6E; background: linear-gradient(180deg, #F7F7F5, #D9DAD6); font-weight: 600; font-size: 14px; box-shadow: inset 0 1px 0 #fff, 0 2px 4px rgba(0,0,0,0.2)">Bekor qilish</button><button style="height: 44px; padding: 0 20px; border-radius: 8px; border: 1px solid #6E1A10; background: linear-gradient(180deg, #FF8C78, {{accent}} 50%, #C23B2B); color: #fff; font-weight: 700; font-size: 14px; box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 2px 4px rgba(0,0,0,0.3)">Saqlash</button></div>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#E5533F&quot;,&quot;options&quot;:[&quot;#E5533F&quot;,&quot;#2F7DD1&quot;,&quot;#2FAE3A&quot;,&quot;#D9982B&quot;]},&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1000}}">
+class Component extends DCLogic {
+renderVals() {
+var accent = this.props.accent ?? '#E5533F';
+var raw = [
+['Du, 21', 0, true, []],
+['Se, 22', 16, true, [['2-son BMSM','4',0],['INV modern.','3',0]]],
+['Ch, 23', 12, true, [['MI/IM soatlar','4',1],['Texnik yordam','3',1]]],
+['Pa, 24', 12, true, [['2-Son BMSM','4',0],['MI/IM guruhlar','3',0]]],
+['Ju, 25', 11, true, [['MI/IM analitika','4',0],['2-son bmsms','4',0]]],
+['Sh, 26', 0, false, []],
+['Ya, 27', 0, false, []]
+];
+return {
+accent: accent,
+days: raw.map(function (r) {
+var sel = r[2], n = r[1], tot = sel ? n + 2 : n, over = tot > 15;
+return {
+l: r[0], sel: sel ? 'true' : 'false', tick: sel ? '✓' : '', h: sel ? '10:00–19:00' : 'DAM OLISH',
+w: Math.min(100, Math.round(tot / 15 * 100)), bc: over ? '#D9982B' : accent,
+load: sel ? n + '+2/15' : '0/15', note: over ? 'SIG‘MAYDI' : '',
+card: !sel ? 'background: #E4DAC4; opacity: 0.65;' : over ? 'background: #FFE9A8;' : 'background: #FBF7EE;',
+pin: sel ? 'background: radial-gradient(circle at 35% 30%, #FF8A6E, ' + accent + '); box-shadow: 0 2px 3px rgba(0,0,0,0.5);' : 'background: radial-gradient(circle at 35% 30%, #D9DAD6, #8C8D88); box-shadow: 0 2px 3px rgba(0,0,0,0.5);',
+tasks: r[3].map(function (t) { return { n: t[0], p: t[1], st: t[2] ? 'text-decoration: line-through; text-decoration-color: #B63A2C; opacity: 0.7;' : '' }; })
+};
+}),
+fields: [{ l: 'POMODORO', v: '25' }, { l: 'QISQA', v: '5' }, { l: 'UZUN', v: '15' }, { l: 'UZUN HAR', v: '4' }],
+cycle: ['25','5','25','5','25','5','25','15'].map(function (v, i) { var w = i % 2 === 0; var last = i === 7; return { v: v, st: last ? 'flex-grow: 1.4; color: #7FB2FF; border: 1px solid rgba(127,178,255,0.4);' : w ? 'flex-grow: 2; color: #FF9A85; border: 1px solid rgba(255,154,133,0.4);' : 'flex-grow: 1; color: #9EFFAA; border: 1px solid rgba(158,255,170,0.35);' }; })
+};
+}
+}
+</script>
+
+
+</body></html>

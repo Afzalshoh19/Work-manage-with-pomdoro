@@ -14,7 +14,9 @@
   display: flex; flex-direction: column; justify-content: center;
 }
 .auth-brand { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 700; margin-bottom: 34px; }
-.auth-brand span { font-size: 27px; filter: drop-shadow(0 3px 10px rgba(255,95,86,.45)); }
+/* Brend belgisi endi emoji emas, `.brand-mark` — o'lcham va soya
+   `style.css` dan keladi, bu yerda faqat eski emoji qoidasi olib tashlandi. */
+.auth-brand .brand-mark { flex-shrink: 0; }
 .auth-side h1 { font-size: 40px; line-height: 1.15; letter-spacing: -.02em; margin-bottom: 16px; }
 .auth-lead { color: var(--txt-2); font-size: 15px; max-width: 440px; margin: 0 0 34px; }
 .auth-feats { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 17px; max-width: 470px; }

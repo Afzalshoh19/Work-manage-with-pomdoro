@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="uz"><head>
+<meta charset="utf-8">
+<title>Tarix — Claymorphism</title>
+<script src="4f867a65-3ff3-441b-8743-1ab79b0a87a5"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* shriftlar olib tashlandi */</style>
+<style>
+body{margin:0;font-family:Nunito,system-ui,sans-serif;background:#F4EEE6;color:#3A2E4A}
+a{color:#C2413A}a:hover{color:#8F2A25}
+button,input{font-family:inherit}
+button{cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1000px; box-sizing: border-box; background: #F4EEE6; display: flex; flex-direction: column; gap: 24px; padding: 24px 40px 40px; overflow: hidden">
+<header style="display: flex; align-items: center; justify-content: space-between; height: 68px; padding: 0 16px 0 20px; border-radius: 28px; background: #FFFAF4; box-shadow: 10px 12px 28px rgba(140,110,80,0.18), inset -4px -6px 10px rgba(180,150,120,0.15), inset 4px 4px 8px rgba(255,255,255,0.9)">
+<div style="font-weight: 900; font-size: 20px">Pomodoro</div>
+<nav style="display: flex; gap: 8px">
+<a href="Clay.dc.html" style="padding: 12px 22px; border-radius: 18px; color: #6B5C7A; font-weight: 800; font-size: 15px; text-decoration: none">Bugun</a>
+<a href="Stat-Clay.dc.html" style="padding: 12px 22px; border-radius: 18px; color: #6B5C7A; font-weight: 800; font-size: 15px; text-decoration: none">Statistika</a>
+<a href="Rep-Clay.dc.html" style="padding: 12px 22px; border-radius: 18px; color: #6B5C7A; font-weight: 800; font-size: 15px; text-decoration: none">Hisobot</a>
+<a href="#" style="padding: 12px 22px; border-radius: 18px; background: {{accent}}; color: #fff; font-weight: 800; font-size: 15px; text-decoration: none; box-shadow: 4px 6px 12px rgba(230,90,80,0.35), inset -3px -4px 6px rgba(0,0,0,0.12), inset 3px 3px 6px rgba(255,255,255,0.5)">Tarix</a>
+</nav>
+<div style="font-weight: 800; font-size: 15px">Foydalanuvchi I.</div>
+</header>
+
+<div style="display: flex; align-items: flex-end; justify-content: space-between">
+<div style="display: flex; align-items: flex-end; gap: 20px">
+<h1 style="margin: 0; font-size: 36px; font-weight: 900">Tarix</h1>
+<div style="display: flex; gap: 10px">
+<button style="height: 42px; padding: 0 16px; border: 0; border-radius: 16px; background: #CDEFE0; color: #1F6B4B; font-weight: 800; font-size: 13px; box-shadow: 3px 5px 10px rgba(70,160,120,0.2), inset -2px -3px 5px rgba(0,0,0,0.06), inset 2px 2px 4px #fff">↓ JSON</button>
+<button style="height: 42px; padding: 0 16px; border: 0; border-radius: 16px; background: #FFEDB8; color: #7A5A10; font-weight: 800; font-size: 13px; box-shadow: 3px 5px 10px rgba(200,160,60,0.2), inset -2px -3px 5px rgba(0,0,0,0.06), inset 2px 2px 4px #fff">↓ CSV (Excel)</button>
+<button style="height: 42px; padding: 0 16px; border: 0; border-radius: 16px; background: #E4DBFF; color: #4F3AA0; font-weight: 800; font-size: 13px; box-shadow: 3px 5px 10px rgba(120,90,200,0.2), inset -2px -3px 5px rgba(0,0,0,0.06), inset 2px 2px 4px #fff">↑ Import</button>
+</div>
+</div>
+<div style="display: flex; gap: 12px; align-items: center">
+<label style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: #7A6A88">Dan<input value="28.08.2026" style="height: 46px; width: 140px; padding: 0 16px; box-sizing: border-box; border: 0; border-radius: 18px; background: #FFFAF4; color: #3A2E4A; font-size: 15px; font-weight: 800; box-shadow: inset 3px 3px 6px rgba(160,120,90,0.2), inset -3px -3px 6px #fff"></label>
+<label style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 800; color: #7A6A88">Gacha<input value="26.09.2026" style="height: 46px; width: 140px; padding: 0 16px; box-sizing: border-box; border: 0; border-radius: 18px; background: #FFFAF4; color: #3A2E4A; font-size: 15px; font-weight: 800; box-shadow: inset 3px 3px 6px rgba(160,120,90,0.2), inset -3px -3px 6px #fff"></label>
+<button style="height: 46px; padding: 0 22px; border: 0; border-radius: 18px; background: {{accent}}; color: #fff; font-weight: 900; font-size: 15px; box-shadow: 4px 6px 12px rgba(230,90,80,0.35), inset -3px -4px 6px rgba(0,0,0,0.14), inset 3px 3px 6px rgba(255,255,255,0.5)">Ko'rish</button>
+</div>
+</div>
+
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 12px">
+<div style="padding: 18px 22px; border-radius: 30px; background: #FFE3DC; box-shadow: 10px 14px 26px rgba(200,110,90,0.22), inset -5px -6px 10px rgba(200,110,90,0.16), inset 5px 5px 10px rgba(255,255,255,0.8)">
+<div style="display: grid; grid-template-columns: 220px 200px 1fr 150px 120px 90px; align-items: center; gap: 16px; font-size: 15px; font-weight: 700">
+<span style="font-weight: 900; font-size: 16px">25-sentabr, Juma</span>
+<div style="height: 14px; padding: 2px; box-sizing: border-box; border-radius: 8px; background: #FFFAF4; box-shadow: inset 2px 2px 4px rgba(160,90,70,0.25)"><div style="width: 73%; height: 100%; border-radius: 6px; background: {{accent}}"></div></div>
+<span><b>11</b> pomodoro</span><span>Fokus <b>4s 35d</b></span><span style="color: #8A4C44">Tanaffus 5d</span><span style="color: #8A4C44">0/3 vazifa</span>
+</div>
+<div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px">
+<sc-for list="{{sub}}" as="t" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-radius: 18px; background: #FFFAF4; font-size: 14px; font-weight: 700; box-shadow: inset 2px 3px 6px rgba(160,90,70,0.12)"><span style="width: 12px; height: 12px; border-radius: 50%; background: #FFD9D2"></span><span style="flex-grow: 1">{{t.n}}</span><span style="padding: 2px 10px; border-radius: 999px; background: #FFD9D2; color: #8A3C35; font-size: 12px; font-weight: 900">Ish</span><span style="width: 100px; text-align: right; color: #6B5C7A">{{t.p}}</span><span style="width: 80px; text-align: right; color: #6B5C7A">{{t.d}}</span></div>
+</sc-for>
+</div>
+</div>
+<sc-for list="{{days}}" as="d" hint-placeholder-count="7">
+<div style="display: grid; grid-template-columns: 220px 200px 1fr 150px 120px 90px; align-items: center; gap: 16px; padding: 15px 22px; border-radius: 24px; background: #FFFAF4; font-size: 15px; font-weight: 700; box-shadow: 6px 9px 18px rgba(140,110,80,0.15), inset -3px -4px 6px rgba(180,150,120,0.12), inset 3px 3px 6px #fff">
+<span style="font-weight: 900; font-size: 16px">{{d.day}}</span>
+<div style="height: 14px; padding: 2px; box-sizing: border-box; border-radius: 8px; background: #F1E8DE; box-shadow: inset 2px 2px 4px rgba(160,120,90,0.25)"><div style="width: {{d.pct}}%; height: 100%; border-radius: 6px; background: {{accent}}"></div></div>
+<span><b>{{d.p}}</b> pomodoro</span><span>Fokus <b>{{d.f}}</b></span><span style="color: #7A6A88">Tanaffus {{d.t}}</span><span style="color: #7A6A88">{{d.v}} vazifa</span>
+</div>
+</sc-for>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#F26B5E&quot;,&quot;options&quot;:[&quot;#F26B5E&quot;,&quot;#9C86F2&quot;,&quot;#57C08E&quot;,&quot;#F2B84B&quot;]},&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1000}}">
+class Component extends DCLogic {
+renderVals() {
+var raw = [['24-sentabr, Payshanba',12,'5s','30d','1/4'],['23-sentabr, Chorshanba',12,'5s 8d','1s 23d','5/5'],['22-sentabr, Seshanba',10,'6s 24d','2s 36d','4/6'],['20-sentabr, Yakshanba',13,'5s 48d','1s 18d','2/4'],['18-sentabr, Juma',13,'5s 25d','2s 2d','5/5'],['17-sentabr, Payshanba',12,'5s 25d','1s 15d','6/6'],['16-sentabr, Chorshanba',9,'3s 56d','1s 14d','4/4']];
+return {
+accent: this.props.accent ?? '#F26B5E',
+sub: [{ n: 'MI/IM analitika', p: '4/4 pomodoro', d: '1s 40d' }, { n: '2-son BMSM guruh kiritish', p: '4/4 pomodoro', d: '1s 40d' }, { n: 'Texnik qo‘llab-quvvatlash', p: '3/3 pomodoro', d: '1s 15d' }],
+days: raw.map(function (r) { return { day: r[0], p: r[1], pct: Math.round(r[1] / 15 * 100), f: r[2], t: r[3], v: r[4] }; })
+};
+}
+}
+</script>
+
+
+</body></html>

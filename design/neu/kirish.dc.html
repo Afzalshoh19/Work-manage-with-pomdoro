@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="uz"><head>
+<meta charset="utf-8">
+<title>Kirish — Neumorphism</title>
+<script src="b0e184e5-0eb8-4178-a98f-c525bb4397ba"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* shriftlar olib tashlandi */</style>
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#E4E8EF;color:#2E3647}
+a{color:#B8372B}a:hover{color:#8A2419}
+button,input{font-family:inherit}
+button{cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; box-sizing: border-box; background: #E4E8EF; display: flex; align-items: center; justify-content: space-between; padding: 0 120px; overflow: hidden">
+<div style="width: 560px; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; align-items: center; gap: 14px"><div style="width: 52px; height: 52px; border-radius: 18px; background: #E4E8EF; box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" sc-camel-view-box="0 0 24 24" fill="none" stroke="{{accent}}" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2"></path><path d="M9 2h6"></path></svg></div><div style="font-weight: 800; font-size: 22px">Pomodoro</div></div>
+<h1 style="margin: 0; font-size: 60px; line-height: 1.04; font-weight: 800; letter-spacing: -0.035em">Ish vaqtingizni boshqaring</h1>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: #4A5470">Kun tartibini tuzing, har bir vazifaga ketadigan vaqtni pomodoro usulida rejalashtiring va tanaffuslarni tizim o'zi hisoblasin.</p>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px">
+<sc-for list="{{feats}}" as="f" hint-placeholder-count="4">
+<div style="display: flex; gap: 12px; align-items: center; padding: 14px; border-radius: 20px; background: #E4E8EF; box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF"><span style="width: 40px; height: 40px; flex-shrink: 0; border-radius: 13px; box-shadow: inset 3px 3px 6px #C2C8D2, inset -3px -3px 6px #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="#B8372B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="{{f.icon}}"></path></svg></span><div><div style="font-weight: 800; font-size: 14px">{{f.t}}</div><div style="font-size: 12px; font-weight: 600; color: #56607A">{{f.d}}</div></div></div>
+</sc-for>
+</div>
+</div>
+<form style="width: 460px; display: flex; flex-direction: column; gap: 20px; padding: 34px; box-sizing: border-box; border-radius: 40px; background: #E4E8EF; box-shadow: 18px 18px 36px #C2C8D2, -18px -18px 36px #FFFFFF">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; padding: 6px; border-radius: 20px; box-shadow: inset 5px 5px 10px #C2C8D2, inset -5px -5px 10px #FFFFFF">
+<button type="button" style="height: 46px; border: 0; border-radius: 15px; background: #E4E8EF; color: #B8372B; font-weight: 800; font-size: 14px; box-shadow: 4px 4px 8px #C2C8D2, -4px -4px 8px #FFFFFF">Kirish</button>
+<button type="button" style="height: 46px; border: 0; border-radius: 15px; background: transparent; color: #56607A; font-weight: 700; font-size: 14px">Ro'yxatdan o'tish</button>
+</div>
+<button type="button" style="height: 52px; border: 0; border-radius: 18px; background: #E4E8EF; color: #2E3647; font-weight: 700; font-size: 15px; box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF">G &nbsp;Google bilan davom etish</button>
+<div style="display: flex; align-items: center; gap: 12px; font-size: 12px; font-weight: 700; color: #56607A"><span style="flex-grow: 1; height: 4px; border-radius: 2px; box-shadow: inset 1px 1px 2px #C2C8D2, inset -1px -1px 2px #FFFFFF"></span>yoki<span style="flex-grow: 1; height: 4px; border-radius: 2px; box-shadow: inset 1px 1px 2px #C2C8D2, inset -1px -1px 2px #FFFFFF"></span></div>
+<label style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 700; color: #3E4760">Email<input value="ism@kompaniya.uz" style="height: 52px; padding: 0 18px; border: 0; border-radius: 18px; background: #E4E8EF; color: #2E3647; font-size: 15px; font-weight: 600; box-shadow: inset 5px 5px 10px #C2C8D2, inset -5px -5px 10px #FFFFFF"></label>
+<label style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 700; color: #3E4760">Parol<input type="password" value="••••••••••••" style="height: 52px; padding: 0 18px; border: 0; border-radius: 18px; background: #E4E8EF; color: #2E3647; font-size: 15px; box-shadow: inset 5px 5px 10px #C2C8D2, inset -5px -5px 10px #FFFFFF"></label>
+<a href="#" style="align-self: flex-end; font-size: 13px; font-weight: 700">Parolni unutdingizmi?</a>
+<button type="submit" style="height: 56px; border: 0; border-radius: 18px; background: {{accent}}; color: #fff; font-weight: 800; font-size: 16px; box-shadow: 8px 8px 16px #C2C8D2, -8px -8px 16px #FFFFFF, inset 3px 3px 6px rgba(255,255,255,0.3), inset -3px -3px 6px rgba(0,0,0,0.15)">Kirish</button>
+<div style="text-align: center; font-size: 12px; font-weight: 600; color: #56607A">Ma'lumotlaringiz shu kompyuterdagi serverda saqlanadi.</div>
+</form>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#E8594C&quot;,&quot;options&quot;:[&quot;#E8594C&quot;,&quot;#5B7CF0&quot;,&quot;#2FA37A&quot;,&quot;#E0A030&quot;]},&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+renderVals() {
+return {
+accent: this.props.accent ?? '#E8594C',
+feats: [
+{ icon: 'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4', t: 'Aqlli jadval', d: 'Avtomatik quriladi' },
+{ icon: 'M5 20V10M12 20V4M19 20v-7', t: 'Statistika', d: 'HTML, MD, CSV, JSON' },
+{ icon: 'M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1', t: 'Integratsiyalar', d: 'Jira, Notion, Confluence' },
+{ icon: 'M6 11V8a6 6 0 0 1 12 0v3M5 11h14v10H5z', t: 'Ma‘lumot sizda', d: 'O‘z serveringizda' }
+]
+};
+}
+}
+</script>
+
+
+</body></html>

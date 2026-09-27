@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="uz"><head>
+<meta charset="utf-8">
+<title>Kirish — Glassmorphism</title>
+<script src="587de2a8-ed6b-41e4-80bb-bd0677a2939f"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* shriftlar olib tashlandi */</style>
+<style>
+body{margin:0;font-family:Manrope,system-ui,sans-serif;background:#0B0E1A;color:#F4F6FF}
+a{color:#FFB4A8}a:hover{color:#FFD2CB}
+button,input{font-family:inherit}
+button{cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1440px; height: 900px; position: relative; overflow: hidden; background: #0B0E1A">
+<div style="position: absolute; width: 700px; height: 700px; left: -160px; top: -200px; border-radius: 50%; background: {{accent}}; filter: blur(160px); opacity: 0.5"></div>
+<div style="position: absolute; width: 640px; height: 640px; left: 900px; top: 400px; border-radius: 50%; background: #7B5CFF; filter: blur(160px); opacity: 0.5"></div>
+<div style="position: absolute; width: 400px; height: 400px; left: 700px; top: -100px; border-radius: 50%; background: #1FC7B6; filter: blur(150px); opacity: 0.3"></div>
+<div style="position: relative; display: flex; align-items: center; justify-content: space-between; height: 100%; padding: 0 120px; box-sizing: border-box">
+<div style="width: 560px; display: flex; flex-direction: column; gap: 28px">
+<div style="display: flex; align-items: center; gap: 12px"><div style="width: 40px; height: 40px; border-radius: 13px; background: linear-gradient(135deg, {{accent}}, #FF9A6B); box-shadow: 0 6px 20px rgba(255,107,91,0.5)"></div><div style="font-family: Sora, sans-serif; font-weight: 700; font-size: 20px">Pomodoro</div></div>
+<h1 style="margin: 0; font-family: Sora, sans-serif; font-size: 60px; line-height: 1.04; font-weight: 700; letter-spacing: -0.03em">Ish vaqtingizni boshqaring</h1>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; color: rgba(244,246,255,0.75)">Kun tartibini tuzing, har bir vazifaga ketadigan vaqtni pomodoro usulida rejalashtiring va tanaffuslarni tizim o'zi hisoblasin.</p>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px">
+<sc-for list="{{feats}}" as="f" hint-placeholder-count="4">
+<div style="display: flex; gap: 12px; padding: 14px; border-radius: 18px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12)"><svg width="20" height="20" sc-camel-view-box="0 0 24 24" fill="none" stroke="#FFB4A8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 2px"><path d="{{f.icon}}"></path></svg><div><div style="font-weight: 700; font-size: 14px">{{f.t}}</div><div style="font-size: 12px; color: rgba(244,246,255,0.65); margin-top: 2px">{{f.d}}</div></div></div>
+</sc-for>
+</div>
+</div>
+<form style="width: 460px; display: flex; flex-direction: column; gap: 18px; padding: 32px; box-sizing: border-box; border-radius: 32px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(30px); box-shadow: 0 40px 80px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.25)">
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 16px; background: rgba(0,0,0,0.2)">
+<button type="button" style="height: 44px; border: 0; border-radius: 12px; background: rgba(255,255,255,0.9); color: #0B0E1A; font-weight: 700; font-size: 14px">Kirish</button>
+<button type="button" style="height: 44px; border: 0; border-radius: 12px; background: transparent; color: rgba(244,246,255,0.75); font-weight: 600; font-size: 14px">Ro'yxatdan o'tish</button>
+</div>
+<button type="button" style="height: 50px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: #F4F6FF; font-weight: 700; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 10px"><span style="width: 20px; height: 20px; border-radius: 50%; background: #fff; color: #4285F4; font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center">G</span>Google bilan davom etish</button>
+<div style="display: flex; align-items: center; gap: 12px; font-size: 12px; color: rgba(244,246,255,0.55)"><span style="flex-grow: 1; height: 1px; background: rgba(255,255,255,0.15)"></span>yoki<span style="flex-grow: 1; height: 1px; background: rgba(255,255,255,0.15)"></span></div>
+<label style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 600; color: rgba(244,246,255,0.8)">Email<input value="ism@kompaniya.uz" style="height: 50px; padding: 0 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #F4F6FF; font-size: 15px"></label>
+<label style="display: flex; flex-direction: column; gap: 8px; font-size: 13px; font-weight: 600; color: rgba(244,246,255,0.8)">Parol<input type="password" value="••••••••••••" style="height: 50px; padding: 0 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.18); background: rgba(255,255,255,0.06); color: #F4F6FF; font-size: 15px"></label>
+<a href="#" style="align-self: flex-end; font-size: 13px; font-weight: 600">Parolni unutdingizmi?</a>
+<button type="submit" style="height: 54px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.3); background: linear-gradient(135deg, {{accent}}, #FF8F6B); color: #fff; font-weight: 700; font-size: 16px; box-shadow: 0 12px 30px rgba(255,107,91,0.45)">Kirish</button>
+<div style="text-align: center; font-size: 12px; color: rgba(244,246,255,0.6)">Ma'lumotlaringiz shu kompyuterdagi serverda saqlanadi.</div>
+</form>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#FF6B5B&quot;,&quot;options&quot;:[&quot;#FF6B5B&quot;,&quot;#7B5CFF&quot;,&quot;#1FC7B6&quot;,&quot;#FFB020&quot;]},&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+renderVals() {
+return {
+accent: this.props.accent ?? '#FF6B5B',
+feats: [
+{ icon: 'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4', t: 'Aqlli jadval', d: 'Kun jadvali avtomatik quriladi' },
+{ icon: 'M5 20V10M12 20V4M19 20v-7', t: 'Statistika va hisobot', d: 'HTML, MD, CSV yoki JSON' },
+{ icon: 'M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1', t: 'Integratsiyalar', d: 'Jira, Notion, Confluence' },
+{ icon: 'M6 11V8a6 6 0 0 1 12 0v3M5 11h14v10H5z', t: 'Ma‘lumot sizda qoladi', d: 'O‘z serveringizda saqlanadi' }
+]
+};
+}
+}
+</script>
+
+
+</body></html>

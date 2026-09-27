@@ -128,15 +128,15 @@ h1, h2, h3, .clock { font-family: var(--font-display); }
   --blue: #9C86F2;
   --amber: #F2B84B;
   --purple: #9C86F2;
-  --shadow: 12px 16px 32px rgba(140,110,80,.20),
+  --shadow: 14px 18px 36px rgba(140,110,80,.20),
             inset -6px -8px 14px rgba(180,150,120,.15),
-            inset 6px 6px 12px rgba(255,255,255,.92);
+            inset 6px 6px 12px #fff;
   --raise: 4px 6px 12px rgba(200,110,90,.24),
            inset -3px -4px 6px rgba(0,0,0,.05),
            inset 3px 3px 6px #fff;
   --inset: inset 4px 5px 10px rgba(180,90,70,.16), inset -4px -4px 8px #fff;
   --glass: 0px;
-  --r: 28px;
+  --r: 36px;
   --font: Nunito, "Segoe UI", system-ui, sans-serif;
   --font-display: Nunito, "Segoe UI", system-ui, sans-serif;
   --font-clock: Nunito, system-ui, sans-serif;
@@ -146,30 +146,6 @@ h1, h2, h3, .clock { font-family: var(--font-display); }
   color-scheme: light;
 }
 
-[data-theme="clay"] h1,
-[data-theme="clay"] h2,
-[data-theme="clay"] h3 { font-weight: var(--w-bold); }
-[data-theme="clay"] .card { border: 0; }
-[data-theme="clay"] .topbar {
-  border-bottom: 0; border-radius: 0 0 26px 26px; background: var(--card);
-  box-shadow: 8px 10px 24px rgba(140,110,80,.16), inset 3px 3px 8px rgba(255,255,255,.9);
-}
-[data-theme="clay"] .tabs { border: 0; border-radius: 20px; background: transparent; }
-[data-theme="clay"] .tab { border-radius: 16px; font-weight: var(--w-mid); }
-[data-theme="clay"] .tab.is-active { box-shadow: var(--raise); }
-[data-theme="clay"] .btn { border: 0; border-radius: 18px; font-weight: var(--w-bold); box-shadow: var(--raise); }
-[data-theme="clay"] .btn-ghost { background: var(--bg-2); color: var(--txt); }
-[data-theme="clay"] .mode-pills { background: transparent; box-shadow: var(--inset); border-radius: 20px; }
-[data-theme="clay"] .pill { border-radius: 16px; font-weight: var(--w-mid); }
-[data-theme="clay"] .pill.is-active { box-shadow: var(--raise); }
-[data-theme="clay"] .mini { border-radius: 22px; box-shadow: var(--raise); }
-[data-theme="clay"] .active-task { border: 0; box-shadow: var(--inset); border-radius: 20px; }
-[data-theme="clay"] .add-form { border: 0; border-radius: 24px; box-shadow: var(--inset); }
-[data-theme="clay"] input,
-[data-theme="clay"] select,
-[data-theme="clay"] textarea { border: 0; border-radius: 14px; box-shadow: var(--inset); }
-[data-theme="clay"] .clock { font-weight: var(--w-bold); }
-[data-theme="clay"] .ring-bg { stroke: #F1E8DE; }
 
 
 /* ═══════════════════════════════════════════════════════════════
@@ -459,10 +435,6 @@ body, .topbar, .card, .mini, .tabs, .tab, .btn, .pill,
    imzosi shu yerda alohida beriladi.
    ═══════════════════════════════════════════════════════════════ */
 
-[data-theme="clay"] .lp-try,
-[data-theme="clay"] .lp-feat,
-[data-theme="clay"] .lp-cta { border: 0; border-radius: 26px; box-shadow: var(--shadow); }
-[data-theme="clay"] .lp-foot { border-top: 0; }
 
 [data-theme="neu"] .lp-try,
 [data-theme="neu"] .lp-feat,
@@ -506,9 +478,7 @@ body, .topbar, .card, .mini, .tabs, .tab, .btn, .pill,
 [data-theme="neu"] .lp-body { background: var(--bg); }
 
 [data-theme="neu"] .lp-top { border: 0; box-shadow: var(--raise); }
-[data-theme="clay"] .lp-top { border: 0; border-radius: 26px; }
 [data-theme="neu"] .lp-badge { border: 0; box-shadow: var(--inset); }
-[data-theme="clay"] .lp-badge { border: 0; box-shadow: var(--inset); }
 
 
 /* ═══════════════════════════════════════════════════════════════
@@ -617,3 +587,731 @@ body, .topbar, .card, .mini, .tabs, .tab, .btn, .pill,
 /* Rejim tugmalari 420px ustunda uch ustunga sig'sin — chizmadagi kabi
    har biri bitta qatorda */
 [data-theme="glass"] .pill { padding: 10px 6px; font-size: 13.5px; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   CLAYMORPHISM — maketga aniq moslash                      (2/4)
+
+   Barcha qiymatlar `design/clay/` papkasidagi maket fayllarining
+   inline stillaridan ko'chirilgan. Gilning qoidasi: HAR BIR yuza uchta soyadan iborat —
+   tashqi tushuvchi soya, pastdan ichki quyuq soya, yuqoridan ichki
+   oq yorug'lik. Faqat shu uchligi birga turganda yuza yumshoq gil
+   bo'lib ko'rinadi; bittasi olib tashlansa oddiy tekis blok qoladi.
+   ═══════════════════════════════════════════════════════════════ */
+
+[data-theme="clay"] h1,
+[data-theme="clay"] h2,
+[data-theme="clay"] h3 { font-weight: var(--w-bold); }
+
+/* ── Yuqori qator ── */
+
+[data-theme="clay"] .topbar {
+  /* Maketda sarlavha chetlarga tegmaydi — sahifa ichida suzuvchi panel */
+  width: calc(100% - 44px);
+  max-width: 1360px;
+  margin: 14px auto 0;
+  height: 68px;
+  padding: 0 12px 0 16px;
+  border-bottom: 0;
+  border-radius: 28px;
+  background: var(--card);
+  backdrop-filter: none;
+  box-shadow: 10px 12px 28px rgba(140,110,80,.18),
+              inset -4px -6px 10px rgba(180,150,120,.15),
+              inset 4px 4px 8px rgba(255,255,255,.9);
+}
+[data-theme="clay"] .brand-mark {
+  width: 44px;
+  height: 44px;
+  border-radius: 16px;
+  background: var(--accent);
+  box-shadow: 4px 6px 12px rgba(230,90,80,.35),
+              inset -3px -4px 6px rgba(0,0,0,.12),
+              inset 3px 3px 6px rgba(255,255,255,.55);
+}
+[data-theme="clay"] .brand strong { font-size: 20px; font-weight: 900; }
+[data-theme="clay"] .brand small { color: var(--txt-2); }
+
+/* Maketda yorliqlar idishsiz — har biri alohida gil tugma */
+[data-theme="clay"] .tabs {
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+[data-theme="clay"] .tab {
+  padding: 12px 22px;
+  border-radius: 18px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--txt-2);
+}
+[data-theme="clay"] .tab:hover { background: rgba(255,255,255,.55); }
+[data-theme="clay"] .tab.is-active {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 900;
+  box-shadow: 4px 6px 12px rgba(230,90,80,.35),
+              inset -3px -4px 6px rgba(0,0,0,.12),
+              inset 3px 3px 6px rgba(255,255,255,.5);
+}
+
+/* Foydalanuvchi yorligi — binafsha pastel, ichkariga botgan */
+[data-theme="clay"] .user-btn {
+  gap: 10px;
+  padding: 6px 16px 6px 6px;
+  border: 0;
+  border-radius: 20px;
+  background: #EFE6FF;
+  color: var(--txt);
+  font-weight: 800;
+  box-shadow: inset -3px -4px 6px rgba(120,90,180,.12),
+              inset 3px 3px 6px rgba(255,255,255,.9);
+}
+[data-theme="clay"] .user-btn .avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 14px;
+  background: #9C86F2;
+  color: #fff;
+  font-weight: 900;
+  box-shadow: inset -2px -3px 5px rgba(0,0,0,.12),
+              inset 2px 2px 4px rgba(255,255,255,.5);
+}
+[data-theme="clay"] .icon-btn {
+  border: 0;
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow: var(--raise);
+}
+
+/* ── Kartalar ── */
+
+[data-theme="clay"] .card {
+  border: 0;
+  border-radius: 36px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+/* Taymer kartasi maketda pushti — boshqa kartalardan ataylab farq qiladi */
+[data-theme="clay"] .timer-card {
+  border-radius: 40px;
+  padding: 26px;
+  background: var(--card-2);
+  box-shadow: 16px 20px 40px rgba(200,110,90,.25),
+              inset -8px -10px 18px rgba(200,110,90,.18),
+              inset 8px 8px 16px rgba(255,255,255,.8);
+}
+
+/* ── Rejim tugmalari ── */
+
+[data-theme="clay"] .mode-pills {
+  gap: 8px;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+}
+[data-theme="clay"] .pill {
+  padding: 12px 0;
+  border-radius: 18px;
+  font-size: 14px;
+  font-weight: 800;
+  color: #8A4C44;
+}
+[data-theme="clay"] .pill.is-active {
+  background: var(--bg-2);
+  color: var(--txt);
+  font-weight: 900;
+  box-shadow: 4px 6px 12px rgba(200,110,90,.25),
+              inset -3px -4px 6px rgba(0,0,0,.05),
+              inset 3px 3px 6px #fff;
+}
+
+/* ── Taymer: maketda bu POMIDOR ──
+   Aksent rangli shar, tepasida yashil band, ichida krem doira.
+   Halqa SVG yashiriladi: pomidorning ozi shar bolib turadi, ustiga
+   halqa qoyilsa ikkita doira ustma-ust tushardi. */
+
+[data-theme="clay"] .dial {
+  width: 272px;
+  height: 272px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 14px 20px 36px rgba(230,90,80,.4),
+              inset -18px -22px 30px rgba(0,0,0,.16),
+              inset 16px 16px 26px rgba(255,255,255,.45);
+}
+[data-theme="clay"] .dial .ring { display: none; }
+[data-theme="clay"] .dial::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -14px;
+  width: 36px;
+  height: 30px;
+  margin-left: -18px;
+  border-radius: 14px 14px 18px 18px;
+  background: #6FCF97;
+  box-shadow: inset -3px -4px 6px rgba(0,0,0,.15),
+              inset 3px 3px 5px rgba(255,255,255,.5);
+}
+[data-theme="clay"] .dial-center {
+  inset: 44px;
+  border-radius: 50%;
+  background: var(--bg-2);
+  box-shadow: inset 8px 10px 18px rgba(180,90,70,.25),
+              inset -6px -6px 12px #fff;
+}
+[data-theme="clay"] .clock {
+  font-size: 56px;
+  font-weight: 900;
+  letter-spacing: -.02em;
+  color: var(--txt);
+}
+[data-theme="clay"] .is-running .clock { color: var(--txt); }
+[data-theme="clay"] .dial-sub {
+  font-size: 14px;
+  font-weight: 700;
+  color: #8A4C44;
+}
+[data-theme="clay"] .cycle-dots i {
+  border: 0;
+  background: rgba(255,255,255,.7);
+  box-shadow: inset 2px 2px 3px rgba(180,90,70,.2);
+}
+[data-theme="clay"] .cycle-dots i.on {
+  background: var(--accent);
+  box-shadow: inset -2px -2px 3px rgba(0,0,0,.2);
+}
+
+/* ── Faol vazifa ── */
+
+[data-theme="clay"] .active-task {
+  border: 0;
+  border-radius: 24px;
+  padding: 14px 18px;
+  background: var(--bg-2);
+  box-shadow: inset 4px 5px 10px rgba(180,90,70,.15),
+              inset -4px -4px 8px #fff;
+}
+[data-theme="clay"] .at-label {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  color: #8A4C44;
+}
+[data-theme="clay"] .at-title { font-size: 17px; font-weight: 900; }
+
+/* ── Tugmalar ──
+   Taymerning asosiy tugmasi maketda toq siyohrang, aksent emas:
+   pushti kartada aksent tugma korinmay ketardi. */
+
+[data-theme="clay"] .btn {
+  border: 0;
+  border-radius: 20px;
+  font-weight: 800;
+  background: var(--bg-2);
+  color: var(--txt);
+  box-shadow: 4px 6px 12px rgba(200,110,90,.22),
+              inset -3px -4px 6px rgba(0,0,0,.05),
+              inset 3px 3px 6px #fff;
+}
+[data-theme="clay"] .btn:hover { background: #fff; }
+[data-theme="clay"] .btn:active { transform: translateY(1px); box-shadow: var(--inset); }
+[data-theme="clay"] .btn-ghost { background: var(--bg-2); color: var(--txt); }
+[data-theme="clay"] .btn-primary,
+[data-theme="clay"] .dh-actions .btn:not(.btn-ghost) {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 900;
+  box-shadow: 6px 8px 16px rgba(230,90,80,.35),
+              inset -3px -4px 6px rgba(0,0,0,.14),
+              inset 3px 3px 6px rgba(255,255,255,.5);
+}
+[data-theme="clay"] .btn-primary:hover,
+[data-theme="clay"] .dh-actions .btn:not(.btn-ghost):hover { background: var(--accent-2); }
+[data-theme="clay"] .controls #btnMain,
+[data-theme="clay"] .lp-demo #lpMain {
+  height: 60px;
+  border-radius: 24px;
+  background: var(--txt);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 900;
+  box-shadow: 6px 10px 20px rgba(58,46,74,.35),
+              inset -4px -5px 8px rgba(0,0,0,.3),
+              inset 4px 4px 8px rgba(255,255,255,.18);
+}
+[data-theme="clay"] .controls #btnMain:hover,
+[data-theme="clay"] .lp-demo #lpMain:hover { background: #2C2239; }
+[data-theme="clay"] .controls .btn:not(#btnMain) {
+  height: 50px;
+  border-radius: 20px;
+}
+[data-theme="clay"] .btn-mini { border-radius: 16px; }
+[data-theme="clay"] .btn-danger {
+  background: #FFD9D2;
+  color: #8A3C35;
+  box-shadow: var(--raise);
+}
+[data-theme="clay"] .btn-danger:hover { background: var(--accent); color: #fff; }
+
+/* ── Sana sarlavhasi ── */
+
+[data-theme="clay"] .dh-sub {
+  font-size: 14px;
+  font-weight: 700;
+  color: #7A6A88;
+}
+[data-theme="clay"] .dh-date { font-size: 34px; font-weight: 900; }
+[data-theme="clay"] .dh-actions .btn { height: 48px; padding: 0 20px; font-size: 15px; }
+
+/* ── KPI kartochkalari ──
+   Maketda torttasi tort xil pastel rangda va yorliq TEPADA turadi.
+   Rang `nth-child` bilan beriladi: qaysi kartochka qayerda turishi
+   `renderPlan()` tartibiga bogliq, JS ga esa tegilmaydi. */
+
+[data-theme="clay"] .summary { gap: 18px; }
+[data-theme="clay"] .sum-item {
+  display: flex;
+  flex-direction: column;
+  border: 0;
+  border-radius: 30px;
+  padding: 18px 20px;
+}
+[data-theme="clay"] .sum-item::before { display: none; }
+[data-theme="clay"] .sum-item .si-ico { display: none; }
+[data-theme="clay"] .sum-item .si-label {
+  order: 1;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+}
+[data-theme="clay"] .sum-item b {
+  order: 2;
+  margin-top: 6px;
+  max-width: 100%;
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--txt);
+}
+[data-theme="clay"] .sum-item b small { font-size: 20px; font-weight: 800; }
+[data-theme="clay"] .sum-item .si-sub {
+  order: 3;
+  margin-top: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+[data-theme="clay"] .sum-item:hover { transform: none; }
+
+[data-theme="clay"] .sum-item:nth-child(1) {
+  background: #FFD9D2;
+  box-shadow: 8px 12px 22px rgba(200,110,90,.22),
+              inset -5px -6px 10px rgba(200,110,90,.18),
+              inset 5px 5px 10px rgba(255,255,255,.8);
+}
+[data-theme="clay"] .sum-item:nth-child(1) .si-label,
+[data-theme="clay"] .sum-item:nth-child(1) b small,
+[data-theme="clay"] .sum-item:nth-child(1) .si-sub { color: #8A3C35; }
+
+[data-theme="clay"] .sum-item:nth-child(2) {
+  background: #CDEFE0;
+  box-shadow: 8px 12px 22px rgba(70,160,120,.20),
+              inset -5px -6px 10px rgba(70,160,120,.18),
+              inset 5px 5px 10px rgba(255,255,255,.8);
+}
+[data-theme="clay"] .sum-item:nth-child(2) .si-label,
+[data-theme="clay"] .sum-item:nth-child(2) b small,
+[data-theme="clay"] .sum-item:nth-child(2) .si-sub { color: #1F6B4B; }
+
+[data-theme="clay"] .sum-item:nth-child(3) {
+  background: #FFEDB8;
+  box-shadow: 8px 12px 22px rgba(200,160,60,.20),
+              inset -5px -6px 10px rgba(200,160,60,.20),
+              inset 5px 5px 10px rgba(255,255,255,.8);
+}
+[data-theme="clay"] .sum-item:nth-child(3) .si-label,
+[data-theme="clay"] .sum-item:nth-child(3) b small,
+[data-theme="clay"] .sum-item:nth-child(3) .si-sub { color: #7A5A10; }
+
+[data-theme="clay"] .sum-item:nth-child(4) {
+  background: #E4DBFF;
+  box-shadow: 8px 12px 22px rgba(120,90,200,.20),
+              inset -5px -6px 10px rgba(120,90,200,.18),
+              inset 5px 5px 10px rgba(255,255,255,.8);
+}
+[data-theme="clay"] .sum-item:nth-child(4) .si-label,
+[data-theme="clay"] .sum-item:nth-child(4) b small,
+[data-theme="clay"] .sum-item:nth-child(4) .si-sub { color: #4F3AA0; }
+
+/* ── Kun bajarilishi yolagi ── */
+
+[data-theme="clay"] .lh-prog { font-size: 14px; font-weight: 800; color: #7A6A88; }
+[data-theme="clay"] .lh-prog b { color: #7A6A88; }
+[data-theme="clay"] .day-bar {
+  height: 16px;
+  padding: 3px;
+  border-radius: 10px;
+  background: #F1E8DE;
+  box-shadow: inset 3px 3px 6px rgba(160,120,90,.25),
+              inset -2px -2px 4px #fff;
+}
+[data-theme="clay"] .day-bar > i {
+  border-radius: 8px;
+  background: var(--accent);
+  box-shadow: inset -2px -2px 3px rgba(0,0,0,.15),
+              inset 2px 2px 3px rgba(255,255,255,.5);
+}
+
+/* ── Vazifa qatorlari ── */
+
+[data-theme="clay"] .task {
+  gap: 14px;
+  padding: 14px 18px;
+  border: 0;
+  border-radius: 24px;
+  background: var(--bg-2);
+  box-shadow: 5px 7px 14px rgba(140,110,80,.14),
+              inset -3px -4px 6px rgba(180,150,120,.10),
+              inset 3px 3px 6px #fff;
+}
+[data-theme="clay"] .task:hover { transform: none; background: #fff; }
+[data-theme="clay"] .task.is-active {
+  background: var(--card-2);
+  box-shadow: 5px 7px 14px rgba(200,110,90,.20),
+              inset -3px -4px 6px rgba(200,110,90,.15),
+              inset 3px 3px 6px rgba(255,255,255,.8);
+}
+[data-theme="clay"] .task.is-done {
+  opacity: 1;
+  background: #EAF7F0;
+  box-shadow: inset 3px 4px 8px rgba(70,160,120,.15),
+              inset -3px -3px 6px #fff;
+}
+[data-theme="clay"] .task.is-done .t-title { color: #5E7A6C; }
+[data-theme="clay"] .t-title { font-size: 16px; font-weight: 800; }
+[data-theme="clay"] .task.is-active .t-title { font-weight: 900; }
+[data-theme="clay"] .t-grip { color: rgba(180,150,120,.75); }
+[data-theme="clay"] .chip {
+  border: 0;
+  border-radius: 12px;
+  font-weight: 700;
+  background: rgba(255,255,255,.75);
+}
+[data-theme="clay"] .t-btn {
+  border: 0;
+  border-radius: 14px;
+  background: var(--bg-2);
+  box-shadow: var(--raise);
+}
+
+/* ── Forma elementlari ── */
+
+[data-theme="clay"] input,
+[data-theme="clay"] select,
+[data-theme="clay"] textarea,
+[data-theme="clay"] output {
+  border: 0;
+  border-radius: 16px;
+  background: #F6EFE6;
+  box-shadow: inset 3px 3px 6px rgba(160,120,90,.20),
+              inset -3px -3px 6px #fff;
+}
+[data-theme="clay"] input:focus,
+[data-theme="clay"] select:focus {
+  box-shadow: inset 3px 3px 6px rgba(160,120,90,.20),
+              inset -3px -3px 6px #fff,
+              0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+[data-theme="clay"] input[type="checkbox"] { accent-color: #57C08E; }
+[data-theme="clay"] input[type="range"] { accent-color: var(--accent); box-shadow: none; }
+[data-theme="clay"] .add-form {
+  border: 0;
+  border-radius: 28px;
+  background: var(--bg-2);
+  box-shadow: var(--inset);
+}
+[data-theme="clay"] .mini {
+  border-radius: 22px;
+  background: var(--bg-2);
+  box-shadow: var(--raise);
+}
+[data-theme="clay"] .day-setup {
+  border: 0;
+  border-radius: 26px;
+  background: var(--bg-2);
+  box-shadow: var(--inset);
+}
+
+/* ── Taqdimot sahifasi ── */
+
+[data-theme="clay"] .lp-top {
+  border: 0;
+  border-radius: 28px;
+  background: var(--card);
+  box-shadow: 10px 12px 28px rgba(140,110,80,.18),
+              inset -4px -6px 10px rgba(180,150,120,.15),
+              inset 4px 4px 8px rgba(255,255,255,.9);
+}
+[data-theme="clay"] .lp-badge {
+  border: 0;
+  border-radius: 999px;
+  background: var(--bg-2);
+  font-weight: 800;
+  box-shadow: var(--inset);
+}
+[data-theme="clay"] .lp-try,
+[data-theme="clay"] .lp-feat,
+[data-theme="clay"] .lp-cta {
+  border: 0;
+  border-radius: 32px;
+  box-shadow: var(--shadow);
+}
+[data-theme="clay"] .lp-feat:hover { transform: translateY(-2px); }
+[data-theme="clay"] .lp-feat b {
+  border: 0;
+  border-radius: 18px;
+  background: #FFD9D2;
+  color: #8A3C35;
+  box-shadow: inset -3px -4px 6px rgba(200,110,90,.18),
+              inset 3px 3px 6px rgba(255,255,255,.8);
+}
+[data-theme="clay"] .lp-feat:nth-child(3n+2) b { background: #CDEFE0; color: #1F6B4B; }
+[data-theme="clay"] .lp-feat:nth-child(3n) b { background: #E4DBFF; color: #4F3AA0; }
+[data-theme="clay"] .lp-foot { border-top: 0; }
+[data-theme="clay"] .lp-demo {
+  background: var(--card-2);
+  border-radius: 40px;
+}
+
+/* ── Statistika, Hisobot, Tarix ── */
+
+/* Davr tanlagich: ichkariga botgan idish, faol tugma aksentda */
+[data-theme="clay"] .seg {
+  gap: 8px;
+  padding: 6px;
+  border-radius: 22px;
+  background: #EFE6DA;
+  box-shadow: inset 4px 4px 8px rgba(160,120,90,.20),
+              inset -4px -4px 8px #fff;
+}
+[data-theme="clay"] .seg button {
+  padding: 10px 18px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 800;
+  color: var(--txt-2);
+}
+[data-theme="clay"] .seg button.is-active {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 900;
+  box-shadow: 3px 5px 10px rgba(230,90,80,.30),
+              inset -2px -3px 5px rgba(0,0,0,.12),
+              inset 2px 2px 4px rgba(255,255,255,.5);
+}
+
+/* KPI kartochkalari — maketda yorliq TEPADA, ostida katta son.
+   Ranglar beshlik bo'yicha aylanadi: qizil, yashil, binafsha,
+   sariq, ko'k. `nth-child(5n+…)` shuning uchun. */
+[data-theme="clay"] .kpi-grid { gap: 18px; }
+[data-theme="clay"] .kpi {
+  display: flex;
+  flex-direction: column;
+  border: 0;
+  border-radius: 30px;
+  padding: 18px 20px;
+}
+[data-theme="clay"] .kpi .kpi-lbl {
+  order: 1;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 800;
+}
+[data-theme="clay"] .kpi .kpi-val {
+  order: 2;
+  margin-top: 4px;
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--txt);
+}
+[data-theme="clay"] .kpi .kpi-sub {
+  order: 3;
+  margin-top: 2px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+[data-theme="clay"] .kpi:nth-child(5n+1) {
+  background: #FFD9D2;
+  box-shadow: 8px 12px 22px rgba(200,110,90,.22),
+              inset -5px -6px 10px rgba(200,110,90,.18),
+              inset 5px 5px 10px rgba(255,255,255,.8);
+}
+[data-theme="clay"] .kpi:nth-child(5n+1) .kpi-lbl,
+[data-theme="clay"] .kpi:nth-child(5n+1) .kpi-sub { color: #8A3C35; }
+
+[data-theme="clay"] .kpi:nth-child(5n+2) {
+  background: #CDEFE0;
+  box-shadow: 8px 12px 22px rgba(70,160,120,.20),
+              inset -5px -6px 10px rgba(70,160,120,.18),
+              inset 5px 5px 10px rgba(255,255,255,.8);
+}
+[data-theme="clay"] .kpi:nth-child(5n+2) .kpi-lbl,
+[data-theme="clay"] .kpi:nth-child(5n+2) .kpi-sub { color: #1F6B4B; }
+
+[data-theme="clay"] .kpi:nth-child(5n+3) {
+  background: #E4DBFF;
+  box-shadow: 8px 12px 22px rgba(120,90,200,.20),
+              inset -5px -6px 10px rgba(120,90,200,.18),
+              inset 5px 5px 10px rgba(255,255,255,.8);
+}
+[data-theme="clay"] .kpi:nth-child(5n+3) .kpi-lbl,
+[data-theme="clay"] .kpi:nth-child(5n+3) .kpi-sub { color: #4F3AA0; }
+
+[data-theme="clay"] .kpi:nth-child(5n+4) {
+  background: #FFEDB8;
+  box-shadow: 8px 12px 22px rgba(200,160,60,.20),
+              inset -5px -6px 10px rgba(200,160,60,.20),
+              inset 5px 5px 10px rgba(255,255,255,.8);
+}
+[data-theme="clay"] .kpi:nth-child(5n+4) .kpi-lbl,
+[data-theme="clay"] .kpi:nth-child(5n+4) .kpi-sub { color: #7A5A10; }
+
+[data-theme="clay"] .kpi:nth-child(5n+5) {
+  background: #DCE8FF;
+  box-shadow: 8px 12px 22px rgba(60,100,180,.20),
+              inset -5px -6px 10px rgba(60,100,180,.18),
+              inset 5px 5px 10px rgba(255,255,255,.8);
+}
+[data-theme="clay"] .kpi:nth-child(5n+5) .kpi-lbl,
+[data-theme="clay"] .kpi:nth-child(5n+5) .kpi-sub { color: #2E4E8F; }
+
+/* Bo'lim sarlavhalari */
+[data-theme="clay"] .card-head h2 { font-size: 24px; font-weight: 900; }
+[data-theme="clay"] .sec-title { font-size: 18px; font-weight: 900; }
+
+/* Oddiy progress yo'laklari (hisobot, ish kartasi) — gilda chuqurcha */
+[data-theme="clay"] .bar {
+  height: 14px;
+  padding: 3px;
+  border-radius: 10px;
+  background: #F1E8DE;
+  box-shadow: inset 3px 3px 6px rgba(160,120,90,.25),
+              inset -2px -2px 4px #fff;
+}
+[data-theme="clay"] .bar > i {
+  border-radius: 8px;
+  background: var(--accent);
+  box-shadow: inset -2px -2px 3px rgba(0,0,0,.15),
+              inset 2px 2px 3px rgba(255,255,255,.5);
+}
+
+/* Grafiklar: ustunlar ham yumshoq uchli bo'lsin */
+[data-theme="clay"] .bar-rect { rx: 6; }
+
+/* ── Modallar ── */
+
+[data-theme="clay"] .modal,
+[data-theme="clay"] .modal-box {
+  border: 0;
+  border-radius: 36px;
+  background: var(--card);
+  box-shadow: var(--shadow);
+}
+[data-theme="clay"] .modal p { font-weight: 700; }
+
+/* ── Profil / sozlamalar ── */
+
+[data-theme="clay"] .rail-item {
+  border-radius: 18px;
+  font-weight: 800;
+  color: var(--txt-2);
+}
+[data-theme="clay"] .rail-item.is-active {
+  background: var(--accent);
+  color: #fff;
+  font-weight: 900;
+  box-shadow: 4px 6px 12px rgba(230,90,80,.30),
+              inset -3px -4px 6px rgba(0,0,0,.12),
+              inset 3px 3px 6px rgba(255,255,255,.5);
+}
+[data-theme="clay"] .rail-lbl { font-weight: 800; }
+[data-theme="clay"] .theme-card {
+  border: 0;
+  border-radius: 24px;
+  background: var(--bg-2);
+  box-shadow: var(--raise);
+}
+[data-theme="clay"] .theme-card[aria-pressed="true"] {
+  background: var(--card-2);
+  box-shadow: var(--inset);
+}
+[data-theme="clay"] .help-block,
+[data-theme="clay"] .integ {
+  border: 0;
+  border-radius: 24px;
+  background: var(--bg-2);
+  box-shadow: var(--inset);
+}
+[data-theme="clay"] .badge {
+  border: 0;
+  border-radius: 12px;
+  font-weight: 800;
+  background: rgba(255,255,255,.8);
+}
+
+/* ── Kirish sahifasi ── */
+
+[data-theme="clay"] .auth-card,
+[data-theme="clay"] .auth-box {
+  border: 0;
+  border-radius: 40px;
+  box-shadow: var(--shadow);
+}
+
+/* ── Tarix: yuklab olish tugmalari ──
+   Maketda uchtasi uch xil pastel rangda: JSON yashil, CSV sariq,
+   Import binafsha. Shakli bir xil bo'lsa qaysi biri bosilayotganini
+   ajratish qiyin edi. */
+
+[data-theme="clay"] .export-bar .btn {
+  height: 42px;
+  padding: 0 16px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 800;
+}
+[data-theme="clay"] #expJson {
+  background: #CDEFE0;
+  color: #1F6B4B;
+  box-shadow: 3px 5px 10px rgba(70,160,120,.20),
+              inset -2px -3px 5px rgba(0,0,0,.06),
+              inset 2px 2px 4px #fff;
+}
+[data-theme="clay"] #expJson:hover { background: #BCE9D5; }
+[data-theme="clay"] #expCsv {
+  background: #FFEDB8;
+  color: #7A5A10;
+  box-shadow: 3px 5px 10px rgba(200,160,60,.20),
+              inset -2px -3px 5px rgba(0,0,0,.06),
+              inset 2px 2px 4px #fff;
+}
+[data-theme="clay"] #expCsv:hover { background: #FFE6A2; }
+[data-theme="clay"] .export-bar .file-btn {
+  background: #E4DBFF;
+  color: #4F3AA0;
+  box-shadow: 3px 5px 10px rgba(120,90,200,.20),
+              inset -2px -3px 5px rgba(0,0,0,.06),
+              inset 2px 2px 4px #fff;
+}
+[data-theme="clay"] .export-bar .file-btn:hover { background: #D9CCFF; }
+
+/* Sana maydonlari maketda balandroq va yumaloqroq */
+[data-theme="clay"] .head-actions input[type="date"] {
+  height: 46px;
+  border-radius: 18px;
+  font-weight: 800;
+}
+[data-theme="clay"] .field.inline > span { font-size: 14px; font-weight: 800; color: #7A6A88; }

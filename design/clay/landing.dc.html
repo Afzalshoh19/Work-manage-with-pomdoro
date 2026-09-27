@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="uz"><head>
+<meta charset="utf-8">
+<title>Landing — Claymorphism</title>
+<script src="b258871c-aeaf-4d53-b2c6-91d0b823d26d"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* shriftlar olib tashlandi */</style>
+<style>
+body{margin:0;font-family:Nunito,system-ui,sans-serif;background:#F4EEE6;color:#3A2E4A}
+a{color:#C2413A}a:hover{color:#8F2A25}
+button{font-family:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1700px; box-sizing: border-box; background: #F4EEE6; display: flex; flex-direction: column; padding: 24px 120px 80px; overflow: hidden">
+<header style="display: flex; align-items: center; justify-content: space-between; height: 68px; padding: 0 12px 0 14px; border-radius: 28px; background: #FFFAF4; box-shadow: 10px 12px 28px rgba(140,110,80,0.18), inset -4px -6px 10px rgba(180,150,120,0.15), inset 4px 4px 8px rgba(255,255,255,0.9)">
+<div style="display: flex; align-items: center; gap: 12px">
+<div style="width: 44px; height: 44px; border-radius: 16px; background: {{accent}}; display: flex; align-items: center; justify-content: center; box-shadow: 4px 6px 12px rgba(230,90,80,0.35), inset -3px -4px 6px rgba(0,0,0,0.12), inset 3px 3px 6px rgba(255,255,255,0.55)"><svg width="22" height="22" sc-camel-view-box="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2"></path><path d="M9 2h6"></path></svg></div>
+<div style="font-weight: 900; font-size: 20px">Pomodoro</div>
+</div>
+<div style="display: flex; gap: 10px">
+<a href="#" style="padding: 12px 22px; border-radius: 18px; background: #FFFAF4; color: #3A2E4A; font-weight: 800; font-size: 15px; text-decoration: none; box-shadow: 4px 6px 12px rgba(140,110,80,0.18), inset -3px -4px 6px rgba(0,0,0,0.05), inset 3px 3px 6px #fff">Kirish</a>
+<a href="#" style="padding: 12px 22px; border-radius: 18px; background: {{accent}}; color: #fff; font-weight: 900; font-size: 15px; text-decoration: none; box-shadow: 4px 6px 12px rgba(230,90,80,0.35), inset -3px -4px 6px rgba(0,0,0,0.12), inset 3px 3px 6px rgba(255,255,255,0.5)">Ro'yxatdan o'tish</a>
+</div>
+</header>
+
+<div style="display: flex; align-items: center; justify-content: space-between; gap: 64px; height: 640px">
+<div style="width: 600px; display: flex; flex-direction: column; gap: 28px">
+<div style="align-self: flex-start; padding: 8px 16px; border-radius: 999px; background: #CDEFE0; color: #1F6B4B; font-weight: 800; font-size: 14px; box-shadow: inset -2px -3px 5px rgba(70,160,120,0.2), inset 2px 2px 4px #fff">Ro'yxatdan o'tmasdan sinab ko'ring</div>
+<h1 style="margin: 0; font-size: 76px; line-height: 1; font-weight: 900; letter-spacing: -0.03em">Ish vaqtingizni boshqaring</h1>
+<p style="margin: 0; font-size: 19px; line-height: 1.6; font-weight: 600; color: #5E5070">Vazifalaringizni yozing — tizim kun jadvalini, tanaffuslarni va tushlikni o'zi joylashtiradi. Har bir pomodoro hisobga olinadi, kun oxirida tayyor hisobot chiqadi.</p>
+<div style="display: flex; gap: 14px">
+<a href="#" style="height: 60px; padding: 0 32px; border-radius: 24px; background: {{accent}}; color: #fff; font-size: 18px; font-weight: 900; text-decoration: none; display: flex; align-items: center; box-shadow: 6px 10px 20px rgba(230,90,80,0.35), inset -4px -5px 8px rgba(0,0,0,0.14), inset 4px 4px 8px rgba(255,255,255,0.5)">Bepul boshlash</a>
+<a href="#features" style="height: 60px; padding: 0 28px; border-radius: 24px; background: #FFFAF4; color: #3A2E4A; font-size: 18px; font-weight: 800; text-decoration: none; display: flex; align-items: center; box-shadow: 6px 10px 20px rgba(140,110,80,0.18), inset -4px -5px 8px rgba(0,0,0,0.05), inset 4px 4px 8px #fff">Nima ochiladi?</a>
+</div>
+</div>
+
+<div style="width: 420px; display: flex; flex-direction: column; gap: 22px; padding: 28px; box-sizing: border-box; border-radius: 40px; background: #FFE3DC; box-shadow: 16px 20px 40px rgba(200,110,90,0.25), inset -8px -10px 18px rgba(200,110,90,0.18), inset 8px 8px 16px rgba(255,255,255,0.8)">
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+<button style="padding: 12px 0; border: 0; border-radius: 18px; background: #FFFAF4; color: #3A2E4A; font-weight: 900; font-size: 14px; box-shadow: 4px 6px 12px rgba(200,110,90,0.25), inset -3px -4px 6px rgba(0,0,0,0.05), inset 3px 3px 6px #fff">Ish</button>
+<button style="padding: 12px 0; border: 0; border-radius: 18px; background: transparent; color: #8A4C44; font-weight: 800; font-size: 14px">Qisqa</button>
+<button style="padding: 12px 0; border: 0; border-radius: 18px; background: transparent; color: #8A4C44; font-weight: 800; font-size: 14px">Uzun</button>
+</div>
+<div style="position: relative; width: 240px; height: 240px; align-self: center; border-radius: 50%; background: {{accent}}; box-shadow: 14px 20px 36px rgba(230,90,80,0.4), inset -18px -22px 30px rgba(0,0,0,0.16), inset 16px 16px 26px rgba(255,255,255,0.45)">
+<div style="position: absolute; left: 102px; top: -14px; width: 36px; height: 30px; border-radius: 14px 14px 18px 18px; background: #6FCF97; box-shadow: inset -3px -4px 6px rgba(0,0,0,0.15), inset 3px 3px 5px rgba(255,255,255,0.5)"></div>
+<div style="position: absolute; inset: 40px; border-radius: 50%; background: #FFFAF4; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: inset 8px 10px 18px rgba(180,90,70,0.25), inset -6px -6px 12px #fff">
+<div style="font-weight: 900; font-size: 52px">25:00</div>
+<div style="font-size: 13px; font-weight: 700; color: #8A4C44">Boshlashga tayyor</div>
+</div>
+</div>
+<button style="height: 58px; border: 0; border-radius: 24px; background: #3A2E4A; color: #fff; font-size: 18px; font-weight: 900; box-shadow: 6px 10px 20px rgba(58,46,74,0.35), inset -4px -5px 8px rgba(0,0,0,0.3), inset 4px 4px 8px rgba(255,255,255,0.18)">Boshlash</button>
+<div style="font-size: 13px; font-weight: 700; line-height: 1.5; color: #8A4C44">Shu brauzerda: 0 pomodoro. Ro'yxatdan o'tsangiz har biri tarixga yoziladi.</div>
+</div>
+</div>
+
+<div id="features" style="display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 40px">
+<h2 style="margin: 0; font-size: 46px; font-weight: 900; letter-spacing: -0.02em">Ro'yxatdan o'tsangiz nima ochiladi</h2>
+<p style="margin: 0; font-size: 18px; font-weight: 700; color: #7A6A88">Taymer — boshlanishi xolos. Hisob ochilgach quyidagilar ishga tushadi.</p>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px">
+<sc-for list="{{features}}" as="f" hint-placeholder-count="9">
+<div style="display: flex; gap: 16px; padding: 24px; border-radius: 32px; background: #FFFAF4; min-height: 150px; box-sizing: border-box; box-shadow: 10px 14px 28px rgba(140,110,80,0.18), inset -5px -6px 10px rgba(180,150,120,0.14), inset 5px 5px 10px #fff">
+<div style="{{f.chip}}"><svg width="24" height="24" sc-camel-view-box="0 0 24 24" fill="none" stroke="{{f.ink}}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="{{f.icon}}"></path></svg></div>
+<div><div style="font-weight: 900; font-size: 18px">{{f.title}}</div><div style="margin-top: 6px; font-size: 15px; font-weight: 600; line-height: 1.5; color: #6B5C7A">{{f.text}}</div></div>
+</div>
+</sc-for>
+</div>
+
+<div style="margin-top: 72px; align-self: center; width: 760px; display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 56px; box-sizing: border-box; border-radius: 44px; background: #E4DBFF; box-shadow: 16px 20px 40px rgba(120,90,200,0.22), inset -8px -10px 18px rgba(120,90,200,0.18), inset 8px 8px 16px rgba(255,255,255,0.8)">
+<h2 style="margin: 0; font-size: 42px; font-weight: 900">Bugundan boshlang</h2>
+<p style="margin: 0; font-size: 18px; font-weight: 700; color: #4F3AA0">Hisob ochish bir daqiqa. Email yoki Google orqali.</p>
+<a href="#" style="margin-top: 8px; height: 60px; padding: 0 36px; border-radius: 24px; background: {{accent}}; color: #fff; font-size: 18px; font-weight: 900; text-decoration: none; display: flex; align-items: center; box-shadow: 6px 10px 20px rgba(230,90,80,0.35), inset -4px -5px 8px rgba(0,0,0,0.14), inset 4px 4px 8px rgba(255,255,255,0.5)">Bepul boshlash</a>
+<div style="font-size: 16px; font-weight: 700; color: #4F3AA0">Hisobingiz bormi? <a href="#">Kirish</a></div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#F26B5E&quot;,&quot;options&quot;:[&quot;#F26B5E&quot;,&quot;#9C86F2&quot;,&quot;#57C08E&quot;,&quot;#F2B84B&quot;]},&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1700}}">
+class Component extends DCLogic {
+renderVals() {
+var tints = [['#FFD9D2','#B8372B'],['#CDEFE0','#1F6B4B'],['#FFEDB8','#7A5A10'],['#E4DBFF','#4F3AA0']];
+var base = [
+{ icon: 'M4 6h16v14H4zM4 10h16M8 3v4M16 3v4', title: 'Kun tartibi o‘zi quriladi', text: 'Vazifa va pomodoro sonini yozasiz — tizim jadval, tanaffus va tushlikni joylashtiradi.' },
+{ icon: 'M4 5h16M4 12h10M4 19h7', title: 'Haftalik jadval va ko‘p kunlik reja', text: 'Ish kunlarini belgilang, rejani bir yo‘la bir necha kunga tuzing.' },
+{ icon: 'M5 20V10M12 20V4M19 20v-7', title: 'Statistika va seriyalar', text: 'Kategoriyalar bo‘yicha taqsimot, eng samarali soatlar va uzluksiz kunlar.' },
+{ icon: 'M12 4v11M7 10l5 5 5-5M5 20h14', title: 'Hisobotni yuklab olish', text: 'Kunlik, haftalik yoki oylik — HTML, Markdown, CSV yoki JSON.' },
+{ icon: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0', title: 'Profil va ish kartasi', text: 'Jonli holat, haftalik natijalar va o‘z rasmingiz.' },
+{ icon: 'M3 5h18v14H3zM13 12h6v5h-6z', title: 'Taymer alohida oynada', text: 'Burchakka yig‘ing yoki boshqa dasturlar ustida alohida oynada qoldiring.' },
+{ icon: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z', title: 'Bir vaqtda ikkita vazifa', text: 'Topshirilgan ish kutayotganda ikkinchisini boshlang — ikkalasi ham hisoblanadi.' },
+{ icon: 'M10 14a4 4 0 0 0 5.66 0l3-3a4 4 0 0 0-5.66-5.66l-1 1M14 10a4 4 0 0 0-5.66 0l-3 3a4 4 0 0 0 5.66 5.66l1-1', title: 'Jira, Notion, Confluence', text: 'Jira’dan vazifa yuklang, hisobotni Notion yoki Confluence’ga yuboring.' },
+{ icon: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6zM9 12l2 2 4-4', title: 'Hisobingiz himoyada', text: 'Email tasdiqlash, ikki bosqichli kirish (2FA) va qurilmalar ro‘yxati.' }
+];
+var features = base.map(function (f, i) {
+var t = tints[i % 4];
+return Object.assign({}, f, { ink: t[1], chip: 'width:52px;height:52px;flex-shrink:0;border-radius:18px;background:' + t[0] + ';display:flex;align-items:center;justify-content:center;box-shadow:inset -3px -4px 6px rgba(0,0,0,0.08),inset 3px 3px 6px rgba(255,255,255,0.8)' });
+});
+return { accent: this.props.accent ?? '#F26B5E', features: features };
+}
+}
+</script>
+
+
+</body></html>

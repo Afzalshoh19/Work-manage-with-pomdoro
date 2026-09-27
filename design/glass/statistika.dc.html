@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="uz"><head>
+<meta charset="utf-8">
+<title>Statistika — Glassmorphism</title>
+<script src="2c4a4e98-3f66-41b6-bcc0-83c8d2118bb0"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* shriftlar olib tashlandi */</style>
+<style>
+body{margin:0;font-family:Manrope,system-ui,sans-serif;background:#0B0E1A;color:#F4F6FF}
+a{color:#FFB4A8}a:hover{color:#FFD2CB}
+button{font-family:inherit;cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1240px; position: relative; overflow: hidden; background: #0B0E1A">
+<div style="position: absolute; width: 640px; height: 640px; left: -160px; top: 120px; border-radius: 50%; background: #7B5CFF; filter: blur(160px); opacity: 0.45"></div>
+<div style="position: absolute; width: 560px; height: 560px; left: 1000px; top: 420px; border-radius: 50%; background: {{accent}}; filter: blur(160px); opacity: 0.4"></div>
+<div style="position: absolute; width: 520px; height: 520px; left: 400px; top: 900px; border-radius: 50%; background: #1FC7B6; filter: blur(160px); opacity: 0.3"></div>
+<div style="position: relative; display: flex; flex-direction: column; gap: 24px; padding: 24px 40px 40px; box-sizing: border-box; height: 100%">
+<header style="display: flex; align-items: center; justify-content: space-between; height: 64px; padding: 0 12px 0 20px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); border-radius: 22px; backdrop-filter: blur(24px)">
+<div style="font-family: Sora, sans-serif; font-weight: 700; font-size: 18px">Pomodoro</div>
+<nav style="display: flex; gap: 4px; padding: 4px; background: rgba(255,255,255,0.06); border-radius: 16px; border: 1px solid rgba(255,255,255,0.1)">
+<a href="Main.dc.html" style="padding: 10px 20px; border-radius: 12px; color: rgba(244,246,255,0.75); font-weight: 600; font-size: 14px; text-decoration: none">Bugun</a>
+<a href="#" style="padding: 10px 20px; border-radius: 12px; background: rgba(255,255,255,0.9); color: #0B0E1A; font-weight: 700; font-size: 14px; text-decoration: none">Statistika</a>
+<a href="Rep-Glass.dc.html" style="padding: 10px 20px; border-radius: 12px; color: rgba(244,246,255,0.75); font-weight: 600; font-size: 14px; text-decoration: none">Hisobot</a>
+<a href="Hist-Glass.dc.html" style="padding: 10px 20px; border-radius: 12px; color: rgba(244,246,255,0.75); font-weight: 600; font-size: 14px; text-decoration: none">Tarix</a>
+</nav>
+<div style="font-size: 14px; font-weight: 600">Foydalanuvchi I.</div>
+</header>
+
+<div style="display: flex; align-items: flex-end; justify-content: space-between">
+<div><div style="font-size: 13px; color: rgba(244,246,255,0.65)">20–26-sentabr</div><h1 style="margin: 4px 0 0; font-family: Sora, sans-serif; font-size: 34px; font-weight: 700; letter-spacing: -0.02em">Statistika</h1></div>
+<div style="display: flex; gap: 4px; padding: 4px; border-radius: 16px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.14)">
+<button style="padding: 10px 18px; border: 0; border-radius: 12px; background: linear-gradient(135deg, {{accent}}, #FF8F6B); color: #fff; font-weight: 700; font-size: 14px">7 kun</button>
+<button style="padding: 10px 18px; border: 0; border-radius: 12px; background: transparent; color: rgba(244,246,255,0.75); font-weight: 600; font-size: 14px">30 kun</button>
+<button style="padding: 10px 18px; border: 0; border-radius: 12px; background: transparent; color: rgba(244,246,255,0.75); font-weight: 600; font-size: 14px">90 kun</button>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px">
+<sc-for list="{{kpis}}" as="k" hint-placeholder-count="8">
+<div style="padding: 18px 20px; border-radius: 22px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); backdrop-filter: blur(24px)">
+<div style="font-size: 13px; color: rgba(244,246,255,0.7)">{{k.label}}</div>
+<div style="margin-top: 6px; font-family: Sora, sans-serif; font-size: 30px; font-weight: 600">{{k.value}}</div>
+<div style="margin-top: 2px; font-size: 12px; color: rgba(244,246,255,0.6)">{{k.sub}}</div>
+</div>
+</sc-for>
+</div>
+
+<div style="padding: 24px; border-radius: 28px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); backdrop-filter: blur(28px)">
+<div style="display: flex; justify-content: space-between; align-items: center"><h2 style="margin: 0; font-family: Sora, sans-serif; font-size: 18px; font-weight: 600">Kunlik pomodorolar</h2><div style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: rgba(244,246,255,0.7)"><span style="width: 18px; border-top: 2px dashed #FFC56B"></span>Maqsad: 8</div></div>
+<div style="position: relative; margin-top: 18px; height: 240px; display: flex; align-items: flex-end; justify-content: space-around; border-bottom: 1px solid rgba(255,255,255,0.15)">
+<div style="position: absolute; left: 0; right: 0; bottom: 123px; border-top: 2px dashed #FFC56B; opacity: 0.8"></div>
+<sc-for list="{{days}}" as="d" hint-placeholder-count="7">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 8px; width: 80px">
+<div style="font-size: 13px; font-weight: 700">{{d.v}}</div>
+<div style="width: 44px; height: {{d.h}}px; border-radius: 10px 10px 4px 4px; background: linear-gradient(180deg, #FF9A85, {{accent}}); box-shadow: 0 0 20px rgba(255,107,91,0.35)"></div>
+</div>
+</sc-for>
+</div>
+<div style="display: flex; justify-content: space-around; margin-top: 10px"><sc-for list="{{days}}" as="d" hint-placeholder-count="7"><div style="width: 80px; text-align: center; font-size: 12px; color: rgba(244,246,255,0.65)">{{d.l}}</div></sc-for></div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; flex-grow: 1">
+<div style="padding: 24px; border-radius: 28px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); backdrop-filter: blur(28px); display: flex; flex-direction: column; gap: 18px">
+<h2 style="margin: 0; font-family: Sora, sans-serif; font-size: 18px; font-weight: 600">Kategoriyalar bo'yicha</h2>
+<div><div style="display: flex; justify-content: space-between; font-size: 14px"><b>Ish</b><span style="color: rgba(244,246,255,0.7)">53 · 24s 50d</span></div><div style="margin-top: 8px; height: 10px; border-radius: 6px; background: rgba(255,255,255,0.1)"><div style="width: 91%; height: 100%; border-radius: 6px; background: {{accent}}"></div></div></div>
+<div><div style="display: flex; justify-content: space-between; font-size: 14px"><b>Boshqa</b><span style="color: rgba(244,246,255,0.7)">5 · 2s 5d</span></div><div style="margin-top: 8px; height: 10px; border-radius: 6px; background: rgba(255,255,255,0.1)"><div style="width: 9%; height: 100%; border-radius: 6px; background: #1FC7B6"></div></div></div>
+<div style="margin-top: auto; padding: 14px; border-radius: 16px; background: rgba(255,255,255,0.06); font-size: 13px; color: rgba(244,246,255,0.75)">Vaqtning 91% i «Ish» yo'nalishiga ketdi.</div>
+</div>
+<div style="padding: 24px; border-radius: 28px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); backdrop-filter: blur(28px); display: flex; flex-direction: column">
+<h2 style="margin: 0; font-family: Sora, sans-serif; font-size: 18px; font-weight: 600">Eng samarali soatlar</h2>
+<div style="margin-top: 4px; font-size: 13px; color: rgba(244,246,255,0.7)">Cho'qqi: 14:00–15:00</div>
+<div style="flex-grow: 1; display: flex; align-items: flex-end; gap: 6px; margin-top: 16px; border-bottom: 1px solid rgba(255,255,255,0.15)">
+<sc-for list="{{hours}}" as="h" hint-placeholder-count="12"><div style="flex-grow: 1; height: {{h.h}}px; border-radius: 6px 6px 2px 2px; background: {{h.c}}"></div></sc-for>
+</div>
+<div style="display: flex; justify-content: space-between; margin-top: 8px; font-size: 11px; color: rgba(244,246,255,0.6)"><span>08</span><span>11</span><span>14</span><span>17</span><span>19</span></div>
+</div>
+<div style="padding: 24px; border-radius: 28px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.16); backdrop-filter: blur(28px)">
+<h2 style="margin: 0 0 8px; font-family: Sora, sans-serif; font-size: 18px; font-weight: 600">Eng ko'p vaqt ketgan vazifalar</h2>
+<sc-for list="{{tasks}}" as="t" hint-placeholder-count="5">
+<div style="display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.08); font-size: 14px"><span>{{t.n}}</span><span style="font-weight: 700; white-space: nowrap">{{t.p}} <span style="font-weight: 500; color: rgba(244,246,255,0.6)">· {{t.d}}</span></span></div>
+</sc-for>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#FF6B5B&quot;,&quot;options&quot;:[&quot;#FF6B5B&quot;,&quot;#7B5CFF&quot;,&quot;#1FC7B6&quot;,&quot;#FFB020&quot;]},&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1240}}">
+class Component extends DCLogic {
+renderVals() {
+var accent = this.props.accent ?? '#FF6B5B';
+var dv = [['20.09',13],['21.09',0],['22.09',10],['23.09',12],['24.09',12],['25.09',11],['26.09',0]];
+var hv = [1,3,5,5,5,1,10,5,3,2,2,1];
+return {
+accent: accent,
+kpis: [
+{ label: 'Bugungi pomodorolar', value: '0', sub: 'Maqsad: 8 · 0%' },
+{ label: 'Sof fokus vaqti', value: '0 daq', sub: 'Tanaffus: 0 daq' },
+{ label: 'Bajarilgan vazifalar', value: '0/0', sub: 'Reja bajarilishi: 0%' },
+{ label: 'Ketma-ket kunlar', value: '4', sub: '16 faol kun jami' },
+{ label: '7 kunlik jami', value: '58', sub: '26 soat 55 daq fokus' },
+{ label: 'Kunlik o‘rtacha', value: '11.7', sub: 'Rekord: 13 (20-sentabr)' },
+{ label: 'Umumiy fokus', value: '83.2 s', sub: '187 pomodoro' },
+{ label: 'Bugungi uzilishlar', value: '0', sub: 'Tugatilmagan sessiyalar' }
+],
+days: dv.map(function (d) { return { l: d[0], v: d[1], h: Math.max(4, Math.round(d[1] / 13 * 200)) }; }),
+hours: hv.map(function (v) { return { h: Math.max(4, v * 18), c: v === 10 ? '#3BE0A6' : 'rgba(255,255,255,0.35)' }; }),
+tasks: [
+{ n: '2-son BMSM guruh kiritish', p: '5 pom', d: '2s 5d' },
+{ n: 'Texnik qo‘llab-quvvatlash', p: '5 pom', d: '2s 5d' },
+{ n: 'MI/IM soatlar biriktirish', p: '4 pom', d: '1s 48d' },
+{ n: 'MI/IM analitika', p: '4 pom', d: '1s 40d' },
+{ n: 'Tex guruh savollariga javob', p: '3 pom', d: '1s 15d' }
+]
+};
+}
+}
+</script>
+
+
+</body></html>

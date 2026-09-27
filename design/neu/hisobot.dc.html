@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="uz"><head>
+<meta charset="utf-8">
+<title>Hisobot — Neumorphism</title>
+<script src="487c7219-0851-492c-8e76-3c44cc37639e"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<style>/* shriftlar olib tashlandi */</style>
+<style>
+body{margin:0;font-family:'Plus Jakarta Sans',system-ui,sans-serif;background:#E4E8EF;color:#2E3647}
+a{color:#B8372B}a:hover{color:#8A2419}
+button,select,input{font-family:inherit}
+button{cursor:pointer}
+</style>
+</helmet>
+<div style="width: 1440px; height: 1240px; box-sizing: border-box; background: #E4E8EF; display: flex; flex-direction: column; gap: 26px; padding: 28px 44px 44px; overflow: hidden">
+<header style="display: flex; align-items: center; justify-content: space-between; height: 64px">
+<div style="font-weight: 800; font-size: 20px">Pomodoro</div>
+<nav style="display: flex; gap: 6px; padding: 6px; border-radius: 20px; box-shadow: inset 5px 5px 10px #C2C8D2, inset -5px -5px 10px #FFFFFF">
+<a href="Neu.dc.html" style="padding: 11px 22px; border-radius: 15px; color: #56607A; font-weight: 700; font-size: 14px; text-decoration: none">Bugun</a>
+<a href="Stat-Neu.dc.html" style="padding: 11px 22px; border-radius: 15px; color: #56607A; font-weight: 700; font-size: 14px; text-decoration: none">Statistika</a>
+<a href="#" style="padding: 11px 22px; border-radius: 15px; background: #E4E8EF; color: #B8372B; font-weight: 800; font-size: 14px; text-decoration: none; box-shadow: 4px 4px 8px #C2C8D2, -4px -4px 8px #FFFFFF">Hisobot</a>
+<a href="Hist-Neu.dc.html" style="padding: 11px 22px; border-radius: 15px; color: #56607A; font-weight: 700; font-size: 14px; text-decoration: none">Tarix</a>
+</nav>
+<div style="font-weight: 700; font-size: 14px">Foydalanuvchi I.</div>
+</header>
+
+<div style="display: flex; align-items: flex-end; justify-content: space-between">
+<div><div style="font-size: 13px; font-weight: 600; color: #56607A">Haftalik · 21–27-sentabr</div><h1 style="margin: 2px 0 0; font-size: 32px; font-weight: 800">Hisobot</h1></div>
+<div style="display: flex; gap: 14px; align-items: flex-end">
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #56607A">Davr<sc-raw-select style="height: 46px; padding: 0 16px; border: 0; border-radius: 16px; background: #E4E8EF; color: #2E3647; font-size: 14px; font-weight: 700; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF"><option>Haftalik</option></sc-raw-select></label>
+<label style="display: flex; flex-direction: column; gap: 6px; font-size: 12px; font-weight: 700; color: #56607A">Sana<input value="26.09.2026" style="height: 46px; width: 150px; padding: 0 16px; box-sizing: border-box; border: 0; border-radius: 16px; background: #E4E8EF; color: #2E3647; font-size: 14px; font-weight: 700; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF"></label>
+<button style="height: 46px; padding: 0 22px; border: 0; border-radius: 16px; background: {{accent}}; color: #fff; font-weight: 800; font-size: 14px; box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF">Yangilash</button>
+</div>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 22px">
+<sc-for list="{{kpis}}" as="k" hint-placeholder-count="5">
+<div style="padding: 18px 20px; border-radius: 24px; background: #E4E8EF; box-shadow: 8px 8px 16px #C2C8D2, -8px -8px 16px #FFFFFF">
+<div style="font-size: 28px; font-weight: 800">{{k.value}}</div>
+<div style="font-size: 13px; font-weight: 700; color: #3E4760">{{k.label}}</div>
+<div style="font-size: 12px; font-weight: 600; color: #56607A">{{k.sub}}</div>
+</div>
+</sc-for>
+</div>
+
+<div style="display: flex; gap: 30px; flex-grow: 1; min-height: 0">
+<div style="flex-grow: 1; display: flex; flex-direction: column; gap: 26px; min-width: 0">
+<div style="padding: 24px; border-radius: 30px; box-shadow: inset 8px 8px 16px #C2C8D2, inset -8px -8px 16px #FFFFFF">
+<h2 style="margin: 0 0 10px; font-size: 18px; font-weight: 800">Qisqacha xulosa</h2>
+<sc-for list="{{bullets}}" as="b" hint-placeholder-count="6"><div style="display: flex; gap: 12px; padding: 6px 0; font-size: 14px; font-weight: 500; color: #3E4760"><span style="width: 8px; height: 8px; margin-top: 6px; border-radius: 50%; background: {{accent}}; flex-shrink: 0"></span>{{b}}</div></sc-for>
+</div>
+<div style="flex-grow: 1; padding: 24px; border-radius: 30px; background: #E4E8EF; box-shadow: 10px 10px 20px #C2C8D2, -10px -10px 20px #FFFFFF; display: flex; flex-direction: column; gap: 14px">
+<div><h2 style="margin: 0; font-size: 18px; font-weight: 800">Hisobotni to'g'rlash</h2><div style="font-size: 13px; font-weight: 600; color: #56607A">Taymer ishlamagan bo'lsa — bajarilganlarni sabab bilan qo'shing.</div></div>
+<div style="padding: 12px 16px; border-radius: 16px; box-shadow: inset 3px 3px 6px #C2C8D2, inset -3px -3px 6px #FFFFFF; font-size: 13px; font-weight: 600; color: #3E4760">19 ta pomodoro qo'lda to'g'rlangan (7 ta tuzatish) · taymer bilan <b>26</b> ta</div>
+<sc-for list="{{fixes}}" as="f" hint-placeholder-count="3">
+<div style="display: flex; align-items: center; gap: 14px; padding: 14px 18px; border-radius: 20px; box-shadow: 5px 5px 10px #C2C8D2, -5px -5px 10px #FFFFFF">
+<div style="flex-grow: 1"><div style="font-weight: 700; font-size: 15px">{{f.n}}</div><div style="margin-top: 3px; font-size: 12px; font-weight: 600; color: #56607A">{{f.d}} · {{f.p}} · {{f.t}}</div></div>
+<sc-if value="{{f.open}}" hint-placeholder-val="{{true}}"><button style="height: 42px; padding: 0 16px; border: 0; border-radius: 14px; background: #E4E8EF; color: #B8372B; font-weight: 800; font-size: 13px; box-shadow: 4px 4px 8px #C2C8D2, -4px -4px 8px #FFFFFF">To'g'rlash</button></sc-if>
+<sc-if value="{{f.locked}}" hint-placeholder-val="{{false}}"><button style="height: 42px; padding: 0 16px; border: 0; border-radius: 14px; background: #E4E8EF; color: #56607A; font-weight: 700; font-size: 13px; box-shadow: inset 3px 3px 6px #C2C8D2, inset -3px -3px 6px #FFFFFF">Qayta ochish</button></sc-if>
+</div>
+</sc-for>
+</div>
+</div>
+<div style="width: 380px; flex-shrink: 0; padding: 24px; box-sizing: border-box; border-radius: 30px; background: #E4E8EF; box-shadow: 10px 10px 20px #C2C8D2, -10px -10px 20px #FFFFFF; display: flex; flex-direction: column; gap: 14px">
+<h2 style="margin: 0; font-size: 18px; font-weight: 800">Yuklab olish</h2>
+<sc-for list="{{exports}}" as="e" hint-placeholder-count="5">
+<button style="display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 0; border-radius: 18px; background: #E4E8EF; color: #2E3647; text-align: left; box-shadow: 5px 5px 10px #C2C8D2, -5px -5px 10px #FFFFFF">
+<span style="width: 42px; height: 42px; border-radius: 14px; box-shadow: inset 3px 3px 6px #C2C8D2, inset -3px -3px 6px #FFFFFF; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #B8372B">{{e.tag}}</span>
+<span style="flex-grow: 1"><span style="display: block; font-weight: 700; font-size: 14px">{{e.n}}</span><span style="display: block; font-size: 12px; font-weight: 600; color: #56607A">{{e.d}}</span></span>
+</button>
+</sc-for>
+<h2 style="margin: 10px 0 0; font-size: 18px; font-weight: 800">Tashqi tizimga</h2>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px">
+<button style="height: 48px; border: 0; border-radius: 16px; background: #E4E8EF; color: #2E3647; font-weight: 700; font-size: 14px; box-shadow: 5px 5px 10px #C2C8D2, -5px -5px 10px #FFFFFF">Notion'ga</button>
+<button style="height: 48px; border: 0; border-radius: 16px; background: #E4E8EF; color: #2E3647; font-weight: 700; font-size: 14px; box-shadow: 5px 5px 10px #C2C8D2, -5px -5px 10px #FFFFFF">Confluence'ga</button>
+</div>
+</div>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="" data-props="{&quot;accent&quot;:{&quot;editor&quot;:&quot;color&quot;,&quot;default&quot;:&quot;#E8594C&quot;,&quot;options&quot;:[&quot;#E8594C&quot;,&quot;#5B7CF0&quot;,&quot;#2FA37A&quot;,&quot;#E0A030&quot;]},&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:1240}}">
+class Component extends DCLogic {
+renderVals() {
+return {
+accent: this.props.accent ?? '#E8594C',
+kpis: [
+{ value: '45/51', label: 'Pomodorolar', sub: 'Reja: 88%' },
+{ value: '21s 7d', label: 'Sof fokus vaqti', sub: 'Tanaffus: 4s 34d' },
+{ value: '10/18', label: 'Bajarilgan vazifalar', sub: '56%' },
+{ value: '80%', label: 'Maqsad bajarilishi', sub: '56 pomodoro' },
+{ value: '−39%', label: 'Oldingi davrga', sub: '74 → 45' }
+],
+bullets: [
+'Jami 45 ta pomodoro yakunlandi — sof fokus vaqti 21 soat 7 daq.',
+'Reja 88% bajarildi (45/51).',
+'Eng ko‘p vaqt «Ish» yo‘nalishiga sarflandi — 100%.',
+'Eng samarali vaqt: 14:00 atrofi.',
+'Oldingi davrga nisbatan 39% kam ish bajarildi.',
+'19 ta pomodoro qo‘lda to‘g‘rlab kiritilgan (7 ta tuzatish).'
+],
+fixes: [
+{ n: '2-son BMSM guruh ma‘lumotlarini qo‘shish', d: '22-sentabr', p: '1/4 pomodoro', t: '25 daq', open: true, locked: false },
+{ n: 'INV modernizatsiya test', d: '22-sentabr', p: '0/3 pomodoro', t: '0 daq', open: true, locked: false },
+{ n: 'Planing ma‘lumotlarini to‘ldirish', d: '22-sentabr', p: '3/3 pomodoro', t: 'qulflangan', open: false, locked: true }
+],
+exports: [
+{ tag: 'PDF', n: 'PDF / Chop etish', d: 'Brauzerda ochiladi' },
+{ tag: 'HTML', n: 'HTML fayl', d: 'Bezatilgan hisobot' },
+{ tag: 'MD', n: 'Markdown', d: 'Notion / Confluence uchun' },
+{ tag: 'CSV', n: 'CSV', d: 'Excel uchun' },
+{ tag: '{ }', n: 'JSON', d: 'Boshqa tizimlar uchun' }
+]
+};
+}
+}
+</script>
+
+
+</body></html>
