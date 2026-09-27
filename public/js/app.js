@@ -670,9 +670,46 @@ function restoreFoldState() {
   document.querySelectorAll('#view-profile details.integ, #view-profile details.fold')
     .forEach(d => smoothDetails(d));
 
+  initCollapseBoxes();
+
   $('btnAddTask').addEventListener('click', openAddForm);
   $('addCancel').addEventListener('click', closeAddForm);
   $('addOverlay').addEventListener('click', e => { if (e.target === $('addOverlay')) closeAddForm(); });
+}
+
+/**
+ * Maketda yo'q, lekin tizimda kerak bo'lgan bloklar yig'iladi.
+ * `[data-collapse]` blokning birinchi `.sec-title` sarlavhasi tugmaga
+ * aylanadi; holat shu brauzerda eslab qolinadi (`fold:<nom>`).
+ * `data-default="closed"` bo'lsa — birinchi ochilishda yopiq turadi.
+ */
+function initCollapseBoxes() {
+  document.querySelectorAll('[data-collapse]').forEach(box => {
+    const head = box.querySelector(':scope > .sec-title');
+    if (!head || head.dataset.ready) return;
+    head.dataset.ready = '1';
+    head.classList.add('collapse-head');
+    head.setAttribute('role', 'button');
+    head.tabIndex = 0;
+    if (!head.querySelector('.collapse-caret')) {
+      head.insertAdjacentHTML('beforeend',
+        '<svg class="collapse-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>');
+    }
+    const key = 'fold:' + box.dataset.collapse;
+    let open = box.dataset.default !== 'closed';
+    try { const v = localStorage.getItem(key); if (v !== null) open = v === '1'; } catch {}
+    const apply = (o) => {
+      box.classList.toggle('is-collapsed', !o);
+      head.setAttribute('aria-expanded', String(o));
+    };
+    apply(open);
+    const toggle = () => {
+      open = !open; apply(open);
+      try { localStorage.setItem(key, open ? '1' : '0'); } catch {}
+    };
+    head.addEventListener('click', e => { if (!e.target.closest('a, button:not(.collapse-head), input, select')) toggle(); });
+    head.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+  });
 }
 
 /** Shu kun uchun amaldagi pomodoro davomiyligi */
@@ -896,6 +933,7 @@ function renderPlan() {
                t.meetBreakMinutes ? `<small>tanaffus ${t.meetBreakMinutes} daq</small>` : ''}</span>`
           : `<span class="t-pomos" title="${t.completedPomodoros}/${t.plannedPomodoros} pomodoro">${dots}</span>
         <span class="t-count" title="Pomodorolar davomiyliklari yig'indisi — oraliq cho'zilsa ham o'zgarmaydi">${t.completedPomodoros}/${t.plannedPomodoros}${extra}<small>${fmtDuration(t.focusMinutes ?? t.estimatedMinutes)}</small></span>`}
+        <button class="t-btn t-more" type="button" aria-expanded="false" title="Amallar" aria-label="Amallar">${icon('more')}</button>
         <div class="t-actions">
           ${st === 'qabulga'
             ? `<button class="btn btn-mini t-accept" title="Vazifani bajarildi deb tasdiqlash">${icon('tick')} Bajarildi</button>`
@@ -1629,6 +1667,17 @@ function bindEvents() {
   $('taskList').addEventListener('click', async e => {
     const li = e.target.closest('.task');
     if (!li) return;
+    // «⋯» — maketda yo'q amallar yig'ilgan; bosilganda shu qatorniki ochiladi
+    const more = e.target.closest('.t-more');
+    if (more) {
+      const open = !li.classList.contains('is-open');
+      document.querySelectorAll('#taskList .task.is-open').forEach(x => {
+        x.classList.remove('is-open'); x.querySelector('.t-more')?.setAttribute('aria-expanded', 'false');
+      });
+      li.classList.toggle('is-open', open);
+      more.setAttribute('aria-expanded', String(open));
+      return;
+    }
     const id = li.dataset.id;
     const task = S.plan.tasks.find(t => t.id === id);
 

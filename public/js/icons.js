@@ -34,6 +34,7 @@ export const SVG = {
   trash:    '<path d="M4 7h16M10 4h4M9 7v11M15 7v11M6 7l1 13a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-13"/>',
   undo:     '<path d="M4 10h10a5 5 0 1 1 0 10H8"/><path d="M4 10 8 6M4 10l4 4"/>',
   arrowR:   '<path d="M5 12h14M13 6l6 6-6 6"/>',
+  more:     '<circle cx="5.5" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.6" fill="currentColor" stroke="none"/><circle cx="18.5" cy="12" r="1.6" fill="currentColor" stroke="none"/>',
   note:     '<path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/>',
   warn:     '<path d="M12 3.5 2.5 20h19z"/><path d="M12 10v4M12 17.2v.1"/>',
 

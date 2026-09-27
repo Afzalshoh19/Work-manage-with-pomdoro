@@ -146,6 +146,8 @@
 
         <div class="card plan-card">
           <!-- Shu kunning ish rejimi: qiymatlar faqat ko'rsatiladi, tahrirlash o'ngdagi tugmadan -->
+          <div class="collapse-box ds-collapse" data-collapse="daysetup" data-default="closed">
+          <h3 class="sec-title collapse-head">Kun sozlamalari <span class="collapse-note">ish vaqti, tanaffuslar, nusxalash va to'g'rlash</span></h3>
           <div class="day-setup" id="daySetup">
             <div class="ds-view" id="dsView"></div>
             <div class="ds-actions">
@@ -154,6 +156,7 @@
               <button class="btn btn-mini" id="dsEdit" title="Pomodoro va tanaffus vaqtlarini shu kunga to'g'rlash"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1v.3a2 2 0 1 1-4 0v-.2a1.6 1.6 0 0 0-2.8-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3.5 15a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.1-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.8-1.1V4a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.8h.1a2 2 0 1 1 0 4z"/></svg> To'g'rlash</button>
               <button class="btn btn-mini btn-ghost" id="dsReset" hidden title="Shu kun uchun kiritilgan o'zgarishlarni bekor qilib, profildagi qiymatlarga qaytarish">↺ Standart</button>
             </div>
+          </div>
           </div>
 
           <details class="plan-wrap" id="planWrap" open>
@@ -271,8 +274,8 @@
       </aside>
     </div>
 
-    <div class="card report-preview-card">
-      <h3 class="sec-title">Hisobot ko'rinishi</h3>
+    <div class="card report-preview-card collapse-box" data-collapse="reportpreview" data-default="closed">
+      <h3 class="sec-title collapse-head">Hisobot ko'rinishi <span class="collapse-note">chop etishdagi ko'rinish</span></h3>
       <div class="report-preview">
         <iframe id="repFrame" title="Hisobot ko'rinishi"></iframe>
       </div>
@@ -356,8 +359,14 @@
       </details>
     </div>
 
-    <div class="card work-card" id="workCard"></div>
-    <div class="card results-card" id="resultsCard"></div>
+    <div class="card collapse-box fold-card" data-collapse="workcard" data-default="closed">
+      <h3 class="sec-title collapse-head">Ish kartasi <span class="collapse-note">jonli holat va bugungi ko'rsatkichlar</span></h3>
+      <div class="card work-card" id="workCard"></div>
+    </div>
+    <div class="card collapse-box fold-card" data-collapse="results" data-default="closed">
+      <h3 class="sec-title collapse-head">Haftalik natijalar <span class="collapse-note">kunlar bo'yicha fokus va yo'nalishlar</span></h3>
+      <div class="card results-card" id="resultsCard"></div>
+    </div>
 
 
 
@@ -650,7 +659,7 @@
     </div>
 
 
-    <div class="card" id="smtpCard" hidden>
+    <div class="card collapse-box" id="smtpCard" data-collapse="smtp" data-default="closed" hidden>
       <h2 class="sec-title"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M3 7l9 6 9-6"/></svg> Pochta serveri (tizim egasi uchun)</h2>
       <p class="hint" style="margin:-8px 0 14px">
         Ro'yxatdan o'tishda emailga tasdiqlash kodi yuborilishi uchun kerak.
@@ -703,7 +712,7 @@
     </div>
 
 
-    <div class="card" id="oauthCard" hidden>
+    <div class="card collapse-box" id="oauthCard" data-collapse="oauth" data-default="closed" hidden>
       <h2 class="sec-title"><svg class="bi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="8" cy="12" r="4"/><path d="M12 12h9M18 12v3.5M15.5 12v2.5"/></svg> Kirish usullari (tizim egasi uchun)</h2>
       <p class="hint" style="margin:-8px 0 14px">Google va GitHub orqali kirishni yoqish uchun o'z OAuth ilovangiz ma'lumotlarini kiriting.</p>
 
