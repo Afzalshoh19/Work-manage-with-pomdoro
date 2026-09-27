@@ -1,0 +1,361 @@
+/* ═══════════════════════════════════════════════════════════════
+   Yangi dizayn — sahifa tuzilishi (design/<uslub>/*.dc.html maketlari)
+
+   themes.css ranglar, yuzalar va soyalarni beradi. Bu fayl esa
+   maketdagi JOYLASHUVNI beradi: sarlavhalar kartadan tashqarida,
+   KPI'lar alohida kartalar, Hisobotda o'ng ustun, Tarixda qator
+   ichida progress chizig'i, vazifa qatorlarining yangi ko'rinishi,
+   sozlamalardagi belgilash katakchalari → almashtirgich (switch).
+
+   Tuzilish qoidalari hamma uslub uchun umumiy; uslubga xos
+   farqlar faylning oxirida.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─────────── Sahifa sarlavhasi (Statistika, Hisobot, Tarix) ─────────── */
+.page-head {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; margin-bottom: 20px;
+}
+.ph-sub { font-size: 13px; color: var(--txt-3); }
+.ph-title {
+  margin: 4px 0 0; font-family: var(--font-display);
+  font-size: 34px; line-height: 1.1; font-weight: var(--w-bold); letter-spacing: -.02em;
+}
+.ph-row { display: flex; align-items: flex-end; gap: 18px; flex-wrap: wrap; }
+.ph-row .export-bar { margin: 0 0 4px; }
+.page-head .report-bar { margin: 0; align-items: flex-end; }
+.page-head .report-bar .field { margin: 0; }
+.page-head .report-bar select,
+.page-head .report-bar input { min-height: 44px; }
+.page-head .report-bar .btn { min-height: 44px; }
+.page-head .head-actions { gap: 10px; }
+.page-head .head-actions input { min-height: 44px; }
+.page-head .head-actions .btn { min-height: 44px; }
+.page-head .seg { padding: 4px; border-radius: 16px; }
+.page-head .seg button { padding: 10px 18px; font-size: 14px; font-weight: var(--w-mid); border-radius: 12px; }
+
+/* ─────────── KPI — har biri alohida karta ─────────── */
+.kpi-cards { margin-bottom: 20px; gap: 16px; }
+.kpi-cards .kpi {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--r); padding: 18px 20px;
+  box-shadow: var(--raise);
+  backdrop-filter: blur(var(--glass)); -webkit-backdrop-filter: blur(var(--glass));
+}
+.kpi-cards .kpi-val { font-family: var(--font-display); font-size: 30px; }
+.kpi-cards .kpi-lbl { font-size: 13px; color: var(--txt-2); margin-top: 6px; }
+.kpi-cards .kpi-sub { font-size: 12px; color: var(--txt-3); margin-top: 2px; }
+#repKpi.kpi-cards { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+
+/* ─────────── Statistika: pastki uch ustun ─────────── */
+.three-col { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.three-col > .card { display: flex; flex-direction: column; min-width: 0; margin-bottom: 0; }
+.three-col #topTasks { font-size: 14px; }
+.three-col .chart-sm { flex-grow: 1; }
+@media (max-width: 1100px) { .three-col { grid-template-columns: 1fr 1fr; } .three-col > .card:last-child { grid-column: 1 / -1; } }
+@media (max-width: 760px)  { .three-col { grid-template-columns: 1fr; } }
+
+/* ─────────── Hisobot: chapda asosiy, o'ngda yuklab olish ─────────── */
+.rep-layout { display: grid; grid-template-columns: minmax(0, 1fr) 380px; gap: 20px; align-items: start; margin-bottom: 20px; }
+.rep-main { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.rep-main > .card, .rep-side { margin: 0; }
+.rep-correct-hint { margin: -4px 0 12px; }
+.rep-side { display: flex; flex-direction: column; gap: 12px; }
+.rep-side .sec-title { margin: 0; }
+.rep-side .sec-title + .dl-grid { margin-top: 0; }
+.rep-side .dl-grid { grid-template-columns: 1fr; gap: 10px; }
+.rep-side .dl-card { display: flex; align-items: center; gap: 14px; padding: 12px 14px; text-align: left; }
+.rep-side .dl-ico {
+  width: 40px; height: 40px; flex-shrink: 0; border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-2); font-size: 16px;
+}
+.rep-side .sec-title:not(:first-child) { margin-top: 10px; }
+.rep-side .split-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.rep-side .split-actions .btn { min-height: 46px; justify-content: center; }
+.report-preview-card .report-preview { margin-top: 0; }
+@media (max-width: 1100px) { .rep-layout { grid-template-columns: 1fr; } }
+
+/* ─────────── Tarix ─────────── */
+.hist-card { padding: 20px; }
+.hday summary {
+  display: grid; align-items: center; gap: 16px;
+  grid-template-columns: 230px 200px 130px 190px 170px auto auto;
+  padding: 15px 20px;
+}
+.hday summary .hday-date { min-width: 0; font-size: 15px; }
+.hday-bar { height: 8px; border-radius: 4px; background: var(--bg-2); overflow: hidden; }
+.hday-bar i { display: block; height: 100%; border-radius: 4px; background: var(--accent); }
+.hday-stat { font-size: 14px; white-space: nowrap; }
+.hday[open] summary { border-bottom: 1px solid var(--line); }
+.hday-body { padding: 12px 20px 16px; }
+.hrow { padding: 9px 12px; border-radius: 12px; font-size: 14px; }
+@media (max-width: 1100px) {
+  .hday summary { grid-template-columns: 1fr 1fr; }
+  .hday-bar { grid-column: 1 / -1; }
+}
+
+/* ─────────── Bugun: ikki ustun yuqoridan boshlanadi ─────────── */
+#view-today .layout { align-items: start; }
+#view-today .layout > .timer-card { margin-top: 0; position: sticky; top: 92px; }
+@media (max-width: 980px) { #view-today .layout > .timer-card { position: relative; top: 0; } }
+.day-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: nowrap; margin-bottom: 20px; }
+.day-head .dh-left { display: flex; align-items: center; gap: 12px; flex-wrap: nowrap; min-width: 0; }
+.day-head .dh-text { min-width: 0; }
+.day-head .dh-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 520px; }
+.day-head .dh-date { margin: 2px 0 0; font-size: 32px; white-space: nowrap; }
+.day-head .dh-actions { display: flex; gap: 10px; flex-shrink: 0; }
+.day-head .dh-actions .btn { min-height: 44px; padding: 0 18px; white-space: nowrap; }
+.day-head .dh-pick input { width: 44px; min-height: 44px; padding: 0 10px; color: transparent; cursor: pointer; }
+.day-head .dh-pick input::-webkit-datetime-edit { display: none; }
+.day-head .dh-pick input::-webkit-calendar-picker-indicator { margin: 0; cursor: pointer; filter: var(--picker-filter, none); }
+@media (max-width: 1250px) {
+  .day-head { flex-wrap: wrap; }
+}
+.mode-pills .pill { font-size: 13px; }
+html:not([data-theme="skeuo"]) .mode-pills .pill { white-space: nowrap; }
+/* Taymer kartasidagi ikki kichik tugma rejim tugmalarini yopmasin:
+   ular siferblat yonidagi bo'sh burchakka, ustma-ust qo'yiladi. */
+html:not([data-theme="skeuo"]) .mode-pills #btnPipTimer,
+html:not([data-theme="skeuo"]) .mode-pills #btnMinTimer { top: 100px; right: 18px; }
+html:not([data-theme="skeuo"]) .mode-pills #btnMinTimer { top: 136px; }
+
+/* Kun sozlamalari — ixcham bir qator */
+.day-setup { gap: 12px; align-items: center; }
+.day-setup .ds-view { gap: 8px; }
+.day-setup .dv-item { min-width: 0; padding: 8px 12px; border-radius: 12px; }
+.day-setup .dv-item > span { font-size: 11px; }
+.day-setup .dv-item > b { font-size: 14px; white-space: nowrap; }
+
+/* ─────────── Vazifa qatori — maketdagidek ─────────── */
+.task {
+  grid-template-columns: 16px 20px minmax(0, 1fr) auto auto auto;
+  gap: 14px; padding: 14px 16px; border-radius: 18px;
+}
+.t-grip { opacity: 0; transition: opacity .15s; }
+.task:hover .t-grip, .task:focus-within .t-grip { opacity: 1; }
+.t-dot {
+  width: 12px; height: 12px; border-radius: 50%; justify-self: center;
+  border: 2px solid var(--line-2); box-sizing: border-box;
+  display: flex; align-items: center; justify-content: center;
+}
+.task.is-active .t-dot { border: 0; background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+.task.st-jarayonda .t-dot { border-color: var(--blue); }
+.task.st-bajarildi .t-dot { width: 20px; height: 20px; border: 0; border-radius: 7px; background: var(--green); color: #0B0E1A; }
+.task.st-bajarildi .t-dot svg { width: 12px; height: 12px; }
+.t-title { font-size: 15px; font-weight: var(--w-bold); }
+.t-meta { gap: 6px; margin-top: 3px; font-size: 12.5px; color: var(--txt-3); }
+.t-meta > span + span:not(.chip)::before { content: '·'; margin-right: 6px; color: var(--txt-3); }
+.t-meta .chip + span::before { content: none !important; }
+.t-time { font-variant-numeric: tabular-nums; }
+.t-time.out { color: var(--amber); }
+.t-pri.pri-yuqori { color: var(--accent); font-weight: var(--w-mid); }
+.t-pomos { gap: 4px; }
+.t-pomos i { width: 18px; height: 6px; border-radius: 3px; background: var(--line-2); }
+.t-pomos i.on { background: var(--accent); }
+.task.st-bajarildi .t-pomos i.on { background: var(--green); }
+.t-count {
+  min-width: 64px; text-align: right; font-size: 14px; font-weight: var(--w-bold);
+  font-variant-numeric: tabular-nums; line-height: 1.2;
+}
+.t-count small { display: block; font-size: 11.5px; font-weight: 500; color: var(--txt-3); }
+.t-actions { opacity: .0; transition: opacity .15s; }
+.task:hover .t-actions, .task:focus-within .t-actions, .task.is-active .t-actions,
+.task.st-qabulga .t-actions { opacity: 1; }
+@media (hover: none) { .t-actions, .t-grip { opacity: 1; } }
+
+/* ─────────── Sozlamalar: katakcha → almashtirgich ─────────── */
+.switch-row { flex-direction: row-reverse; justify-content: space-between; gap: 14px; font-size: 14px; }
+.switch-row[style*="padding:0"] { flex-direction: row; justify-content: flex-start; }
+#psec-taymer .switch-row:not([style]) {
+  padding: 14px 16px; margin-bottom: 10px; border-radius: 16px;
+  background: var(--card-2); border: 1px solid var(--line);
+}
+.switch-row > input[type="checkbox"] {
+  -webkit-appearance: none; appearance: none; flex-shrink: 0;
+  width: 44px; height: 26px; border-radius: 13px; margin: 0;
+  background: var(--bg-2); border: 1px solid var(--line-2);
+  position: relative; cursor: pointer; transition: background .15s;
+}
+.switch-row > input[type="checkbox"]::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 20px; height: 20px; border-radius: 50%; background: #fff;
+  box-shadow: 0 1px 3px rgba(0,0,0,.35); transition: left .15s;
+}
+.switch-row > input[type="checkbox"]:checked { background: var(--accent); border-color: var(--accent); }
+.switch-row > input[type="checkbox"]:checked::after { left: 20px; }
+.switch-row > input[type="checkbox"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* ─────────── Ko'p kunlik reja — 4 ustunli to'r ─────────── */
+#weekPlanOverlay .modal-xl { max-width: 860px; }
+
+/* ─────────── Kirish sahifasi: forma karta ichida, imkoniyatlar 2×2 ─────────── */
+.auth-card {
+  width: 100%; max-width: 460px; box-sizing: border-box; padding: 32px;
+  background: var(--card); border: 1px solid var(--line); border-radius: calc(var(--r) + 10px);
+  box-shadow: var(--raise);
+  backdrop-filter: blur(var(--glass)); -webkit-backdrop-filter: blur(var(--glass));
+}
+.auth-feats { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.auth-feats li {
+  padding: 14px; border-radius: 18px; background: var(--card-2); border: 1px solid var(--line);
+}
+@media (max-width: 760px) { .auth-feats { grid-template-columns: 1fr; } }
+
+/* ═══════════════ Uslubga xos farqlar ═══════════════ */
+
+/* Glass */
+[data-theme="glass"] { --picker-filter: invert(1); }
+[data-theme="glass"] .hday-bar i { background: linear-gradient(90deg, var(--accent), var(--accent-2)); }
+[data-theme="glass"] .task.is-active { background: rgba(255,107,91,.16); border-color: rgba(255,140,120,.45); }
+
+/* Clay — pastel KPI kartalari aylanadi */
+[data-theme="clay"] .kpi-cards .kpi { border: 0; border-radius: 30px; }
+[data-theme="clay"] .kpi-cards .kpi:nth-child(4n+1) { background: #FFD9D2; }
+[data-theme="clay"] .kpi-cards .kpi:nth-child(4n+2) { background: #CDEFE0; }
+[data-theme="clay"] .kpi-cards .kpi:nth-child(4n+3) { background: #E4DBFF; }
+[data-theme="clay"] .kpi-cards .kpi:nth-child(4n+4) { background: #FFEDB8; }
+[data-theme="clay"] .kpi-cards .kpi:nth-child(4n+1) :is(.kpi-lbl,.kpi-sub) { color: #8A3C35; }
+[data-theme="clay"] .kpi-cards .kpi:nth-child(4n+2) :is(.kpi-lbl,.kpi-sub) { color: #1F6B4B; }
+[data-theme="clay"] .kpi-cards .kpi:nth-child(4n+3) :is(.kpi-lbl,.kpi-sub) { color: #4F3AA0; }
+[data-theme="clay"] .kpi-cards .kpi:nth-child(4n+4) :is(.kpi-lbl,.kpi-sub) { color: #7A5A10; }
+[data-theme="clay"] .kpi-cards .kpi-val { color: #3A2E4A !important; font-weight: 900; }
+[data-theme="clay"] .kpi-cards .kpi-lbl { font-weight: 800; }
+[data-theme="clay"] .ph-title { font-weight: 900; }
+[data-theme="clay"] .hday-bar { height: 14px; padding: 2px; box-sizing: border-box; border-radius: 8px; background: #F1E8DE; box-shadow: inset 2px 2px 4px rgba(160,120,90,.25); }
+[data-theme="clay"] .t-pomos i { height: 8px; border-radius: 4px; }
+[data-theme="clay"] .t-dot { border: 0; background: #E4DBFF; box-shadow: inset 2px 2px 3px rgba(120,90,200,.3); width: 14px; height: 14px; }
+[data-theme="clay"] .task.st-bajarildi .t-dot { background: #57C08E; color: #fff; width: 22px; height: 22px; border-radius: 8px; }
+[data-theme="clay"] .switch-row > input[type="checkbox"] { width: 52px; height: 30px; border-radius: 15px; border: 0; background: #E2D6C8; box-shadow: inset 2px 2px 4px rgba(160,120,90,.3); }
+[data-theme="clay"] .switch-row > input[type="checkbox"]::after { top: 3px; left: 3px; width: 24px; height: 24px; }
+[data-theme="clay"] .switch-row > input[type="checkbox"]:checked { background: #57C08E; }
+[data-theme="clay"] .switch-row > input[type="checkbox"]:checked::after { left: 25px; }
+
+/* Skeuo — yog'och fonda sarlavhalar och rangda; qog'oz/metall kartalar */
+[data-theme="skeuo"] .page-head .ph-title {
+  font-family: 'Libre Baskerville', Georgia, serif; color: #F8EEDC;
+  text-shadow: 0 3px 4px rgba(0,0,0,.6); letter-spacing: 0;
+}
+[data-theme="skeuo"] .page-head .ph-sub,
+[data-theme="skeuo"] .page-head .field > span,
+[data-theme="skeuo"] .page-head label.inline > span { color: #D9CCB4; }
+[data-theme="skeuo"] .kpi-cards .kpi {
+  border-radius: 12px; border: 1px solid #7C7D78; padding: 14px;
+  background: linear-gradient(180deg, #E9E9E6 0%, #C9CAC6 48%, #B8B9B4 52%, #D6D7D3 100%);
+  box-shadow: 0 8px 14px rgba(0,0,0,.45), inset 0 1px 0 #fff;
+  display: grid; grid-template-areas: "lbl" "val" "sub"; gap: 6px;
+}
+[data-theme="skeuo"] .kpi-cards .kpi-lbl {
+  grid-area: lbl; margin: 0; font-size: 10px; font-weight: 700; letter-spacing: .16em;
+  text-transform: uppercase; color: #45463F; text-shadow: 0 1px 0 rgba(255,255,255,.8);
+}
+[data-theme="skeuo"] .kpi-cards .kpi-val {
+  grid-area: val; padding: 8px 12px; border-radius: 6px; background: #1A1A18;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.7);
+  font-family: 'Share Tech Mono', ui-monospace, monospace; font-weight: 400;
+  color: #FFB85C !important; text-shadow: 0 0 8px rgba(255,170,60,.5); font-size: 28px;
+}
+[data-theme="skeuo"] .kpi-cards .kpi-sub { grid-area: sub; margin: 0; color: #45463F; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 11px; }
+[data-theme="skeuo"] .hday-bar { height: 14px; border-radius: 0; border: 1.5px solid #2A2420; background: transparent; }
+[data-theme="skeuo"] .hday-bar i { border-radius: 0; background: repeating-linear-gradient(135deg, var(--accent) 0 5px, #C94432 5px 8px); }
+[data-theme="skeuo"] .t-dot { border-radius: 3px; border: 2px solid #2A2420; width: 18px; height: 18px; }
+[data-theme="skeuo"] .task.is-active .t-dot { background: transparent; box-shadow: none; border-color: var(--accent); }
+[data-theme="skeuo"] .task.st-bajarildi .t-dot { background: transparent; color: #B63A2C; border: 2px solid #2A2420; border-radius: 3px; width: 18px; height: 18px; }
+[data-theme="skeuo"] .t-pomos i { width: 14px; height: 14px; border-radius: 50%; background: transparent; border: 1.5px dashed #9A8F80; box-sizing: border-box; }
+[data-theme="skeuo"] .t-pomos i.on { border: 0; background: radial-gradient(circle at 35% 30%, #FF8A6E, var(--accent)); box-shadow: 0 1px 2px rgba(0,0,0,.4); }
+[data-theme="skeuo"] .t-meta > span + span:not(.chip)::before { color: #9A8F80; }
+[data-theme="skeuo"] .switch-row > input[type="checkbox"] {
+  width: 56px; height: 28px; border-radius: 14px; border: 0; background: #1A1A18; box-shadow: inset 0 2px 4px rgba(0,0,0,.9);
+}
+[data-theme="skeuo"] .switch-row > input[type="checkbox"]::after {
+  top: 2px; left: 2px; width: 26px; height: 24px; border-radius: 12px;
+  background: linear-gradient(180deg, #FAFAF8, #BDBEB9); box-shadow: 0 2px 3px rgba(0,0,0,.5);
+}
+[data-theme="skeuo"] .switch-row > input[type="checkbox"]:checked { background: #1A1A18; box-shadow: inset 0 2px 4px rgba(0,0,0,.9), inset 10px 0 8px -6px rgba(111,255,127,.55); }
+[data-theme="skeuo"] .switch-row > input[type="checkbox"]:checked::after { left: 28px; }
+
+/* Neu — faol holat ichiga botgan */
+[data-theme="neu"] .kpi-cards .kpi { border: 0; border-radius: 24px; box-shadow: 8px 8px 16px #C2C8D2, -8px -8px 16px #FFFFFF; background: #E4E8EF; }
+[data-theme="neu"] .kpi-cards .kpi-val { color: #2E3647 !important; font-weight: 800; }
+[data-theme="neu"] .hday-bar { height: 12px; padding: 2px; box-sizing: border-box; border-radius: 8px; background: transparent; box-shadow: inset 2px 2px 4px #C2C8D2, inset -2px -2px 4px #FFFFFF; }
+[data-theme="neu"] .t-dot { border: 0; box-shadow: inset 2px 2px 3px #C2C8D2, inset -2px -2px 3px #FFFFFF; }
+[data-theme="neu"] .task.is-active .t-dot { box-shadow: none; }
+[data-theme="neu"] .task.st-bajarildi .t-dot { background: #E4E8EF; color: #1F7A52; box-shadow: inset 2px 2px 4px #C2C8D2, inset -2px -2px 4px #FFFFFF; }
+[data-theme="neu"] .t-pomos i { box-shadow: inset 1px 1px 2px #C2C8D2; background: #E4E8EF; }
+[data-theme="neu"] .t-pomos i.on { background: var(--accent); box-shadow: none; }
+[data-theme="neu"] .switch-row > input[type="checkbox"] {
+  width: 54px; height: 30px; border-radius: 15px; border: 0; background: #E4E8EF;
+  box-shadow: inset 3px 3px 6px #C2C8D2, inset -3px -3px 6px #FFFFFF;
+}
+[data-theme="neu"] .switch-row > input[type="checkbox"]::after {
+  top: 4px; left: 4px; width: 22px; height: 22px; background: #E4E8EF;
+  box-shadow: 2px 2px 4px #C2C8D2, -2px -2px 4px #FFFFFF;
+}
+[data-theme="neu"] .switch-row > input[type="checkbox"]:checked { background: #E4E8EF; }
+[data-theme="neu"] .switch-row > input[type="checkbox"]:checked::after { left: 28px; background: var(--accent); box-shadow: 2px 2px 4px #C2C8D2; }
+
+/* Klassik (dark/light) — yangi tuzilish ularda ham buzilmasin */
+[data-theme="dark"] .kpi-cards .kpi, [data-theme="light"] .kpi-cards .kpi { backdrop-filter: none; }
+#topTasks > :nth-child(n+7) { display: none; }
+
+#psec-taymer .field > span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Skeuo: «REJA N% BAJARILDI» muhri — KPI ustidan emas, xulosa varag'ining burchagida */
+[data-theme="skeuo"] #repKpi::after { content: none; }
+[data-theme="skeuo"] .rep-main > .card:first-child { position: relative; }
+[data-theme="skeuo"] .rep-main > .card:first-child::after {
+  content: "REJA " var(--reja-pct, "") " BAJARILDI";
+  position: absolute; right: 22px; top: 14px; z-index: 1;
+  display: flex; align-items: center; justify-content: center;
+  width: 104px; height: 104px; padding: 0 12px; box-sizing: border-box;
+  border: 3px double var(--accent); border-radius: 50%; color: var(--accent);
+  font-family: var(--font-label, 'IBM Plex Mono', monospace); font-size: 12px; font-weight: 600;
+  letter-spacing: .08em; line-height: 1.5; text-align: center;
+  opacity: .8; transform: rotate(-8deg); pointer-events: none;
+}
+[data-theme="skeuo"] .rep-main > .card:first-child #repHighlights { padding-right: 120px; min-height: 80px; }
+
+/* Neu: yuklab olish kartalari bo'rtib chiqqan, asosiy tugma aksentda */
+[data-theme="neu"] .rep-side .dl-card { border: 0; background: #E4E8EF; box-shadow: 5px 5px 10px #C2C8D2, -5px -5px 10px #FFFFFF; border-radius: 18px; }
+[data-theme="neu"] .rep-side .dl-ico { background: #E4E8EF; box-shadow: inset 3px 3px 6px #C2C8D2, inset -3px -3px 6px #FFFFFF; border-radius: 14px; }
+[data-theme="neu"] #repRefresh, [data-theme="neu"] #histLoad { background: var(--accent); color: #fff; }
+
+/* Skeuo: profil menyusi — qora charm panel (maketdagidek), och matn o'qiladi */
+[data-theme="skeuo"] .prof-rail {
+  background: linear-gradient(180deg, #2E2A27, #1C1A18);
+  border: 1px solid #0D0C0B; border-radius: 10px;
+  box-shadow: 0 14px 24px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.12);
+}
+[data-theme="skeuo"] .rail-item:not(.is-active):hover { background: rgba(255,255,255,.06); color: #F3E6CF; }
+
+/* Neu: tarix qatorlari bo'rtib chiqqan, ochilgani ichiga botgan */
+[data-theme="neu"] .hist-card .hday {
+  border: 0; border-radius: 20px; background: #E4E8EF; margin-bottom: 14px;
+  box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF;
+}
+[data-theme="neu"] .hist-card .hday[open] { box-shadow: inset 6px 6px 12px #C2C8D2, inset -6px -6px 12px #FFFFFF; }
+[data-theme="neu"] .hist-card .hday[open] summary { border-bottom: 0; }
+
+/* Skeuo: taymer — metall qurilma (umumiy «.card = qog'oz» qoidasi uni bosib ketardi) */
+[data-theme="skeuo"] .card.timer-card {
+  border: 1px solid #7C7D78; border-radius: 22px;
+  background: linear-gradient(180deg, #E9E9E6 0%, #C9CAC6 48%, #B8B9B4 52%, #D6D7D3 100%);
+  box-shadow: 0 24px 40px rgba(0,0,0,.55), inset 0 1px 0 #fff, inset 0 -2px 0 rgba(0,0,0,.15);
+}
+
+[data-theme="neu"] .auth-card { border: 0; border-radius: 40px; background: #E4E8EF; box-shadow: 18px 18px 36px #C2C8D2, -18px -18px 36px #FFFFFF; }
+[data-theme="neu"] .auth-feats li { border: 0; background: #E4E8EF; box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF; }
+[data-theme="clay"] .auth-card { border: 0; border-radius: 44px; background: #FFFAF4; box-shadow: 20px 26px 50px rgba(140,110,80,.25), inset -8px -10px 18px rgba(180,150,120,.16), inset 8px 8px 16px #fff; }
+[data-theme="clay"] .auth-feats li { border: 0; border-radius: 24px; box-shadow: 6px 9px 18px rgba(140,110,80,.16), inset -4px -5px 8px rgba(0,0,0,.06), inset 4px 4px 8px rgba(255,255,255,.8); }
+[data-theme="clay"] .auth-feats li:nth-child(1) { background: #FFD9D2; }
+[data-theme="clay"] .auth-feats li:nth-child(2) { background: #CDEFE0; }
+[data-theme="clay"] .auth-feats li:nth-child(3) { background: #E4DBFF; }
+[data-theme="clay"] .auth-feats li:nth-child(4) { background: #FFEDB8; }
+[data-theme="skeuo"] .auth-card { border: 0; border-radius: 4px; background: #FBF7EE; box-shadow: 0 30px 50px rgba(0,0,0,.6), 4px 4px 0 #EDE5D4, 8px 8px 0 #DDD3BF; }
+[data-theme="skeuo"] .auth-feats { grid-template-columns: 1fr; }
+[data-theme="skeuo"] .auth-feats li { background: transparent; border: 0; padding: 4px 0; }
+
+/* Kirish: maketdagidek yagona fon — chap panel alohida bo'yalmaydi */
+:is([data-theme="glass"],[data-theme="clay"],[data-theme="skeuo"],[data-theme="neu"]) .auth-side { background: transparent; border-right: 0; }
+[data-theme="skeuo"] .auth-lead, [data-theme="skeuo"] .auth-feats span { color: #D9CCB4; }
+[data-theme="skeuo"] .auth-feats b { color: #F3E6CF; }

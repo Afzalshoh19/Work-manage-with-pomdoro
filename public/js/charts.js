@@ -19,10 +19,11 @@ const shortDate = (d) => {
 };
 
 /** Kunlik pomodorolar — ustunli diagramma */
-export function dailyChart(series, goal = 8) {
+export function dailyChart(series, goal = 8, width = 0) {
   if (!series.length) return '<div class="empty">Ma\'lumot yo\'q</div>';
 
-  const W = Math.max(560, series.length * 34);
+  // Konteyner kengligi berilsa grafik unga to'liq yoyiladi (maketdagidek)
+  const W = Math.max(width || 560, series.length * 34);
   const H = 220, PAD_L = 30, PAD_B = 28, PAD_T = 14;
   const max = Math.max(goal, ...series.map(s => s.pomodoros), 1);
   const plotH = H - PAD_B - PAD_T;
@@ -63,11 +64,11 @@ export function dailyChart(series, goal = 8) {
 }
 
 /** Soatlar bo'yicha taqsimot */
-export function hourlyChart(hourly) {
+export function hourlyChart(hourly, width = 0) {
   const max = Math.max(1, ...hourly.map(h => h.pomodoros));
   if (!hourly.some(h => h.pomodoros)) return '<div class="empty">Hali ma\'lumot to\'planmagan</div>';
 
-  const W = 560, H = 150, PAD_B = 22, PAD_T = 8;
+  const W = Math.max(280, width || 560), H = 150, PAD_B = 22, PAD_T = 8;
   const plotH = H - PAD_B - PAD_T;
   const step = W / 24;
   let svg = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img">`;

@@ -875,26 +875,27 @@ function renderPlan() {
       return `<li class="task st-${st} ${t.done ? 'is-done' : ''} ${t.overflow ? 'is-overflow' : ''} ${t.id === S.activeTaskId ? 'is-active' : ''}"
                   style="--cat:${color}" data-id="${t.id}" draggable="true">
         <span class="t-grip" title="Sudrab tartibni o'zgartiring">⠿</span>
+        <span class="t-dot" aria-hidden="true">${st === 'bajarildi' ? icon('tick') : ''}</span>
         <div class="t-main">
           <span class="t-title">${esc(t.title)}</span>
           <div class="t-meta">
-            <span class="chip status ${st}">${STATUS[st].icon} ${STATUS[st].label}</span>
-            <span class="chip cat">${esc(CAT_LABELS[t.category] || t.category)}</span>
-            ${t.priority === 'yuqori' ? '<span class="chip pri-yuqori">Yuqori</span>' : ''}
-            ${t.startTime ? `<span class="chip time ${t.overflow ? 'out' : ''} ${t.pinnedStart ? 'pinned' : ''}" title="${
+            ${st !== 'reja' ? `<span class="chip status ${st}">${STATUS[st].icon} ${STATUS[st].label}</span>` : ''}
+            ${t.startTime ? `<span class="t-time ${t.overflow ? 'out' : ''} ${t.pinnedStart ? 'pinned' : ''}" title="${
               t.donePomodoroCount
                 ? `Birinchi pomodoro boshlanishidan oxirgisining tugashigacha — ${fmtDuration(t.spanMinutes)}`
                 : t.overflow ? 'Ish vaqtidan tashqarida' : 'Rejadagi vaqt'
             }">${t.pinnedStart ? '▶ ' : ''}${tm(t.startTime, t.startDayOffset)}–${tm(t.endTime, t.endDayOffset)}</span>` : ''}
-            ${t.pausedMinutes > 0 ? `<span class="chip pause" title="Pauzada o'tgan vaqt — tugash vaqti shunga surildi">⏸ ${fmtDuration(t.pausedMinutes)}</span>` : ''}
-            ${t.isMeet
-              ? `<span title="Uchrashuv davomiyligi — tanaffus chiqarilgan">${fmtDuration(t.focusMinutes)}${
-                   t.meetBreakMinutes ? ` · tanaffus ${t.meetBreakMinutes} daq` : ''}</span>`
-              : `<span class="t-pomos" title="${t.completedPomodoros}/${t.plannedPomodoros} pomodoro">${dots}</span>
-            <span title="Pomodorolar davomiyliklari yig'indisi — oraliq cho'zilsa ham o'zgarmaydi">${t.completedPomodoros}/${t.plannedPomodoros}${extra} · ${fmtDuration(t.focusMinutes ?? t.estimatedMinutes)}</span>`}
+            <span class="t-cat">${esc(CAT_LABELS[t.category] || t.category)}</span>
+            <span class="t-pri pri-${t.priority}">${PRI_LABEL[t.priority] || ''}</span>
+            ${t.pausedMinutes > 0 ? `<span class="t-pause" title="Pauzada o'tgan vaqt — tugash vaqti shunga surildi">⏸ ${fmtDuration(t.pausedMinutes)}</span>` : ''}
             ${t.note ? `<span class="t-note" title="${esc(t.note)}">${icon('note')}</span>` : ''}
           </div>
         </div>
+        ${t.isMeet
+          ? `<span class="t-count" title="Uchrashuv davomiyligi — tanaffus chiqarilgan">${fmtDuration(t.focusMinutes)}${
+               t.meetBreakMinutes ? `<small>tanaffus ${t.meetBreakMinutes} daq</small>` : ''}</span>`
+          : `<span class="t-pomos" title="${t.completedPomodoros}/${t.plannedPomodoros} pomodoro">${dots}</span>
+        <span class="t-count" title="Pomodorolar davomiyliklari yig'indisi — oraliq cho'zilsa ham o'zgarmaydi">${t.completedPomodoros}/${t.plannedPomodoros}${extra}<small>${fmtDuration(t.focusMinutes ?? t.estimatedMinutes)}</small></span>`}
         <div class="t-actions">
           ${st === 'qabulga'
             ? `<button class="btn btn-mini t-accept" title="Vazifani bajarildi deb tasdiqlash">${icon('tick')} Bajarildi</button>`
@@ -1318,9 +1319,9 @@ async function loadStats() {
     <div class="kpi"><div class="kpi-val">${t.interruptions}</div><div class="kpi-lbl">${isToday ? 'Bugun' : 'Shu kuni'} uzilishlar</div>
       <div class="kpi-sub">Tugatilmagan sessiyalar</div></div>`;
 
-  $('chartDaily').innerHTML = dailyChart(st.series, st.today.goal);
+  $('chartDaily').innerHTML = dailyChart(st.series, st.today.goal, $('chartDaily').clientWidth);
   $('chartCategory').innerHTML = categoryBars(st.categories);
-  $('chartHourly').innerHTML = hourlyChart(st.hourly);
+  $('chartHourly').innerHTML = hourlyChart(st.hourly, $('chartHourly').clientWidth);
   $('topTasks').innerHTML = topTasksList(st.topTasks);
 }
 
@@ -1339,6 +1340,7 @@ async function loadHistory() {
     <details class="hday" ${i === 0 ? 'open' : ''}>
       <summary>
         <span class="hday-date">${fmtDateLong(d.date)}</span>
+        <span class="hday-bar" title="${d.pomodoros} pomodoro"><i style="width:${Math.min(100, Math.round(d.pomodoros / Math.max(1, S.settings?.dailyGoal || 8) * 100))}%"></i></span>
         <span class="hday-stat" title="Pomodoro"><b>${d.pomodoros}</b> pomodoro</span>
         <span class="hday-stat">Fokus: <b>${fmtDuration(d.focusMinutes)}</b></span>
         <span class="hday-stat">Tanaffus: <b>${fmtDuration(d.breakMinutes)}</b></span>

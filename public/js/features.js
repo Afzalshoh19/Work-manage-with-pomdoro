@@ -222,6 +222,8 @@ export async function loadReport() {
   // qo'yiladi. Boshqa uslublarda muhr chizilmaydi va o'zgaruvchi
   // ishlatilmay qoladi.
   $('repKpi').style.setProperty('--reja-pct', `"${s.planPercent}%"`);
+  // Yangi tuzilishda muhr «Qisqacha xulosa» kartasida turadi — o'zgaruvchi o'sha yerga ham beriladi
+  document.querySelector('#view-report .rep-main')?.style.setProperty('--reja-pct', `"${s.planPercent}%"`);
 
   $('repKpi').innerHTML = `
     <div class="kpi a"><div class="kpi-val">${s.completedPomodoros}${s.plannedPomodoros ? `/${s.plannedPomodoros}` : ''}</div>
