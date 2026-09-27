@@ -25,6 +25,8 @@
   --font: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
   --font-display: var(--font);
   --font-clock: var(--font);
+  --font-hand: var(--font);      /* qo'lyozma — faqat skeuo'da boshqacha */
+  --font-label: var(--font);     /* qurilma yorliqlari — faqat skeuo'da */
   --w-normal: 400;
   --w-mid: 550;
   --w-bold: 650;
@@ -177,69 +179,14 @@ h1, h2, h3, .clock { font-family: var(--font-display); }
   --font: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   --font-display: "Libre Baskerville", Georgia, serif;
   --font-clock: "Share Tech Mono", ui-monospace, monospace;
+  --font-hand: Caveat, "Segoe Script", cursive;
+  --font-label: "IBM Plex Mono", ui-monospace, monospace;
   --w-mid: 600;
   --w-bold: 700;
   color-scheme: light;
 }
 
 /* Yog'och taxta. `fixed` — aylantirganda naqsh siljimasin. */
-[data-theme="skeuo"] body {
-  background: repeating-linear-gradient(92deg,
-    #4A3224 0px, #553A2A 6px, #4A3224 11px, #3F2A1E 18px, #4A3224 26px);
-  background-attachment: fixed;
-}
-[data-theme="skeuo"] .topbar {
-  background: linear-gradient(180deg, #2E2A27, #1C1A18);
-  border-bottom: 1px solid #0D0C0B; backdrop-filter: none;
-  box-shadow: 0 8px 18px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.12);
-  color: #F3E6CF;
-}
-[data-theme="skeuo"] .topbar .brand strong { color: #F3E6CF; font-family: var(--font-display); }
-[data-theme="skeuo"] .topbar .brand small,
-[data-theme="skeuo"] .topbar .conn { color: #D9CCB4; }
-[data-theme="skeuo"] .tabs { background: #111; border: 0; border-radius: 10px; padding: 3px; }
-[data-theme="skeuo"] .tab { color: #D9CCB4; border-radius: 8px; }
-[data-theme="skeuo"] .tab:hover { background: rgba(255,255,255,.08); color: #fff; }
-[data-theme="skeuo"] .tab.is-active {
-  background: linear-gradient(180deg, #F4EDE0, #CFC4AE); color: #2A2420;
-  box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(0,0,0,.6);
-}
-[data-theme="skeuo"] .icon-btn { background: linear-gradient(180deg, #3A3632, #26231F); border-color: #0D0C0B; color: #F3E6CF; }
-
-[data-theme="skeuo"] .card { border: 1px solid #D6CDB8; border-radius: 6px; }
-[data-theme="skeuo"] .btn {
-  border: 1px solid #6E1A10; border-radius: 8px;
-  background: linear-gradient(180deg, #FF8C78, var(--accent) 50%, #C23B2B);
-  text-shadow: 0 -1px 0 rgba(0,0,0,.35); box-shadow: var(--raise);
-}
-[data-theme="skeuo"] .btn:hover { background: linear-gradient(180deg, #FF9C88, #D2432F 50%, #A8301F); }
-[data-theme="skeuo"] .btn-ghost {
-  border-color: #9A8F80; color: #2A2420; text-shadow: none;
-  background: linear-gradient(180deg, #F4EDE0, #CFC4AE);
-}
-[data-theme="skeuo"] .mode-pills { background: #111; border-radius: 8px; box-shadow: var(--inset); }
-[data-theme="skeuo"] .pill { color: #D9CCB4; border-radius: 6px; }
-[data-theme="skeuo"] .pill.is-active { background: linear-gradient(180deg, #F4EDE0, #CFC4AE); color: #2A2420; }
-
-/* LCD ekran: raqamlar yashil yorug'lik bilan qorong'i oynada */
-[data-theme="skeuo"] .dial-center {
-  background: linear-gradient(180deg, #1B2A1E, #0F1A12);
-  border: 2px solid #4E4F4A; border-radius: 12px; inset: 28px;
-  box-shadow: inset 0 4px 12px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.7);
-}
-[data-theme="skeuo"] .clock {
-  color: #9EFFAA; font-weight: 400; letter-spacing: 0;
-  text-shadow: 0 0 14px rgba(120,255,140,.6);
-}
-[data-theme="skeuo"] .dial-sub { color: rgba(158,255,170,.7); }
-[data-theme="skeuo"] .is-running .clock { color: #9EFFAA; }
-[data-theme="skeuo"] .ring-bg { stroke: rgba(0,0,0,.35); }
-[data-theme="skeuo"] .mini {
-  background: #1A1A18; border-radius: 8px;
-  box-shadow: inset 0 2px 5px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.7);
-}
-[data-theme="skeuo"] .mini b { color: #FFB85C; font-family: var(--font-clock); text-shadow: 0 0 8px rgba(255,170,60,.5); }
-[data-theme="skeuo"] .mini span { color: #A8A28F; letter-spacing: .1em; }
 
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1315,3 +1262,784 @@ body, .topbar, .card, .mini, .tabs, .tab, .btn, .pill,
   font-weight: 800;
 }
 [data-theme="clay"] .field.inline > span { font-size: 14px; font-weight: 800; color: #7A6A88; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   SKEUOMORPHISM — maketga aniq moslash                     (3/4)
+
+   Qiymatlar design/skeuo/ papkasidagi sakkizta maket faylining inline
+   stillaridan olingan. Bu uslubda UCHTA butunlay boshqa yuza bor va
+   ularni aralashtirib yuborish mumkin emas:
+
+     1. YOGOCH  — sahifa foni, ustida krem matn;
+     2. METALL  — taymer paneli va tugmalar, ustida quyuq matn;
+     3. QOGOZ   — kun tartibi va hisobot, chiziqli daftar, Caveat qolyozmasi.
+
+   Alohida turadigan to'rtinchisi — LCD displey: qora oyna ustida
+   yashil (`#9EFFAA`) yoki qahrabo (`#FFB85C`) yoruq raqamlar.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Yogoch stol ── */
+
+[data-theme="skeuo"] body {
+  background: repeating-linear-gradient(92deg,
+    #4A3224 0px, #553A2A 6px, #4A3224 11px, #3F2A1E 18px, #4A3224 26px);
+  background-attachment: fixed;
+}
+
+/* ── Yuqori qator: qora charm lavha ── */
+
+[data-theme="skeuo"] .topbar {
+  width: calc(100% - 44px);
+  max-width: 1360px;
+  margin: 14px auto 0;
+  height: 68px;
+  padding: 0 16px 0 20px;
+  border: 1px solid #0D0C0B;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #2E2A27, #1C1A18);
+  backdrop-filter: none;
+  color: #F3E6CF;
+  box-shadow: 0 8px 18px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.12);
+  outline: 1px dashed rgba(243,230,207,.3);
+  outline-offset: -7px;
+}
+/* Brend belgisi — yorugligi bir tomondan tushgan sharsimon pomidor */
+[data-theme="skeuo"] .brand-mark {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #FF8A6E, var(--accent) 55%, #8E2418);
+  box-shadow: 0 3px 6px rgba(0,0,0,.6), inset 0 -2px 4px rgba(0,0,0,.3);
+  color: transparent;
+}
+[data-theme="skeuo"] .brand-mark svg { display: none; }
+[data-theme="skeuo"] .brand strong {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  color: #F3E6CF;
+  text-shadow: 0 1px 0 #000;
+}
+[data-theme="skeuo"] .brand small,
+[data-theme="skeuo"] .conn,
+[data-theme="skeuo"] .user-btn { color: #D9CCB4; }
+[data-theme="skeuo"] .user-btn {
+  border: 0;
+  background: transparent;
+  font-weight: 600;
+}
+[data-theme="skeuo"] .user-btn .user-name { color: #F3E6CF; }
+[data-theme="skeuo"] .conn.ok i {
+  background: radial-gradient(circle at 35% 35%, #B8FFB0, #2FAE3A);
+  box-shadow: 0 0 8px #4CDA56;
+}
+
+/* Yorliqlar: qora chuqurchaga botirilgan, faol yorliq suyak plastinka */
+[data-theme="skeuo"] .tabs {
+  gap: 0;
+  padding: 3px;
+  border: 0;
+  border-radius: 10px;
+  background: #111;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.1);
+}
+[data-theme="skeuo"] .tab {
+  padding: 10px 22px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #D9CCB4;
+  text-shadow: 0 -1px 0 #000;
+}
+[data-theme="skeuo"] .tab:hover { background: rgba(255,255,255,.08); color: #fff; }
+[data-theme="skeuo"] .tab.is-active {
+  background: linear-gradient(180deg, #F4EDE0, #CFC4AE);
+  color: #2A2420;
+  font-weight: 700;
+  text-shadow: none;
+  box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(0,0,0,.6);
+}
+[data-theme="skeuo"] .icon-btn {
+  border: 1px solid #0D0C0B;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #3A3632, #26231F);
+  color: #F3E6CF;
+}
+
+/* ── Taymer paneli: metall qurilma «FOCUS TIMER · MODEL 25» ── */
+
+[data-theme="skeuo"] .timer-card {
+  padding: 26px;
+  border: 1px solid #7C7D78;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #E9E9E6 0%, #C9CAC6 48%, #B8B9B4 52%, #D6D7D3 100%);
+  box-shadow: 0 24px 40px rgba(0,0,0,.55), inset 0 1px 0 #fff, inset 0 -2px 0 rgba(0,0,0,.15);
+}
+/* Qurilma yorligi — kartaning tepasiga yoziladi */
+[data-theme="skeuo"] .timer-card::before {
+  content: "FOCUS TIMER \00B7 MODEL 25";
+  display: block;
+  margin-bottom: 14px;
+  font-family: var(--font-label);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .2em;
+  color: #55564F;
+  text-shadow: 0 1px 0 rgba(255,255,255,.8);
+}
+
+/* LCD displey: rejim qatori + soat + holat qatori bitta oyna bo'lib
+   ko'rinishi kerak. Ular DOM'da uchta qo'shni element, shuning uchun
+   radiuslar va chegaralar ulanadigan qilib berilgan. */
+
+[data-theme="skeuo"] .mode-pills {
+  gap: 0;
+  margin-bottom: 0;
+  padding: 14px 20px 6px;
+  border: 2px solid #4E4F4A;
+  border-bottom: 0;
+  border-radius: 12px 12px 0 0;
+  background: linear-gradient(180deg, #1B2A1E, #17251A);
+  box-shadow: inset 0 4px 12px rgba(0,0,0,.9);
+}
+[data-theme="skeuo"] .pill {
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  font-family: var(--font-clock);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: rgba(158,255,170,.55);
+}
+[data-theme="skeuo"] .pill.is-active {
+  background: transparent;
+  color: #9EFFAA;
+  text-shadow: 0 0 8px rgba(120,255,140,.6);
+}
+
+/* Soat maydoni: doira emas, tekis oyna */
+[data-theme="skeuo"] .dial {
+  width: auto;
+  height: auto;
+  margin: 0;
+  padding: 2px 20px 10px;
+  border: 2px solid #4E4F4A;
+  border-top: 0;
+  border-bottom: 0;
+  background: linear-gradient(180deg, #17251A, #121F15);
+  box-shadow: inset 0 0 12px rgba(0,0,0,.9);
+}
+[data-theme="skeuo"] .dial .ring { display: none; }
+[data-theme="skeuo"] .dial-center {
+  position: static;
+  inset: auto;
+  display: block;
+  text-align: center;
+}
+[data-theme="skeuo"] .clock {
+  font-family: var(--font-clock);
+  font-size: 84px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #9EFFAA;
+  text-shadow: 0 0 14px rgba(120,255,140,.6);
+}
+[data-theme="skeuo"] .is-running .clock { color: #9EFFAA; }
+[data-theme="skeuo"] .dial-sub {
+  margin-top: 6px;
+  font-family: var(--font-clock);
+  font-size: 13px;
+  color: rgba(158,255,170,.75);
+}
+/* Sikl nuqtalari LCD ichidagi kichik chiroqlar */
+[data-theme="skeuo"] .cycle-dots {
+  margin: 0;
+  padding: 0 20px 10px;
+  border: 2px solid #4E4F4A;
+  border-top: 0;
+  border-bottom: 0;
+  background: linear-gradient(180deg, #121F15, #0F1A12);
+}
+[data-theme="skeuo"] .cycle-dots i {
+  border: 1px solid rgba(158,255,170,.35);
+  background: transparent;
+}
+[data-theme="skeuo"] .cycle-dots i.on {
+  background: #9EFFAA;
+  border-color: #9EFFAA;
+  box-shadow: 0 0 8px rgba(120,255,140,.7);
+}
+/* Faol vazifa — LCD ning pastki qatori */
+[data-theme="skeuo"] .active-task {
+  margin-top: 0;
+  padding: 6px 20px 14px;
+  border: 2px solid #4E4F4A;
+  border-top: 0;
+  border-radius: 0 0 12px 12px;
+  background: linear-gradient(180deg, #0F1A12, #0C160F);
+  box-shadow: inset 0 -4px 12px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.7);
+}
+[data-theme="skeuo"] .at-label {
+  font-family: var(--font-clock);
+  font-size: 11px;
+  letter-spacing: .1em;
+  color: rgba(158,255,170,.55);
+}
+[data-theme="skeuo"] .at-title {
+  font-family: var(--font-clock);
+  font-size: 14px;
+  text-transform: uppercase;
+  color: #9EFFAA;
+}
+
+/* ── Fizik tugmalar ──
+   Maketda uchta dumaloq tugma: chapda «o'tkazish», o'rtada katta qizil,
+   o'ngda «to'xtatish». Ilova tartibi boshqa (asosiy tugma birinchi),
+   shuning uchun `order` bilan qayta joylashtiriladi.
+   Yozuv tugma ichida, ikonka ostida turadi — maketda u tugma tagida,
+   lekin markupga qo'shimcha element qo'shmaslik uchun ichiga olindi. */
+
+[data-theme="skeuo"] .controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 6px 0;
+}
+[data-theme="skeuo"] .controls .btn {
+  flex-direction: column;
+  gap: 3px;
+  width: 64px;
+  height: 64px;
+  min-width: 0;
+  padding: 0;
+  border: 1px solid #6E6F6A;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 30%, #FAFAF8, #BDBEB9 70%, #9C9D98);
+  color: #3A3B36;
+  font-size: 8.5px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  text-shadow: none;
+  box-shadow: 0 6px 10px rgba(0,0,0,.4), inset 0 -3px 5px rgba(0,0,0,.2), inset 0 2px 2px #fff;
+}
+[data-theme="skeuo"] .controls .btn:hover {
+  background: radial-gradient(circle at 40% 30%, #fff, #C9CAC6 70%, #A8A9A4);
+}
+[data-theme="skeuo"] .controls .btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,.4), inset 0 3px 6px rgba(0,0,0,.35);
+}
+[data-theme="skeuo"] .controls .btn .bi { width: 20px; height: 20px; }
+[data-theme="skeuo"] .controls #btnSkip,
+[data-theme="skeuo"] .controls #lpSkip { order: 1; }
+[data-theme="skeuo"] .controls #btnMain,
+[data-theme="skeuo"] .controls #lpMain {
+  order: 2;
+  grid-column: auto;
+  width: 104px;
+  height: 104px;
+  border: 2px solid #7A1C12;
+  background: radial-gradient(circle at 40% 30%, #FF9C88, var(--accent) 55%, #9A2A1D);
+  color: #FFF6EE;
+  font-size: 10px;
+  box-shadow: 0 10px 18px rgba(0,0,0,.45),
+              inset 0 -5px 10px rgba(0,0,0,.3),
+              inset 0 3px 3px rgba(255,255,255,.5),
+              0 0 0 8px #A9AAA5,
+              0 0 0 9px #6E6F6A;
+}
+[data-theme="skeuo"] .controls #btnMain:hover,
+[data-theme="skeuo"] .controls #lpMain:hover {
+  background: radial-gradient(circle at 40% 30%, #FFB19E, #F0644F 55%, #A8331F);
+}
+[data-theme="skeuo"] .controls #btnMain .bi,
+[data-theme="skeuo"] .controls #lpMain .bi { width: 28px; height: 28px; }
+[data-theme="skeuo"] .controls #btnStop,
+[data-theme="skeuo"] .controls #lpStop { order: 3; }
+
+/* ── LCD kichik hisoblagichlar ── */
+
+[data-theme="skeuo"] .today-mini { gap: 10px; }
+[data-theme="skeuo"] .mini {
+  padding: 10px;
+  border-radius: 8px;
+  background: #1A1A18;
+  text-align: center;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.7);
+}
+[data-theme="skeuo"] .mini b {
+  font-family: var(--font-clock);
+  font-size: 24px;
+  font-weight: 400;
+  color: #FFB85C;
+  text-shadow: 0 0 8px rgba(255,170,60,.5);
+}
+[data-theme="skeuo"] .mini span {
+  font-size: 10px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #A8A28F;
+}
+
+/* ── Sana sarlavhasi: yogoch ustida krem matn ── */
+
+[data-theme="skeuo"] .dh-sub { color: #D9CCB4; font-size: 14px; }
+[data-theme="skeuo"] .dh-date {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  color: #F3E6CF;
+  text-shadow: 0 2px 2px rgba(0,0,0,.6);
+}
+[data-theme="skeuo"] .dh-warn { color: #FFB85C; }
+
+/* Tugmalar: suyak plastinka va qizil emal */
+[data-theme="skeuo"] .btn {
+  height: 46px;
+  border: 1px solid #6E1A10;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #FF8C78, var(--accent) 50%, #C23B2B);
+  color: #fff;
+  font-weight: 700;
+  text-shadow: 0 -1px 0 rgba(0,0,0,.35);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 0 4px 8px rgba(0,0,0,.5);
+}
+[data-theme="skeuo"] .btn:hover { background: linear-gradient(180deg, #FF9C88, #D2432F 50%, #A8301F); }
+[data-theme="skeuo"] .btn-ghost {
+  border-color: #1C1A18;
+  background: linear-gradient(180deg, #F4EDE0, #CFC4AE);
+  color: #2A2420;
+  text-shadow: none;
+  box-shadow: inset 0 1px 0 #fff, 0 4px 8px rgba(0,0,0,.5);
+}
+[data-theme="skeuo"] .btn-ghost:hover { background: linear-gradient(180deg, #fff, #DCD2BC); }
+[data-theme="skeuo"] .btn-mini { height: 36px; border-radius: 8px; }
+[data-theme="skeuo"] .btn-danger {
+  border-color: #6E1A10;
+  background: linear-gradient(180deg, #C23B2B, #8E2418);
+  color: #fff;
+}
+
+/* ── Xulosa: maketda kartochka emas, qatordagi yozuv ──
+   Skeuo maketida ko'rsatkichlar daftar sarlavhasining o'ng chetida
+   oddiy matn bo'lib turadi. Ilovada ular alohida blok, shuning uchun
+   yog'och ustidagi krem yozuvlar qatoriga aylantirildi. */
+
+[data-theme="skeuo"] .summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 14px;
+  padding: 0 4px;
+}
+[data-theme="skeuo"] .sum-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #D9CCB4;
+}
+[data-theme="skeuo"] .sum-item::before { display: none; }
+[data-theme="skeuo"] .sum-item .si-ico { display: none; }
+[data-theme="skeuo"] .sum-item .si-sub { display: none; }
+[data-theme="skeuo"] .sum-item .si-label {
+  order: 1;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #D9CCB4;
+}
+[data-theme="skeuo"] .sum-item b {
+  order: 2;
+  margin: 0;
+  max-width: none;
+  font-size: 15px;
+  font-weight: 700;
+  color: #F3E6CF;
+}
+[data-theme="skeuo"] .sum-item b small { font-size: 13px; color: #D9CCB4; }
+[data-theme="skeuo"] .sum-item:hover { transform: none; }
+
+/* ── Kun tartibi: chiziqli daftar ──
+   Uch qavat: qog'oz (`.plan-card`), tikuv chizig'i (`::before`) va
+   qizil hoshiya (`::after`). Chiziqlar `repeating-linear-gradient`
+   bilan `.task-list` ga tushadi. */
+
+[data-theme="skeuo"] .plan-card {
+  position: relative;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: #FBF7EE;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,.55),
+              0 2px 0 #E8E1D1,
+              0 4px 0 #D9D0BD,
+              0 6px 0 #CBC1AC;
+}
+/* Tikuv chizig'i — teshiklari bilan */
+[data-theme="skeuo"] .plan-card::before {
+  content: "";
+  display: block;
+  height: 44px;
+  background:
+    radial-gradient(circle at 10% 50%, #FBF7EE 0 7px, transparent 7px),
+    radial-gradient(circle at 26% 50%, #FBF7EE 0 7px, transparent 7px),
+    radial-gradient(circle at 42% 50%, #FBF7EE 0 7px, transparent 7px),
+    radial-gradient(circle at 58% 50%, #FBF7EE 0 7px, transparent 7px),
+    radial-gradient(circle at 74% 50%, #FBF7EE 0 7px, transparent 7px),
+    radial-gradient(circle at 90% 50%, #FBF7EE 0 7px, transparent 7px),
+    linear-gradient(180deg, #3A3A38, #242422);
+}
+/* Qizil hoshiya chizig'i */
+[data-theme="skeuo"] .plan-card::after {
+  content: "";
+  position: absolute;
+  left: 76px;
+  top: 44px;
+  bottom: 0;
+  width: 2px;
+  background: rgba(214,80,70,.55);
+  pointer-events: none;
+}
+[data-theme="skeuo"] .day-setup {
+  margin: 14px 32px 0 100px;
+  padding: 10px 14px;
+  border: 1px dashed #C9BFA8;
+  border-radius: 4px;
+  background: rgba(201,216,234,.14);
+}
+[data-theme="skeuo"] .plan-wrap { padding: 4px 32px 0 100px; }
+[data-theme="skeuo"] .timeline-wrap { padding: 0 32px 18px 100px; }
+[data-theme="skeuo"] .list-head h3 {
+  font-family: var(--font-hand);
+  font-size: 32px;
+  font-weight: 700;
+  color: #2A2A6E;
+}
+[data-theme="skeuo"] .lh-count,
+[data-theme="skeuo"] .lh-prog { font-size: 13px; color: #5E554A; }
+[data-theme="skeuo"] .lh-prog b { color: #2A2420; }
+[data-theme="skeuo"] .day-bar {
+  height: 10px;
+  border-radius: 2px;
+  background: #EDE6D6;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,.25);
+}
+[data-theme="skeuo"] .day-bar > i {
+  border-radius: 2px;
+  background: linear-gradient(180deg, var(--accent), #B63A2C);
+}
+
+/* Daftar chiziqlari va qo'lyozma vazifalar */
+[data-theme="skeuo"] .task-list {
+  gap: 0;
+  background: repeating-linear-gradient(180deg,
+    transparent 0px, transparent 55px, #C9D8EA 55px, #C9D8EA 56px);
+}
+[data-theme="skeuo"] .task {
+  gap: 16px;
+  min-height: 56px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+[data-theme="skeuo"] .task:hover { transform: none; background: rgba(255,230,90,.10); }
+[data-theme="skeuo"] .t-title {
+  font-family: var(--font-hand);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.1;
+  color: #2A2A6E;
+}
+/* Faol vazifa sariq marker bilan chizilgan */
+[data-theme="skeuo"] .task.is-active { box-shadow: none; }
+[data-theme="skeuo"] .task.is-active .t-title {
+  background: linear-gradient(180deg,
+    transparent 55%, rgba(255,230,90,.75) 55%, rgba(255,230,90,.75) 90%, transparent 90%);
+}
+/* Bajarilgan vazifa qizil chiziq bilan o'chirilgan */
+[data-theme="skeuo"] .task.is-done { opacity: 1; }
+[data-theme="skeuo"] .task.is-done .t-title {
+  color: #7A7466;
+  text-decoration: line-through;
+  text-decoration-color: #B63A2C;
+  text-decoration-thickness: 2px;
+}
+[data-theme="skeuo"] .t-grip { color: #B3A992; }
+[data-theme="skeuo"] .t-meta { color: #5E554A; }
+[data-theme="skeuo"] .chip {
+  border: 1px solid #D6CDB8;
+  border-radius: 3px;
+  background: rgba(201,216,234,.18);
+  color: #5E554A;
+  font-weight: 600;
+}
+[data-theme="skeuo"] .t-pomos i {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1.5px dashed #9A8F80;
+  background: transparent;
+  box-sizing: border-box;
+}
+[data-theme="skeuo"] .t-pomos i.on {
+  border: 0;
+  background: radial-gradient(circle at 35% 30%, #FF8A6E, var(--accent));
+  box-shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+[data-theme="skeuo"] .t-btn {
+  border: 1px solid #C9BFA8;
+  border-radius: 4px;
+  background: linear-gradient(180deg, #F4EDE0, #DCD2BC);
+  color: #5E554A;
+}
+
+/* ── Kartalar: boshqa bo'limlarda ham qog'oz ── */
+
+[data-theme="skeuo"] .card {
+  border: 1px solid #D6CDB8;
+  border-radius: 6px;
+  background: #FBF7EE;
+  box-shadow: 0 16px 32px rgba(0,0,0,.45), 0 2px 0 #E8E1D1, 0 4px 0 #D9D0BD;
+}
+[data-theme="skeuo"] .sec-title,
+[data-theme="skeuo"] .card-head h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: #2A2420;
+}
+
+/* ── Statistika: LCD va katakli qog'oz ── */
+
+[data-theme="skeuo"] .seg {
+  padding: 3px;
+  border: 0;
+  border-radius: 8px;
+  background: #111;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,.8), 0 1px 0 rgba(255,255,255,.1);
+}
+[data-theme="skeuo"] .seg button {
+  border-radius: 6px;
+  color: #D9CCB4;
+  font-weight: 600;
+}
+[data-theme="skeuo"] .seg button.is-active {
+  background: linear-gradient(180deg, #F4EDE0, #CFC4AE);
+  color: #2A2420;
+  box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(0,0,0,.6);
+}
+[data-theme="skeuo"] .kpi {
+  border: 1px solid #4E4F4A;
+  border-radius: 8px;
+  background: #1A1A18;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.7);
+}
+[data-theme="skeuo"] .kpi .kpi-val {
+  font-family: var(--font-clock);
+  font-weight: 400;
+  color: #FFB85C;
+  text-shadow: 0 0 8px rgba(255,170,60,.5);
+}
+[data-theme="skeuo"] .kpi .kpi-lbl,
+[data-theme="skeuo"] .kpi .kpi-sub {
+  color: #A8A28F;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+/* Grafiklar katakli qog'ozda */
+[data-theme="skeuo"] .chart {
+  background:
+    repeating-linear-gradient(90deg, transparent 0 23px, rgba(201,216,234,.5) 23px 24px),
+    repeating-linear-gradient(180deg, transparent 0 23px, rgba(201,216,234,.5) 23px 24px);
+  border: 1px solid #D6CDB8;
+  border-radius: 3px;
+}
+
+/* ── Modallar: qog'oz varaq ── */
+
+[data-theme="skeuo"] .modal,
+[data-theme="skeuo"] .modal-box {
+  border: 1px solid #C9BFA8;
+  border-radius: 6px;
+  background: #FBF7EE;
+  box-shadow: 0 24px 48px rgba(0,0,0,.6), 0 2px 0 #E8E1D1, 0 4px 0 #D9D0BD;
+}
+
+/* ── Profil / sozlamalar ── */
+
+[data-theme="skeuo"] .rail-item {
+  border-radius: 6px;
+  color: #D9CCB4;
+  font-weight: 600;
+  text-shadow: 0 -1px 0 #000;
+}
+[data-theme="skeuo"] .rail-item.is-active {
+  background: linear-gradient(180deg, #F4EDE0, #CFC4AE);
+  color: #2A2420;
+  text-shadow: none;
+  box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(0,0,0,.6);
+}
+[data-theme="skeuo"] .rail-lbl { color: #A8A28F; }
+[data-theme="skeuo"] input,
+[data-theme="skeuo"] select,
+[data-theme="skeuo"] textarea,
+[data-theme="skeuo"] output {
+  border: 1px solid #9A8F80;
+  border-radius: 3px;
+  background: #FFFDF7;
+  color: #2A2420;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,.18);
+}
+[data-theme="skeuo"] input[type="checkbox"] { accent-color: #2FAE3A; }
+[data-theme="skeuo"] .theme-card {
+  border: 1px solid #C9BFA8;
+  border-radius: 4px;
+  background: #FBF7EE;
+  color: #2A2420;
+}
+[data-theme="skeuo"] .theme-card[aria-pressed="true"] { border-color: var(--accent); }
+[data-theme="skeuo"] .theme-note { color: #5E554A; }
+
+/* ── Taqdimot sahifasi ── */
+
+[data-theme="skeuo"] .lp-top {
+  border: 1px solid #0D0C0B;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #2E2A27, #1C1A18);
+  color: #F3E6CF;
+  box-shadow: 0 8px 18px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.12);
+  outline: 1px dashed rgba(243,230,207,.3);
+  outline-offset: -7px;
+}
+[data-theme="skeuo"] .lp-badge {
+  border: 1px solid rgba(243,230,207,.28);
+  background: rgba(243,230,207,.1);
+  color: #F3E6CF;
+}
+[data-theme="skeuo"] .lp-try,
+[data-theme="skeuo"] .lp-feat,
+[data-theme="skeuo"] .lp-cta {
+  border: 1px solid #D6CDB8;
+  border-radius: 6px;
+  background: #FBF7EE;
+  color: #2A2420;
+  box-shadow: 0 16px 32px rgba(0,0,0,.45), 0 2px 0 #E8E1D1, 0 4px 0 #D9D0BD;
+}
+[data-theme="skeuo"] .lp-feat b {
+  border: 1px solid #C9BFA8;
+  border-radius: 4px;
+  background: rgba(201,216,234,.2);
+  color: var(--accent);
+}
+[data-theme="skeuo"] .lp-feat span { color: #5E554A; }
+[data-theme="skeuo"] .lp-hero-text h1,
+[data-theme="skeuo"] .lp-sec-head h2 {
+  font-family: var(--font-display);
+  color: #F3E6CF;
+  text-shadow: 0 2px 3px rgba(0,0,0,.6);
+}
+[data-theme="skeuo"] .lp-lead,
+[data-theme="skeuo"] .lp-sec-head p,
+[data-theme="skeuo"] .lp-foot { color: #D9CCB4; }
+[data-theme="skeuo"] .lp-cta h2 { color: #2A2420; text-shadow: none; }
+[data-theme="skeuo"] .lp-foot { border-top: 1px solid rgba(243,230,207,.2); }
+[data-theme="skeuo"] .lp-demo {
+  border: 1px solid #7C7D78;
+  border-radius: 22px;
+  background: linear-gradient(180deg, #E9E9E6 0%, #C9CAC6 48%, #B8B9B4 52%, #D6D7D3 100%);
+  box-shadow: 0 24px 40px rgba(0,0,0,.55), inset 0 1px 0 #fff, inset 0 -2px 0 rgba(0,0,0,.15);
+}
+[data-theme="skeuo"] .lp-note { color: #55564F; }
+[data-theme="skeuo"] .lp-note b { color: #2A2420; }
+
+/* ── Hisobot: rasmiy blanka va dumaloq muhr ──
+   Maketda hisobot varaqning o'ng yuqori burchagida ikki chiziqli
+   dumaloq muhr turadi: REJA / N% / BAJARILDI. Foiz `--reja-pct`
+   orqali keladi (features.js uni hisobot yuklanganda qo'yadi);
+   o'zgaruvchi bo'lmasa muhr umuman chizilmaydi. */
+
+[data-theme="skeuo"] #repKpi { position: relative; }
+[data-theme="skeuo"] #repKpi::after {
+  content: "REJA " var(--reja-pct, "") " BAJARILDI";
+  position: absolute;
+  right: -8px;
+  top: -84px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 120px;
+  padding: 0 14px;
+  border: 3px double var(--accent);
+  border-radius: 50%;
+  color: var(--accent);
+  font-family: var(--font-label);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  line-height: 1.5;
+  text-align: center;
+  opacity: .8;
+  transform: rotate(-8deg);
+  pointer-events: none;
+}
+/* Muhr sarlavha ustiga chiqmasin: tor ekranda o'chiriladi */
+@media (max-width: 1100px) {
+  [data-theme="skeuo"] #repKpi::after { display: none; }
+}
+
+/* Qo'lda kiritilgan pomodorolar haqidagi eslatma — sariq marker */
+[data-theme="skeuo"] #viewNote {
+  padding: 10px 14px;
+  background: rgba(255,230,90,.45);
+  font-family: var(--font-hand);
+  font-size: 22px;
+  font-weight: 700;
+  color: #5E4508;
+  transform: rotate(-.5deg);
+}
+
+/* ── Tarix ── */
+
+[data-theme="skeuo"] .export-bar .btn { height: 42px; }
+[data-theme="skeuo"] #expJson,
+[data-theme="skeuo"] #expCsv,
+[data-theme="skeuo"] .export-bar .file-btn {
+  border: 1px solid #1C1A18;
+  background: linear-gradient(180deg, #F4EDE0, #CFC4AE);
+  color: #2A2420;
+  text-shadow: none;
+  box-shadow: inset 0 1px 0 #fff, 0 4px 8px rgba(0,0,0,.5);
+}
+
+/* ── Kirish sahifasi ── */
+
+[data-theme="skeuo"] .auth-body { color: #F3E6CF; }
+[data-theme="skeuo"] .auth-brand,
+[data-theme="skeuo"] .auth-side h1 {
+  font-family: var(--font-display);
+  color: #F3E6CF;
+  text-shadow: 0 2px 3px rgba(0,0,0,.6);
+}
+[data-theme="skeuo"] .auth-card,
+[data-theme="skeuo"] .auth-box {
+  border: 1px solid #D6CDB8;
+  border-radius: 6px;
+  background: #FBF7EE;
+  color: #2A2420;
+  box-shadow: 0 20px 40px rgba(0,0,0,.55), 0 2px 0 #E8E1D1, 0 4px 0 #D9D0BD;
+}

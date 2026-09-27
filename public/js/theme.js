@@ -33,7 +33,11 @@ export const THEMES = [
     name: 'Skeuomorphism',
     note: 'Yog\'och stol, qog\'oz daftar, LCD taymer',
     preview: 'tp-skeuo',
-    fonts: 'family=Libre+Baskerville:wght@400;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=Share+Tech+Mono'
+    fonts: 'family=Libre+Baskerville:wght@400;700'
+           + '&family=IBM+Plex+Sans:wght@400;500;600;700'
+           + '&family=IBM+Plex+Mono:wght@500;600'
+           + '&family=Share+Tech+Mono'
+           + '&family=Caveat:wght@600;700'
   },
   {
     id: 'neu',

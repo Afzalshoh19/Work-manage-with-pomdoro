@@ -216,6 +216,13 @@ export async function loadReport() {
   const { report } = await C.guard(() => api.report(reportOpts()));
   const s = report.summary;
 
+  // Skeuo uslubidagi dumaloq muhr uchun foiz. Bu yangi ma'lumot emas —
+  // o'sha `planPercent` pastdagi kartochkada ham ko'rinadi; shunchaki
+  // `themes.css` dagi `content:` unga yeta olsin deb o'zgaruvchiga
+  // qo'yiladi. Boshqa uslublarda muhr chizilmaydi va o'zgaruvchi
+  // ishlatilmay qoladi.
+  $('repKpi').style.setProperty('--reja-pct', `"${s.planPercent}%"`);
+
   $('repKpi').innerHTML = `
     <div class="kpi a"><div class="kpi-val">${s.completedPomodoros}${s.plannedPomodoros ? `/${s.plannedPomodoros}` : ''}</div>
       <div class="kpi-lbl">Pomodorolar</div><div class="kpi-sub">Reja: ${s.planPercent}%</div></div>
