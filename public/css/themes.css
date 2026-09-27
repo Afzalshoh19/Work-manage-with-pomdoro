@@ -25,6 +25,7 @@
   --font: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
   --font-display: var(--font);
   --font-clock: var(--font);
+  --accent-ink: var(--accent);   /* aksent MATNI — fonga qarab quyuqroq */
   --font-hand: var(--font);      /* qo'lyozma — faqat skeuo'da boshqacha */
   --font-label: var(--font);     /* qurilma yorliqlari — faqat skeuo'da */
   --w-normal: 400;
@@ -204,9 +205,15 @@ h1, h2, h3, .clock { font-family: var(--font-display); }
   --line-2: transparent;
   --txt: #2E3647;
   --txt-2: #56607A;
-  --txt-3: #6B7590;
+  /* Topshiriqda aniq yozilgan: ikkinchi darajali matn #56607A dan
+     ochroq bo'lmasin. Neumorfizmda chegara chizig'i yo'q, shuning
+     uchun kontrast yagona ajratgich bo'lib qoladi. */
+  --txt-3: #56607A;
   --accent: #E8594C;
   --accent-2: #D14A3E;
+  /* Och fonda #E8594C matn uchun juda och: 3.1:1 beradi. Maketda
+     yozuvlar uchun quyuqroq tus ishlatilgan — u 4.9:1. */
+  --accent-ink: #B8372B;
   --green: #2FA37A;
   --blue: #5B7CF0;
   --amber: #E0A030;
@@ -225,44 +232,6 @@ h1, h2, h3, .clock { font-family: var(--font-display); }
   color-scheme: light;
 }
 
-[data-theme="neu"] .card { border: 0; }
-[data-theme="neu"] .topbar {
-  background: var(--bg); border-bottom: 0; backdrop-filter: none;
-  box-shadow: 0 8px 20px rgba(194,200,210,.5);
-}
-[data-theme="neu"] .tabs { border: 0; border-radius: 20px; background: var(--bg); box-shadow: var(--inset); }
-[data-theme="neu"] .tab { border-radius: 15px; font-weight: var(--w-mid); }
-[data-theme="neu"] .tab.is-active { background: var(--bg); color: var(--accent); box-shadow: var(--raise); }
-[data-theme="neu"] .icon-btn { border: 0; box-shadow: var(--raise); }
-[data-theme="neu"] .btn {
-  border: 0; border-radius: 16px; background: var(--bg); color: var(--accent);
-  font-weight: var(--w-bold); box-shadow: var(--raise);
-}
-[data-theme="neu"] .btn:hover { background: var(--bg); box-shadow: var(--inset); }
-[data-theme="neu"] .btn:active { transform: none; box-shadow: var(--inset); }
-/* Asosiy amal tugmasi rangli bo'lib qolsin — aks holda hammasi bir xil ko'rinadi */
-[data-theme="neu"] .btn-primary,
-[data-theme="neu"] .controls #btnMain {
-  background: var(--accent); color: #fff;
-  box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF,
-              inset 3px 3px 6px rgba(255,255,255,.3), inset -4px -4px 8px rgba(0,0,0,.15);
-}
-[data-theme="neu"] .btn-ghost { background: var(--bg); color: var(--txt-2); }
-[data-theme="neu"] .mode-pills { background: var(--bg); border-radius: 18px; box-shadow: var(--inset); }
-[data-theme="neu"] .pill { border-radius: 13px; font-weight: var(--w-mid); }
-[data-theme="neu"] .pill.is-active { background: var(--bg); color: var(--accent); box-shadow: var(--raise); }
-[data-theme="neu"] .mini { border-radius: 20px; box-shadow: var(--raise); }
-[data-theme="neu"] .active-task { border: 0; border-radius: 18px; box-shadow: var(--inset); }
-[data-theme="neu"] .add-form { border: 0; border-radius: 22px; box-shadow: var(--inset); }
-[data-theme="neu"] input,
-[data-theme="neu"] select,
-[data-theme="neu"] textarea { border: 0; border-radius: 14px; box-shadow: var(--inset); }
-[data-theme="neu"] input:focus,
-[data-theme="neu"] select:focus { box-shadow: var(--inset), 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
-[data-theme="neu"] .clock { font-weight: var(--w-mid); }
-[data-theme="neu"] .ring-bg { stroke: #D3D9E3; }
-[data-theme="neu"] .cycle-dots i { border: 0; background: var(--bg); box-shadow: var(--inset); }
-[data-theme="neu"] .cycle-dots i.on { background: var(--accent); box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 55%, transparent); }
 
 
 /* ═══════════════════════════════════════════════════════════════
@@ -383,11 +352,6 @@ body, .topbar, .card, .mini, .tabs, .tab, .btn, .pill,
    ═══════════════════════════════════════════════════════════════ */
 
 
-[data-theme="neu"] .lp-try,
-[data-theme="neu"] .lp-feat,
-[data-theme="neu"] .lp-cta { border: 0; border-radius: 24px; box-shadow: var(--raise); }
-[data-theme="neu"] .lp-feat:hover { box-shadow: var(--inset); transform: none; }
-[data-theme="neu"] .lp-foot { border-top: 0; }
 
 /* Yuqori qator endi panel: skeuo'da u ilovadagi kabi qora yog'och
    ustidagi metall lavha bo'ladi, aks holda krem fonda krem matn qolardi */
@@ -424,8 +388,6 @@ body, .topbar, .card, .mini, .tabs, .tab, .btn, .pill,
    esa shakl beradi. Rangli yoyilma soyalarni yo'q qilib yuboradi. */
 [data-theme="neu"] .lp-body { background: var(--bg); }
 
-[data-theme="neu"] .lp-top { border: 0; box-shadow: var(--raise); }
-[data-theme="neu"] .lp-badge { border: 0; box-shadow: var(--inset); }
 
 
 /* ═══════════════════════════════════════════════════════════════
@@ -2043,3 +2005,600 @@ body, .topbar, .card, .mini, .tabs, .tab, .btn, .pill,
   color: #2A2420;
   box-shadow: 0 20px 40px rgba(0,0,0,.55), 0 2px 0 #E8E1D1, 0 4px 0 #D9D0BD;
 }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   NEUMORPHISM — maketga aniq moslash                       (4/4)
+
+   Qiymatlar design/neu/ papkasidagi maketlardan olingan.
+   Butun uslub BITTA qoidaga quriladi:
+
+       faol holat  = ichiga botgan (inset)
+       nofaol      = bo'rtib chiqqan (raise)
+
+   Fon, karta va tugma — hammasi bir xil rangda (#E4E8EF); shakl
+   faqat qo'shaloq soyadan chiqadi: pastdan quyuq #C2C8D2,
+   yuqoridan oq #FFFFFF. Chegara chizig'i umuman yo'q, shuning
+   uchun kontrast pasayib ketmasligi kerak: matn #2E3647, ikkinchi
+   darajali #56607A — bulardan ochroq qilinmaydi.
+
+   Aksent faqat uchta joyda: asosiy tugma, taymer yoyi va progress.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Yuqori qator ── */
+
+[data-theme="neu"] .topbar {
+  width: calc(100% - 44px);
+  max-width: 1360px;
+  margin: 14px auto 0;
+  height: 68px;
+  border-bottom: 0;
+  background: var(--bg);
+  backdrop-filter: none;
+  box-shadow: none;
+}
+[data-theme="neu"] .brand-mark {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: var(--bg);
+  color: var(--accent);
+  box-shadow: var(--raise);
+}
+[data-theme="neu"] .brand-mark svg { width: 22px; height: 22px; }
+[data-theme="neu"] .brand strong { font-size: 20px; font-weight: 800; letter-spacing: -.01em; }
+
+/* Yorliqlar: botgan idish, faol yorliq bo'rtib chiqqan */
+[data-theme="neu"] .tabs {
+  gap: 6px;
+  padding: 6px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--bg);
+  box-shadow: var(--inset);
+}
+[data-theme="neu"] .tab {
+  padding: 11px 22px;
+  border-radius: 15px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--txt-2);
+}
+[data-theme="neu"] .tab.is-active {
+  background: var(--bg);
+  color: var(--accent-ink);
+  font-weight: 800;
+  box-shadow: var(--raise);
+}
+[data-theme="neu"] .user-btn {
+  gap: 12px;
+  padding: 6px 16px 6px 6px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--bg);
+  color: var(--txt);
+  font-weight: 700;
+  box-shadow: var(--raise);
+}
+[data-theme="neu"] .user-btn .avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 14px;
+  background: var(--bg);
+  color: var(--txt-2);
+  font-weight: 800;
+  box-shadow: inset 3px 3px 6px #C2C8D2, inset -3px -3px 6px #FFFFFF;
+}
+[data-theme="neu"] .icon-btn {
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 14px;
+  background: var(--bg);
+  color: var(--txt-2);
+  box-shadow: 5px 5px 10px #C2C8D2, -5px -5px 10px #FFFFFF;
+}
+[data-theme="neu"] .icon-btn:hover { background: var(--bg); box-shadow: var(--inset); }
+
+/* ── Kartalar ── */
+
+[data-theme="neu"] .card {
+  border: 0;
+  border-radius: 32px;
+  padding: 24px;
+  box-shadow: 12px 12px 24px #C2C8D2, -12px -12px 24px #FFFFFF;
+}
+[data-theme="neu"] .timer-card {
+  border-radius: 36px;
+  padding: 28px;
+  box-shadow: 14px 14px 28px #C2C8D2, -14px -14px 28px #FFFFFF;
+}
+
+/* ── Rejim tugmalari ── */
+
+[data-theme="neu"] .mode-pills {
+  gap: 6px;
+  padding: 6px;
+  border-radius: 18px;
+  background: var(--bg);
+  box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF;
+}
+[data-theme="neu"] .pill {
+  padding: 11px 0;
+  border-radius: 13px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--txt-2);
+}
+[data-theme="neu"] .pill.is-active {
+  background: var(--bg);
+  color: var(--accent-ink);
+  font-weight: 800;
+  box-shadow: 4px 4px 8px #C2C8D2, -4px -4px 8px #FFFFFF;
+}
+
+/* ── Taymer: uch qavat ──
+   bo'rtiq disk -> ichiga botgan halqa -> markazda yana bo'rtiq disk.
+   Aksent yoy SVG ustida qoladi. */
+
+[data-theme="neu"] .dial {
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  background: var(--bg);
+  box-shadow: 14px 14px 28px #C2C8D2, -14px -14px 28px #FFFFFF;
+}
+/* Botgan halqa */
+[data-theme="neu"] .dial::before {
+  content: "";
+  position: absolute;
+  inset: 30px;
+  border-radius: 50%;
+  background: var(--bg);
+  box-shadow: inset 10px 10px 20px #C2C8D2, inset -10px -10px 20px #FFFFFF;
+}
+[data-theme="neu"] .ring { position: relative; z-index: 1; }
+[data-theme="neu"] .ring-bg { stroke: transparent; }
+[data-theme="neu"] .ring-fg { stroke-width: 10; }
+/* Markazdagi bo'rtiq disk */
+[data-theme="neu"] .dial-center {
+  inset: 60px;
+  z-index: 2;
+  border-radius: 50%;
+  background: var(--bg);
+  box-shadow: 8px 8px 16px #C2C8D2, -8px -8px 16px #FFFFFF;
+}
+[data-theme="neu"] .clock {
+  font-size: 50px;
+  font-weight: 700;
+  letter-spacing: -.03em;
+  color: var(--txt);
+}
+[data-theme="neu"] .is-running .clock { color: var(--txt); }
+[data-theme="neu"] .dial-sub { font-size: 13px; font-weight: 600; color: var(--txt-2); }
+[data-theme="neu"] .cycle-dots i {
+  border: 0;
+  background: var(--bg);
+  box-shadow: inset 2px 2px 4px #C2C8D2, inset -2px -2px 4px #FFFFFF;
+}
+[data-theme="neu"] .cycle-dots i.on {
+  background: var(--accent);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+/* ── Faol vazifa: botgan ── */
+
+[data-theme="neu"] .active-task {
+  border: 0;
+  border-radius: 20px;
+  padding: 14px 18px;
+  background: var(--bg);
+  box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF;
+}
+[data-theme="neu"] .at-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  color: var(--txt-2);
+}
+[data-theme="neu"] .at-title { font-size: 16px; font-weight: 800; }
+
+/* ── Boshqaruv tugmalari: dumaloq 58 / 84 / 58 ── */
+
+[data-theme="neu"] .controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+}
+[data-theme="neu"] .controls .btn {
+  flex-direction: column;
+  gap: 2px;
+  width: 58px;
+  height: 58px;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--bg);
+  color: var(--txt-2);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  text-transform: uppercase;
+  box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF;
+}
+[data-theme="neu"] .controls .btn:hover { background: var(--bg); box-shadow: var(--inset); }
+[data-theme="neu"] .controls .btn:active { transform: none; box-shadow: var(--inset); }
+[data-theme="neu"] .controls .btn .bi { width: 18px; height: 18px; }
+[data-theme="neu"] .controls #btnSkip,
+[data-theme="neu"] .controls #lpSkip { order: 1; }
+[data-theme="neu"] .controls #btnMain,
+[data-theme="neu"] .controls #lpMain {
+  order: 2;
+  grid-column: auto;
+  width: 84px;
+  height: 84px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 9px;
+  box-shadow: 8px 8px 16px #C2C8D2,
+              -8px -8px 16px #FFFFFF,
+              inset 3px 3px 6px rgba(255,255,255,.35),
+              inset -4px -4px 8px rgba(0,0,0,.15);
+}
+[data-theme="neu"] .controls #btnMain:hover,
+[data-theme="neu"] .controls #lpMain:hover { background: var(--accent-2); }
+[data-theme="neu"] .controls #btnMain .bi,
+[data-theme="neu"] .controls #lpMain .bi { width: 26px; height: 26px; }
+[data-theme="neu"] .controls #btnStop,
+[data-theme="neu"] .controls #lpStop { order: 3; }
+
+/* ── Umumiy tugmalar ── */
+
+[data-theme="neu"] .btn {
+  height: 48px;
+  border: 0;
+  border-radius: 16px;
+  background: var(--bg);
+  color: var(--txt);
+  font-weight: 700;
+  box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF;
+}
+[data-theme="neu"] .btn:hover { background: var(--bg); box-shadow: var(--inset); }
+[data-theme="neu"] .btn:active { transform: none; box-shadow: var(--inset); }
+[data-theme="neu"] .btn-ghost { background: var(--bg); color: var(--txt-2); }
+/* Maketda «asosiy» tugma ham bir xil yuzada, faqat matni aksent rangida */
+[data-theme="neu"] .btn-primary,
+[data-theme="neu"] .dh-actions .btn:not(.btn-ghost) {
+  background: var(--bg);
+  color: var(--accent-ink);
+  font-weight: 800;
+}
+[data-theme="neu"] .btn-mini { height: 38px; border-radius: 13px; }
+[data-theme="neu"] .btn-danger {
+  background: var(--bg);
+  color: var(--accent-ink);
+  box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF;
+}
+[data-theme="neu"] .btn-danger:hover { background: var(--accent); color: #fff; }
+
+/* ── Sana sarlavhasi ── */
+
+[data-theme="neu"] .dh-sub { font-size: 13px; font-weight: 600; color: var(--txt-2); }
+[data-theme="neu"] .dh-date { font-size: 30px; font-weight: 800; letter-spacing: -.02em; }
+
+/* ── Xulosa kartochkalari ── */
+
+[data-theme="neu"] .summary { gap: 22px; }
+[data-theme="neu"] .sum-item {
+  display: flex;
+  flex-direction: column;
+  border: 0;
+  border-radius: 24px;
+  padding: 18px 20px;
+  background: var(--bg);
+  box-shadow: 8px 8px 16px #C2C8D2, -8px -8px 16px #FFFFFF;
+}
+[data-theme="neu"] .sum-item::before { display: none; }
+[data-theme="neu"] .sum-item .si-ico { display: none; }
+[data-theme="neu"] .sum-item .si-label {
+  order: 1;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--txt-2);
+}
+[data-theme="neu"] .sum-item b {
+  order: 2;
+  margin-top: 6px;
+  max-width: 100%;
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--txt);
+}
+[data-theme="neu"] .sum-item b small { font-size: 18px; color: var(--txt-2); }
+[data-theme="neu"] .sum-item .si-sub {
+  order: 3;
+  margin-top: 6px;
+  font-size: 11.5px;
+  color: var(--txt-2);
+}
+[data-theme="neu"] .sum-item:hover { transform: none; }
+
+/* ── Kun bajarilishi ── */
+
+[data-theme="neu"] .lh-prog { font-size: 13px; font-weight: 700; color: var(--txt-2); }
+[data-theme="neu"] .lh-prog b { color: var(--txt); }
+[data-theme="neu"] .day-bar {
+  height: 14px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--bg);
+  box-shadow: inset 3px 3px 6px #C2C8D2, inset -3px -3px 6px #FFFFFF;
+}
+[data-theme="neu"] .day-bar > i { border-radius: 8px; background: var(--accent); }
+
+/* ── Vazifa qatorlari ──
+   Faol qator botgan, qolganlari bo'rtib chiqqan. */
+
+[data-theme="neu"] .task {
+  gap: 14px;
+  padding: 14px 18px;
+  border: 0;
+  border-radius: 20px;
+  background: var(--bg);
+  box-shadow: 5px 5px 10px #C2C8D2, -5px -5px 10px #FFFFFF;
+}
+[data-theme="neu"] .task:hover { transform: none; }
+[data-theme="neu"] .task.is-active {
+  box-shadow: inset 5px 5px 10px #C2C8D2, inset -5px -5px 10px #FFFFFF;
+}
+[data-theme="neu"] .task.is-done { opacity: 1; }
+[data-theme="neu"] .task.is-done .t-title { color: var(--txt-2); }
+[data-theme="neu"] .t-title { font-size: 15px; font-weight: 700; }
+[data-theme="neu"] .task.is-active .t-title { font-weight: 800; }
+[data-theme="neu"] .t-meta { color: var(--txt-2); }
+[data-theme="neu"] .t-grip { color: var(--txt-3); }
+[data-theme="neu"] .chip {
+  border: 0;
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--txt-2);
+  font-weight: 600;
+  box-shadow: inset 2px 2px 4px #C2C8D2, inset -2px -2px 4px #FFFFFF;
+}
+[data-theme="neu"] .t-btn {
+  border: 0;
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--txt-2);
+  box-shadow: 3px 3px 6px #C2C8D2, -3px -3px 6px #FFFFFF;
+}
+[data-theme="neu"] .t-btn:hover { box-shadow: var(--inset); }
+
+/* ── Forma elementlari: hammasi botgan ── */
+
+[data-theme="neu"] input,
+[data-theme="neu"] select,
+[data-theme="neu"] textarea,
+[data-theme="neu"] output {
+  border: 0;
+  border-radius: 14px;
+  background: var(--bg);
+  color: var(--txt);
+  box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF;
+}
+[data-theme="neu"] input:focus,
+[data-theme="neu"] select:focus {
+  box-shadow: inset 4px 4px 8px #C2C8D2,
+              inset -4px -4px 8px #FFFFFF,
+              0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+[data-theme="neu"] input[type="range"] { box-shadow: none; accent-color: var(--accent); }
+[data-theme="neu"] .add-form {
+  border: 0;
+  border-radius: 22px;
+  background: var(--bg);
+  box-shadow: var(--inset);
+}
+[data-theme="neu"] .mini {
+  border-radius: 20px;
+  background: var(--bg);
+  box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF;
+}
+[data-theme="neu"] .mini b { color: var(--txt); }
+[data-theme="neu"] .mini span { color: var(--txt-2); }
+[data-theme="neu"] .day-setup {
+  border: 0;
+  border-radius: 22px;
+  background: var(--bg);
+  box-shadow: var(--inset);
+}
+
+/* ── Statistika ── */
+
+[data-theme="neu"] .seg {
+  gap: 6px;
+  padding: 6px;
+  border-radius: 18px;
+  background: var(--bg);
+  box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #FFFFFF;
+}
+[data-theme="neu"] .seg button {
+  border-radius: 13px;
+  font-weight: 700;
+  color: var(--txt-2);
+}
+[data-theme="neu"] .seg button.is-active {
+  background: var(--bg);
+  color: var(--accent-ink);
+  font-weight: 800;
+  box-shadow: 4px 4px 8px #C2C8D2, -4px -4px 8px #FFFFFF;
+}
+[data-theme="neu"] .kpi {
+  display: flex;
+  flex-direction: column;
+  border: 0;
+  border-radius: 24px;
+  padding: 18px 20px;
+  background: var(--bg);
+  box-shadow: 8px 8px 16px #C2C8D2, -8px -8px 16px #FFFFFF;
+}
+[data-theme="neu"] .kpi .kpi-lbl {
+  order: 1;
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--txt-2);
+}
+[data-theme="neu"] .kpi .kpi-val {
+  order: 2;
+  margin-top: 6px;
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--txt);
+}
+[data-theme="neu"] .kpi .kpi-sub {
+  order: 3;
+  margin-top: 4px;
+  color: var(--txt-2);
+}
+[data-theme="neu"] .bar {
+  height: 14px;
+  padding: 3px;
+  border-radius: 10px;
+  background: var(--bg);
+  box-shadow: inset 3px 3px 6px #C2C8D2, inset -3px -3px 6px #FFFFFF;
+}
+[data-theme="neu"] .bar > i { border-radius: 8px; background: var(--accent); }
+
+/* ── Modallar ── */
+
+[data-theme="neu"] .modal,
+[data-theme="neu"] .modal-box {
+  border: 0;
+  border-radius: 32px;
+  background: var(--bg);
+  box-shadow: 16px 16px 32px #C2C8D2, -16px -16px 32px #FFFFFF;
+}
+
+/* ── Profil / sozlamalar ── */
+
+[data-theme="neu"] .rail-item {
+  border-radius: 15px;
+  font-weight: 700;
+  color: var(--txt-2);
+}
+[data-theme="neu"] .rail-item.is-active {
+  background: var(--bg);
+  color: var(--accent-ink);
+  font-weight: 800;
+  box-shadow: var(--raise);
+}
+[data-theme="neu"] .theme-card {
+  border: 0;
+  border-radius: 22px;
+  background: var(--bg);
+  box-shadow: var(--raise);
+}
+[data-theme="neu"] .theme-card[aria-pressed="true"] { box-shadow: var(--inset); }
+[data-theme="neu"] .theme-note { color: var(--txt-2); }
+[data-theme="neu"] .help-block,
+[data-theme="neu"] .integ {
+  border: 0;
+  border-radius: 22px;
+  background: var(--bg);
+  box-shadow: var(--inset);
+}
+[data-theme="neu"] .badge {
+  border: 0;
+  border-radius: 10px;
+  background: var(--bg);
+  color: var(--txt-2);
+  box-shadow: inset 2px 2px 4px #C2C8D2, inset -2px -2px 4px #FFFFFF;
+}
+
+/* ── Taqdimot sahifasi va kirish ── */
+
+[data-theme="neu"] .lp-body { background: var(--bg); }
+[data-theme="neu"] .lp-top {
+  border: 0;
+  border-radius: 22px;
+  background: var(--bg);
+  box-shadow: var(--raise);
+}
+[data-theme="neu"] .lp-badge {
+  border: 0;
+  background: var(--bg);
+  color: var(--txt-2);
+  font-weight: 700;
+  box-shadow: var(--inset);
+}
+[data-theme="neu"] .lp-try,
+[data-theme="neu"] .lp-feat,
+[data-theme="neu"] .lp-cta {
+  border: 0;
+  border-radius: 28px;
+  background: var(--bg);
+  box-shadow: 10px 10px 20px #C2C8D2, -10px -10px 20px #FFFFFF;
+}
+[data-theme="neu"] .lp-feat:hover { transform: none; box-shadow: var(--inset); }
+[data-theme="neu"] .lp-feat b {
+  border: 0;
+  border-radius: 16px;
+  background: var(--bg);
+  color: var(--accent-ink);
+  box-shadow: inset 3px 3px 6px #C2C8D2, inset -3px -3px 6px #FFFFFF;
+}
+[data-theme="neu"] .lp-feat span { color: var(--txt-2); }
+[data-theme="neu"] .lp-foot { border-top: 0; color: var(--txt-2); }
+[data-theme="neu"] .lp-demo {
+  background: var(--bg);
+  border-radius: 36px;
+  box-shadow: 14px 14px 28px #C2C8D2, -14px -14px 28px #FFFFFF;
+}
+[data-theme="neu"] .lp-note { color: var(--txt-2); }
+[data-theme="neu"] .lp-note b { color: var(--txt); }
+[data-theme="neu"] .auth-card,
+[data-theme="neu"] .auth-box {
+  border: 0;
+  border-radius: 32px;
+  background: var(--bg);
+  box-shadow: 16px 16px 32px #C2C8D2, -16px -16px 32px #FFFFFF;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Dumaloq asosiy tugmadagi yozuv — kontrast tuzatishi
+
+   Neu va skeuo maketlarida taymerning katta qizil tugmasi FAQAT
+   ikonkali: neu'da umuman yozuvsiz, skeuo'da esa yozuv tugmadan
+   TASHQARIDA, och metall ustida turadi.
+
+   Men dastlab yozuvni tugma ichiga qo'ygan edim va oq matn qizil
+   fonda 3.5:1 chiqdi — matn uchun 4.5:1 kerak. Ikonka esa grafik
+   element, unga 3:1 yetarli, ya'ni shu holda talab bajariladi.
+
+   Yozuv DOM'dan yo'qolmaydi: `font-size: 0` uni faqat ko'rinmas
+   qiladi, ekran o'quvchisi tugma nomini ("Boshlash" / "Pauza" /
+   "Davom etish") avvalgidek o'qiydi.
+   ═══════════════════════════════════════════════════════════════ */
+
+[data-theme="neu"] .controls #btnMain,
+[data-theme="neu"] .controls #lpMain,
+[data-theme="skeuo"] .controls #btnMain,
+[data-theme="skeuo"] .controls #lpMain {
+  gap: 0;
+  font-size: 0;
+}
+
+/* Neu'da yon tugmalarda ham yozuv yo'q — maketda ular sof ikonka.
+   Skeuo'da esa yozuv qoladi: u och metall ustida quyuq rangda,
+   kontrast 5:1 dan yuqori. */
+[data-theme="neu"] .controls .btn {
+  gap: 0;
+  font-size: 0;
+}
+[data-theme="neu"] .controls .btn .bi { width: 20px; height: 20px; }
+[data-theme="neu"] .controls #btnMain .bi,
+[data-theme="neu"] .controls #lpMain .bi { width: 28px; height: 28px; }
