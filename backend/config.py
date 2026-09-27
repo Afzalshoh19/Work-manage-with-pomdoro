@@ -58,9 +58,21 @@ HOST = os.environ.get("HOST") or "127.0.0.1"
 
 # ═══════════ Bayroqlar ═══════════
 
+def _production() -> bool:
+    """
+    `production` rejimimi.
+
+    Node tomonida bu `NODE_ENV` edi. Python xizmatida bunday nom chalg'itadi,
+    shuning uchun `APP_ENV` ham qabul qilinadi. `NODE_ENV` ATAYLAB qoldirildi:
+    mavjud `.env` fayllari va `dist/` (Node) bir xil o'zgaruvchi bilan ishlashda
+    davom etsin — ko'chirish paytida ikkovi yonma-yon turadi.
+    """
+    return "production" in (os.environ.get("APP_ENV"), os.environ.get("NODE_ENV"))
+
+
 # Cookie'ga Secure bayrog'ini majburan qo'yish. Odatda kerak emas:
 # ulanish HTTPS ekani so'rovning o'zidan aniqlanadi (core/net.py).
-SECURE_COOKIES = _flag("SECURE_COOKIES", os.environ.get("NODE_ENV") == "production")
+SECURE_COOKIES = _flag("SECURE_COOKIES", _production())
 
 # Teskari proksi orqasida X-Forwarded-* sarlavhalariga ishonish.
 # To'g'ridan-to'g'ri internetga chiqarilgan serverda YOQILMASIN —
@@ -72,6 +84,12 @@ TLS_CERT = os.environ.get("TLS_CERT") or ""
 TLS_CA = os.environ.get("TLS_CA") or ""
 TLS_ENABLED = bool(TLS_KEY and TLS_CERT)
 
+# DIQQAT: bu bayroq hozir HECH QAYERDA o'qilmaydi. Node'da u
+# `REDIRECT_PORT` bilan birga HTTP→HTTPS yo'naltiruvchi serverni yoqardi
+# (`server.js:307`); Python variantida bu ish proksiga (nginx/Caddy)
+# qoldirilgan. O'zgaruvchi moslik uchun qoldirildi — `.env` da yozilgan
+# bo'lsa xato bermasin. HSTS unga bog'liq EMAS: `http_layer.py` faqat
+# `HSTS_DAYS` va so'rov HTTPS ekanini qaraydi.
 FORCE_HTTPS = _flag("FORCE_HTTPS", TLS_ENABLED)
 HSTS_DAYS = float(os.environ.get("HSTS_DAYS") or 180)
 

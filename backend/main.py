@@ -201,6 +201,10 @@ def banner(https_active: bool = False) -> None:
     print(f"  Marshrut: {len(ROUTES)} ta")
     print("  Toxtatish: Ctrl+C")
     print("")
+    # Chiqish faylga yoki journald'ga yo'naltirilganda Python stdout'ni
+    # blok bo'yicha buferlaydi — banner bufer to'lguncha ko'rinmay turardi,
+    # ya'ni `systemctl status` va `docker logs` bo'sh chiqardi.
+    sys.stdout.flush()
 
 
 def main() -> None:

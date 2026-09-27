@@ -15,8 +15,10 @@ desktop.ini
 .idea/
 *.swp
 
-# Yig'ish natijalari — build.mjs ularni qayta yaratadi
+# Yig'ish natijalari — build.mjs (Node) va backend/build.py (Python)
+# ularni qayta yaratadi
 dist/
+dist-py/
 *.zip
 
 # Mahalliy tahrirlash vositalari sozlamasi
