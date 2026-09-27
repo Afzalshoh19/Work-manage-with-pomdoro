@@ -771,7 +771,10 @@ body, .topbar, .card, .mini, .tabs, .tab, .btn, .pill,
 [data-theme="clay"] .dh-sub {
   font-size: 14px;
   font-weight: 700;
-  color: #7A6A88;
+  /* Maketda #7A6A88 — lekin u #F4EEE6 fonda 4.29:1 beradi, ya'ni
+     4.5 dan past. Bir pog'ona quyuqroq tus 5.07:1 qiladi va
+     ko'rinishi deyarli o'zgarmaydi. */
+  color: #6E5F7C;
 }
 [data-theme="clay"] .dh-date { font-size: 34px; font-weight: 900; }
 [data-theme="clay"] .dh-actions .btn { height: 48px; padding: 0 20px; font-size: 15px; }
@@ -856,8 +859,8 @@ body, .topbar, .card, .mini, .tabs, .tab, .btn, .pill,
 
 /* ── Kun bajarilishi yolagi ── */
 
-[data-theme="clay"] .lh-prog { font-size: 14px; font-weight: 800; color: #7A6A88; }
-[data-theme="clay"] .lh-prog b { color: #7A6A88; }
+[data-theme="clay"] .lh-prog { font-size: 14px; font-weight: 800; color: #6E5F7C; }
+[data-theme="clay"] .lh-prog b { color: #3A2E4A; }
 [data-theme="clay"] .day-bar {
   height: 16px;
   padding: 3px;
