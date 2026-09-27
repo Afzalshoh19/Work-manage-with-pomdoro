@@ -1,6 +1,12 @@
 /** Kirish / ro'yxatdan o'tish sahifasi */
+import { applyTheme, DEFAULT_THEME } from './theme.js';
 
 const $ = (id) => document.getElementById(id);
+
+// Sukutdagi uslub. `index.html` dagidan farqi: bu yerda hisob yo'q,
+// shuning uchun serverdan sozlama so'ralmaydi. `applyTheme` shriftni ham
+// yuklaydi — HTML dagi `data-theme` bir o'zi buni qilmaydi.
+applyTheme(DEFAULT_THEME);
 
 async function api(method, url, body) {
   const res = await fetch(url, {

@@ -2,6 +2,8 @@ import { getDb, persist, userSettings, DEFAULT_SETTINGS } from '../lib/db.js';
 import { clamp } from '../lib/util.js';
 import { checkLunch } from './tasks.js';
 
+const THEMES = ['glass', 'clay', 'skeuo', 'neu', 'dark', 'light'];
+
 export function getSettings({ user }) {
   return { settings: userSettings(user.id), defaults: DEFAULT_SETTINGS };
 }
@@ -33,7 +35,10 @@ export function updateSettings({ user, body }) {
   for (const key of ['autoStartBreaks', 'autoStartWork', 'soundEnabled', 'notificationsEnabled', 'tickingEnabled', 'lunchEnabled']) {
     if (b[key] !== undefined) s[key] = !!b[key];
   }
-  if (b.theme === 'dark' || b.theme === 'light') s.theme = b.theme;
+  // Ko'rinish uslublari. `dark` va `light` — eski klassik ko'rinish;
+  // kimning sozlamasida o'sha tursa o'zgarmasin, shuning uchun qoldirildi.
+  // Ro'yxat `public/js/theme.js` dagi THEMES bilan bir xil bo'lishi shart.
+  if (THEMES.includes(b.theme)) s.theme = b.theme;
 
   user.settings = s;
   persist();

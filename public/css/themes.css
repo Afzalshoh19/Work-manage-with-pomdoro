@@ -1,0 +1,496 @@
+/* ═══════════════════════════════════════════════════════════════
+   Ko'rinish uslublari — Glass · Clay · Skeuo · Neu
+
+   Nega shu tarzda: `style.css` allaqachon to'liq token asosida yozilgan
+   (`--bg`, `--card`, `--line`, `--txt`, `--accent`, `--shadow`, `--r`).
+   Shuning uchun bu yerda birinchi navbatda TOKENLAR qayta belgilanadi —
+   400 qatorlik tartib qoidasi qayta yozilmaydi. Har uslubning o'ziga xos
+   effekti (shisha xiralashuvi, gil soyalari, yog'och taxta) uchungina
+   mavjud sinflarga qo'shimcha qoida beriladi.
+
+   `dark` va `light` — eski klassik ko'rinish, `style.css` da qoladi va
+   tegilmaydi: kimning sozlamasida o'sha tursa, o'zgarmasin.
+
+   Shriftlar `js/theme.js` orqali FAQAT kerak bo'lganda yuklanadi. Internet
+   bo'lmasa uslub tizim shriftiga tushadi, lekin ishlashda davom etadi —
+   shuning uchun har bir `--font` da zaxira ro'yxat bor.
+   ═══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Uslublar qo'shadigan yangi tokenlar. Bu yerda bo'sh — klassik
+     ko'rinishda ular hech narsa qilmaydi. */
+  --inset: none;              /* ichkariga bosilgan yuza */
+  --raise: var(--shadow);     /* ko'tarilgan yuza */
+  --glass: 0px;               /* backdrop-filter blur radiusi */
+  --font: "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  --font-display: var(--font);
+  --font-clock: var(--font);
+  --w-normal: 400;
+  --w-mid: 550;
+  --w-bold: 650;
+}
+
+body { font-family: var(--font); }
+h1, h2, h3, .clock { font-family: var(--font-display); }
+.clock { font-family: var(--font-clock); }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   1 · GLASSMORPHISM — sukut bo'yicha
+   Qorong'i fon, orqada xiralashgan rangli dog'lar, yuzalar yarim shaffof.
+   ═══════════════════════════════════════════════════════════════ */
+
+[data-theme="glass"] {
+  --bg: #0B0E1A;
+  --bg-2: rgba(255,255,255,.06);
+  --card: rgba(255,255,255,.08);
+  --card-2: rgba(255,255,255,.06);
+  --line: rgba(255,255,255,.16);
+  --line-2: rgba(255,255,255,.28);
+  --txt: #F4F6FF;
+  --txt-2: rgba(244,246,255,.75);
+  --txt-3: rgba(244,246,255,.60);
+  --accent: #FF6B5B;
+  --accent-2: #FF8F6B;
+  --green: #3BE0A6;
+  --blue: #7B5CFF;
+  --amber: #FFB020;
+  --purple: #A78BFA;
+  --shadow: 0 30px 60px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.22);
+  --raise: var(--shadow);
+  --inset: inset 0 2px 8px rgba(0,0,0,.35);
+  --glass: 24px;
+  --r: 22px;
+  --font: Manrope, "Segoe UI", system-ui, sans-serif;
+  --font-display: Sora, Manrope, "Segoe UI", system-ui, sans-serif;
+  --font-clock: Sora, Manrope, system-ui, sans-serif;
+  --w-mid: 600;
+  --w-bold: 700;
+  color-scheme: dark;
+}
+
+/* Fon dog'lari. `fixed` — sahifa aylanganda ular joyida qoladi, aks holda
+   uzun ro'yxatda dog'lar yuqoriga chiqib ketib fon qorayib qolardi. */
+[data-theme="glass"] body::before,
+[data-theme="glass"] body::after {
+  content: ""; position: fixed; z-index: -1; border-radius: 50%;
+  filter: blur(150px); pointer-events: none;
+}
+[data-theme="glass"] body::before {
+  width: 620px; height: 620px; left: -140px; top: 22vh;
+  background: var(--accent); opacity: .5;
+}
+[data-theme="glass"] body::after {
+  width: 560px; height: 560px; right: -120px; top: -180px;
+  background: var(--blue); opacity: .45;
+}
+
+[data-theme="glass"] .card,
+[data-theme="glass"] .topbar,
+[data-theme="glass"] .tabs,
+[data-theme="glass"] .mini,
+[data-theme="glass"] .add-form,
+[data-theme="glass"] .modal-box,
+[data-theme="glass"] .lp-try,
+[data-theme="glass"] .lp-feat,
+[data-theme="glass"] .lp-cta {
+  backdrop-filter: blur(var(--glass));
+  -webkit-backdrop-filter: blur(var(--glass));
+}
+[data-theme="glass"] .mode-pills { background: rgba(0,0,0,.22); }
+[data-theme="glass"] .tab.is-active { color: #0B0E1A; background: rgba(255,255,255,.9); }
+[data-theme="glass"] .pill.is-active { box-shadow: inset 0 1px 0 rgba(255,255,255,.3); }
+[data-theme="glass"] .btn { box-shadow: 0 10px 26px rgba(255,107,91,.35); }
+[data-theme="glass"] .btn-ghost { box-shadow: none; }
+[data-theme="glass"] .ring-fg { filter: drop-shadow(0 0 12px color-mix(in srgb, var(--mode) 70%, transparent)); }
+[data-theme="glass"] .clock { font-weight: 300; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   2 · CLAYMORPHISM
+   Iliq och fon, yumshoq gil bloklar: tashqi soya + ichki ikki soya.
+   ═══════════════════════════════════════════════════════════════ */
+
+[data-theme="clay"] {
+  --bg: #F4EEE6;
+  --bg-2: #FFFAF4;
+  --card: #FFFAF4;
+  --card-2: #FFE3DC;
+  --line: transparent;
+  --line-2: rgba(200,110,90,.35);
+  --txt: #3A2E4A;
+  --txt-2: #6B5C7A;
+  --txt-3: #8A4C44;
+  --accent: #F26B5E;
+  --accent-2: #E2574A;
+  --green: #57C08E;
+  --blue: #9C86F2;
+  --amber: #F2B84B;
+  --purple: #9C86F2;
+  --shadow: 12px 16px 32px rgba(140,110,80,.20),
+            inset -6px -8px 14px rgba(180,150,120,.15),
+            inset 6px 6px 12px rgba(255,255,255,.92);
+  --raise: 4px 6px 12px rgba(200,110,90,.24),
+           inset -3px -4px 6px rgba(0,0,0,.05),
+           inset 3px 3px 6px #fff;
+  --inset: inset 4px 5px 10px rgba(180,90,70,.16), inset -4px -4px 8px #fff;
+  --glass: 0px;
+  --r: 28px;
+  --font: Nunito, "Segoe UI", system-ui, sans-serif;
+  --font-display: Nunito, "Segoe UI", system-ui, sans-serif;
+  --font-clock: Nunito, system-ui, sans-serif;
+  --w-normal: 500;
+  --w-mid: 700;
+  --w-bold: 900;
+  color-scheme: light;
+}
+
+[data-theme="clay"] h1,
+[data-theme="clay"] h2,
+[data-theme="clay"] h3 { font-weight: var(--w-bold); }
+[data-theme="clay"] .card { border: 0; }
+[data-theme="clay"] .topbar {
+  border-bottom: 0; border-radius: 0 0 26px 26px; background: var(--card);
+  box-shadow: 8px 10px 24px rgba(140,110,80,.16), inset 3px 3px 8px rgba(255,255,255,.9);
+}
+[data-theme="clay"] .tabs { border: 0; border-radius: 20px; background: transparent; }
+[data-theme="clay"] .tab { border-radius: 16px; font-weight: var(--w-mid); }
+[data-theme="clay"] .tab.is-active { box-shadow: var(--raise); }
+[data-theme="clay"] .btn { border: 0; border-radius: 18px; font-weight: var(--w-bold); box-shadow: var(--raise); }
+[data-theme="clay"] .btn-ghost { background: var(--bg-2); color: var(--txt); }
+[data-theme="clay"] .mode-pills { background: transparent; box-shadow: var(--inset); border-radius: 20px; }
+[data-theme="clay"] .pill { border-radius: 16px; font-weight: var(--w-mid); }
+[data-theme="clay"] .pill.is-active { box-shadow: var(--raise); }
+[data-theme="clay"] .mini { border-radius: 22px; box-shadow: var(--raise); }
+[data-theme="clay"] .active-task { border: 0; box-shadow: var(--inset); border-radius: 20px; }
+[data-theme="clay"] .add-form { border: 0; border-radius: 24px; box-shadow: var(--inset); }
+[data-theme="clay"] input,
+[data-theme="clay"] select,
+[data-theme="clay"] textarea { border: 0; border-radius: 14px; box-shadow: var(--inset); }
+[data-theme="clay"] .clock { font-weight: var(--w-bold); }
+[data-theme="clay"] .ring-bg { stroke: #F1E8DE; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   3 · SKEUOMORPHISM
+   Yog'och stol, qog'oz daftar, LCD ekranli taymer.
+   ═══════════════════════════════════════════════════════════════ */
+
+[data-theme="skeuo"] {
+  --bg: #3F2A1E;
+  --bg-2: #FFFDF7;
+  --card: #FBF7EE;
+  --card-2: #F1EADA;
+  --line: #CBC1AC;
+  --line-2: #A89980;
+  --txt: #2A2420;
+  --txt-2: #5E554A;
+  --txt-3: #7A7466;
+  --accent: #E5533F;
+  --accent-2: #C23B2B;
+  --green: #2FAE3A;
+  --blue: #2F7DD1;
+  --amber: #D9982B;
+  --purple: #7A5AA8;
+  --shadow: 0 18px 36px rgba(0,0,0,.45), 0 2px 0 #E8E1D1, 0 4px 0 #D9D0BD;
+  --raise: inset 0 1px 0 #fff, 0 4px 8px rgba(0,0,0,.4);
+  --inset: inset 0 3px 8px rgba(0,0,0,.25);
+  --glass: 0px;
+  --r: 10px;
+  --font: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Libre Baskerville", Georgia, serif;
+  --font-clock: "Share Tech Mono", ui-monospace, monospace;
+  --w-mid: 600;
+  --w-bold: 700;
+  color-scheme: light;
+}
+
+/* Yog'och taxta. `fixed` — aylantirganda naqsh siljimasin. */
+[data-theme="skeuo"] body {
+  background: repeating-linear-gradient(92deg,
+    #4A3224 0px, #553A2A 6px, #4A3224 11px, #3F2A1E 18px, #4A3224 26px);
+  background-attachment: fixed;
+}
+[data-theme="skeuo"] .topbar {
+  background: linear-gradient(180deg, #2E2A27, #1C1A18);
+  border-bottom: 1px solid #0D0C0B; backdrop-filter: none;
+  box-shadow: 0 8px 18px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.12);
+  color: #F3E6CF;
+}
+[data-theme="skeuo"] .topbar .brand strong { color: #F3E6CF; font-family: var(--font-display); }
+[data-theme="skeuo"] .topbar .brand small,
+[data-theme="skeuo"] .topbar .conn { color: #D9CCB4; }
+[data-theme="skeuo"] .tabs { background: #111; border: 0; border-radius: 10px; padding: 3px; }
+[data-theme="skeuo"] .tab { color: #D9CCB4; border-radius: 8px; }
+[data-theme="skeuo"] .tab:hover { background: rgba(255,255,255,.08); color: #fff; }
+[data-theme="skeuo"] .tab.is-active {
+  background: linear-gradient(180deg, #F4EDE0, #CFC4AE); color: #2A2420;
+  box-shadow: inset 0 1px 0 #fff, 0 1px 2px rgba(0,0,0,.6);
+}
+[data-theme="skeuo"] .icon-btn { background: linear-gradient(180deg, #3A3632, #26231F); border-color: #0D0C0B; color: #F3E6CF; }
+
+[data-theme="skeuo"] .card { border: 1px solid #D6CDB8; border-radius: 6px; }
+[data-theme="skeuo"] .btn {
+  border: 1px solid #6E1A10; border-radius: 8px;
+  background: linear-gradient(180deg, #FF8C78, var(--accent) 50%, #C23B2B);
+  text-shadow: 0 -1px 0 rgba(0,0,0,.35); box-shadow: var(--raise);
+}
+[data-theme="skeuo"] .btn:hover { background: linear-gradient(180deg, #FF9C88, #D2432F 50%, #A8301F); }
+[data-theme="skeuo"] .btn-ghost {
+  border-color: #9A8F80; color: #2A2420; text-shadow: none;
+  background: linear-gradient(180deg, #F4EDE0, #CFC4AE);
+}
+[data-theme="skeuo"] .mode-pills { background: #111; border-radius: 8px; box-shadow: var(--inset); }
+[data-theme="skeuo"] .pill { color: #D9CCB4; border-radius: 6px; }
+[data-theme="skeuo"] .pill.is-active { background: linear-gradient(180deg, #F4EDE0, #CFC4AE); color: #2A2420; }
+
+/* LCD ekran: raqamlar yashil yorug'lik bilan qorong'i oynada */
+[data-theme="skeuo"] .dial-center {
+  background: linear-gradient(180deg, #1B2A1E, #0F1A12);
+  border: 2px solid #4E4F4A; border-radius: 12px; inset: 28px;
+  box-shadow: inset 0 4px 12px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.7);
+}
+[data-theme="skeuo"] .clock {
+  color: #9EFFAA; font-weight: 400; letter-spacing: 0;
+  text-shadow: 0 0 14px rgba(120,255,140,.6);
+}
+[data-theme="skeuo"] .dial-sub { color: rgba(158,255,170,.7); }
+[data-theme="skeuo"] .is-running .clock { color: #9EFFAA; }
+[data-theme="skeuo"] .ring-bg { stroke: rgba(0,0,0,.35); }
+[data-theme="skeuo"] .mini {
+  background: #1A1A18; border-radius: 8px;
+  box-shadow: inset 0 2px 5px rgba(0,0,0,.9), 0 1px 0 rgba(255,255,255,.7);
+}
+[data-theme="skeuo"] .mini b { color: #FFB85C; font-family: var(--font-clock); text-shadow: 0 0 8px rgba(255,170,60,.5); }
+[data-theme="skeuo"] .mini span { color: #A8A28F; letter-spacing: .1em; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   4 · NEUMORPHISM
+   Bitta tekis fon; hamma narsa faqat qo'shaloq soya bilan ajratiladi:
+   pastdan quyuq, yuqoridan oq. Chegara chizig'i yo'q.
+   ═══════════════════════════════════════════════════════════════ */
+
+[data-theme="neu"] {
+  --bg: #E4E8EF;
+  --bg-2: #E4E8EF;
+  --card: #E4E8EF;
+  --card-2: #E4E8EF;
+  --line: transparent;
+  --line-2: transparent;
+  --txt: #2E3647;
+  --txt-2: #56607A;
+  --txt-3: #6B7590;
+  --accent: #E8594C;
+  --accent-2: #D14A3E;
+  --green: #2FA37A;
+  --blue: #5B7CF0;
+  --amber: #E0A030;
+  --purple: #7B6BE0;
+  --shadow: 12px 12px 24px #C2C8D2, -12px -12px 24px #FFFFFF;
+  --raise: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF;
+  --inset: inset 5px 5px 10px #C2C8D2, inset -5px -5px 10px #FFFFFF;
+  --glass: 0px;
+  --r: 24px;
+  --font: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Plus Jakarta Sans", "Segoe UI", system-ui, sans-serif;
+  --font-clock: "Plus Jakarta Sans", system-ui, sans-serif;
+  --w-normal: 500;
+  --w-mid: 700;
+  --w-bold: 800;
+  color-scheme: light;
+}
+
+[data-theme="neu"] .card { border: 0; }
+[data-theme="neu"] .topbar {
+  background: var(--bg); border-bottom: 0; backdrop-filter: none;
+  box-shadow: 0 8px 20px rgba(194,200,210,.5);
+}
+[data-theme="neu"] .tabs { border: 0; border-radius: 20px; background: var(--bg); box-shadow: var(--inset); }
+[data-theme="neu"] .tab { border-radius: 15px; font-weight: var(--w-mid); }
+[data-theme="neu"] .tab.is-active { background: var(--bg); color: var(--accent); box-shadow: var(--raise); }
+[data-theme="neu"] .icon-btn { border: 0; box-shadow: var(--raise); }
+[data-theme="neu"] .btn {
+  border: 0; border-radius: 16px; background: var(--bg); color: var(--accent);
+  font-weight: var(--w-bold); box-shadow: var(--raise);
+}
+[data-theme="neu"] .btn:hover { background: var(--bg); box-shadow: var(--inset); }
+[data-theme="neu"] .btn:active { transform: none; box-shadow: var(--inset); }
+/* Asosiy amal tugmasi rangli bo'lib qolsin — aks holda hammasi bir xil ko'rinadi */
+[data-theme="neu"] .btn-primary,
+[data-theme="neu"] .controls #btnMain {
+  background: var(--accent); color: #fff;
+  box-shadow: 6px 6px 12px #C2C8D2, -6px -6px 12px #FFFFFF,
+              inset 3px 3px 6px rgba(255,255,255,.3), inset -4px -4px 8px rgba(0,0,0,.15);
+}
+[data-theme="neu"] .btn-ghost { background: var(--bg); color: var(--txt-2); }
+[data-theme="neu"] .mode-pills { background: var(--bg); border-radius: 18px; box-shadow: var(--inset); }
+[data-theme="neu"] .pill { border-radius: 13px; font-weight: var(--w-mid); }
+[data-theme="neu"] .pill.is-active { background: var(--bg); color: var(--accent); box-shadow: var(--raise); }
+[data-theme="neu"] .mini { border-radius: 20px; box-shadow: var(--raise); }
+[data-theme="neu"] .active-task { border: 0; border-radius: 18px; box-shadow: var(--inset); }
+[data-theme="neu"] .add-form { border: 0; border-radius: 22px; box-shadow: var(--inset); }
+[data-theme="neu"] input,
+[data-theme="neu"] select,
+[data-theme="neu"] textarea { border: 0; border-radius: 14px; box-shadow: var(--inset); }
+[data-theme="neu"] input:focus,
+[data-theme="neu"] select:focus { box-shadow: var(--inset), 0 0 0 3px color-mix(in srgb, var(--accent) 22%, transparent); }
+[data-theme="neu"] .clock { font-weight: var(--w-mid); }
+[data-theme="neu"] .ring-bg { stroke: #D3D9E3; }
+[data-theme="neu"] .cycle-dots i { border: 0; background: var(--bg); box-shadow: var(--inset); }
+[data-theme="neu"] .cycle-dots i.on { background: var(--accent); box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 55%, transparent); }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   Umumiy: yangi uslublarda kartalar ko'tarilgan/bosilgan holatni
+   tokendan oladi. `dark`/`light` da bu qoidalar ta'sir qilmaydi,
+   chunki ularda `--raise` = `--shadow`.
+   ═══════════════════════════════════════════════════════════════ */
+
+[data-theme="clay"] .card,
+[data-theme="neu"] .card,
+[data-theme="glass"] .card { box-shadow: var(--shadow); }
+
+/* Sana va vaqt maydonlari brauzer ko'rinishini fon yorqinligiga moslaydi */
+[data-theme="clay"] input[type="date"], [data-theme="clay"] input[type="time"],
+[data-theme="clay"] input[type="number"], [data-theme="clay"] select,
+[data-theme="neu"] input[type="date"], [data-theme="neu"] input[type="time"],
+[data-theme="neu"] input[type="number"], [data-theme="neu"] select,
+[data-theme="skeuo"] input[type="date"], [data-theme="skeuo"] input[type="time"],
+[data-theme="skeuo"] input[type="number"], [data-theme="skeuo"] select { color-scheme: light; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   Sozlamalardagi uslub tanlagich
+   ═══════════════════════════════════════════════════════════════ */
+
+.theme-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 14px; margin-top: 4px;
+}
+.theme-card {
+  position: relative; display: flex; flex-direction: column; gap: 10px;
+  padding: 12px; border-radius: 16px; cursor: pointer; text-align: left;
+  background: var(--card-2); border: 2px solid var(--line);
+  color: var(--txt); font: inherit; transition: .15s;
+}
+.theme-card:hover { border-color: var(--line-2); }
+.theme-card[aria-pressed="true"] { border-color: var(--accent); }
+.theme-card[aria-pressed="true"]::after {
+  content: "✓"; position: absolute; top: 10px; right: 12px;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  font-size: 13px; font-weight: 700; line-height: 22px; text-align: center;
+}
+.theme-name { font-size: 13.5px; font-weight: var(--w-mid); }
+.theme-note { font-size: 11.5px; color: var(--txt-3); line-height: 1.45; }
+
+/* Har bir namuna o'z uslubining ranglari bilan chiziladi — tanlashdan
+   oldin ko'rinishi ma'lum bo'lsin. Ranglar shu yerda ataylab qo'lda
+   yozilgan: namuna `data-theme` ichida bo'lmaydi, shuning uchun
+   tokenlarni meros qilib olmaydi. */
+.theme-prev {
+  height: 74px; border-radius: 12px; padding: 9px;
+  display: flex; flex-direction: column; gap: 7px; overflow: hidden;
+}
+.theme-prev i { display: block; border-radius: 5px; }
+.theme-prev .tp-bar { height: 12px; }
+.theme-prev .tp-row { display: flex; gap: 7px; flex-grow: 1; }
+.theme-prev .tp-dial { width: 34px; border-radius: 50%; flex-shrink: 0; }
+.theme-prev .tp-body { flex-grow: 1; border-radius: 7px; }
+
+.tp-glass { background: #0B0E1A; }
+.tp-glass .tp-bar { background: rgba(255,255,255,.14); }
+.tp-glass .tp-dial { background: #FF6B5B; box-shadow: 0 0 10px rgba(255,107,91,.7); }
+.tp-glass .tp-body { background: rgba(255,255,255,.09); }
+
+.tp-clay { background: #F4EEE6; }
+.tp-clay .tp-bar { background: #FFFAF4; box-shadow: 2px 3px 6px rgba(140,110,80,.2); }
+.tp-clay .tp-dial { background: #F26B5E; box-shadow: 3px 4px 8px rgba(230,90,80,.4), inset -3px -4px 6px rgba(0,0,0,.15); }
+.tp-clay .tp-body { background: #FFE3DC; box-shadow: inset 3px 3px 6px rgba(200,110,90,.18); }
+
+.tp-skeuo { background: repeating-linear-gradient(92deg, #4A3224 0, #553A2A 5px, #3F2A1E 12px, #4A3224 20px); }
+.tp-skeuo .tp-bar { background: linear-gradient(180deg, #2E2A27, #1C1A18); border-radius: 4px; }
+.tp-skeuo .tp-dial { background: radial-gradient(circle at 38% 30%, #FF8A6E, #E5533F 60%, #8E2418); }
+.tp-skeuo .tp-body { background: #FBF7EE; border-radius: 4px; }
+
+.tp-neu { background: #E4E8EF; }
+.tp-neu .tp-bar { background: #E4E8EF; box-shadow: 3px 3px 6px #C2C8D2, -3px -3px 6px #fff; }
+.tp-neu .tp-dial { background: #E4E8EF; box-shadow: 4px 4px 8px #C2C8D2, -4px -4px 8px #fff; }
+.tp-neu .tp-body { background: #E4E8EF; box-shadow: inset 4px 4px 8px #C2C8D2, inset -4px -4px 8px #fff; }
+
+.tp-dark { background: #0e1116; }
+.tp-dark .tp-bar { background: #171d26; border: 1px solid #262f3d; }
+.tp-dark .tp-dial { background: #ff5f56; }
+.tp-dark .tp-body { background: #171d26; border: 1px solid #262f3d; }
+
+.tp-light { background: #f4f6fa; }
+.tp-light .tp-bar { background: #fff; border: 1px solid #e3e8f0; }
+.tp-light .tp-dial { background: #ff5f56; }
+.tp-light .tp-body { background: #fff; border: 1px solid #e3e8f0; }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   Uslub almashishi
+   Taqdimot sahifasida uslub har daqiqada o'zi almashadi — keskin
+   sakrash ko'zni urmasin. Ro'yxat ATAYLAB qisqa: hamma narsaga
+   `transition: all` berilsa uzun jadval sekinlashadi.
+   ═══════════════════════════════════════════════════════════════ */
+
+body, .topbar, .card, .mini, .tabs, .tab, .btn, .pill,
+.mode-pills, .active-task, .add-form {
+  transition: background-color .35s ease, color .35s ease,
+              box-shadow .35s ease, border-color .35s ease;
+}
+/* Harakatni kamaytirish so'ralgan bo'lsa — o'tish yo'q */
+@media (prefers-reduced-motion: reduce) {
+  body, .topbar, .card, .mini, .tabs, .tab, .btn, .pill,
+  .mode-pills, .active-task, .add-form { transition: none; }
+}
+
+.lp-theme-tag b { color: var(--txt-2); font-weight: var(--w-mid); }
+
+
+/* ═══════════════════════════════════════════════════════════════
+   Taqdimot sahifasi
+   `landing.css` o'z sinflarini ishlatadi (`.lp-*`) — asosiy ilovadagi
+   `.card` qoidalari ularga tegmaydi. Shuning uchun har uslubning
+   imzosi shu yerda alohida beriladi.
+   ═══════════════════════════════════════════════════════════════ */
+
+[data-theme="clay"] .lp-try,
+[data-theme="clay"] .lp-feat,
+[data-theme="clay"] .lp-cta { border: 0; border-radius: 26px; box-shadow: var(--shadow); }
+[data-theme="clay"] .lp-foot { border-top: 0; }
+
+[data-theme="neu"] .lp-try,
+[data-theme="neu"] .lp-feat,
+[data-theme="neu"] .lp-cta { border: 0; border-radius: 24px; box-shadow: var(--raise); }
+[data-theme="neu"] .lp-feat:hover { box-shadow: var(--inset); transform: none; }
+[data-theme="neu"] .lp-foot { border-top: 0; }
+
+[data-theme="skeuo"] .lp-top { color: #F3E6CF; }
+[data-theme="skeuo"] .lp-try,
+[data-theme="skeuo"] .lp-feat,
+[data-theme="skeuo"] .lp-cta {
+  background: var(--card); border: 1px solid #D6CDB8; border-radius: 6px;
+  color: var(--txt); box-shadow: var(--shadow);
+}
+[data-theme="skeuo"] .lp-feat b { color: var(--txt); }
+[data-theme="skeuo"] .lp-hero-text h1,
+[data-theme="skeuo"] .lp-sec-head h2 { color: #F3E6CF; text-shadow: 0 2px 3px rgba(0,0,0,.6); }
+[data-theme="skeuo"] .lp-lead,
+[data-theme="skeuo"] .lp-sec-head p,
+[data-theme="skeuo"] .lp-foot { color: #D9CCB4; }
+[data-theme="skeuo"] .lp-cta h2 { color: var(--txt); text-shadow: none; }
+[data-theme="skeuo"] .lp-foot { border-top: 1px solid rgba(243,230,207,.2); }
+
+/* Katta oynada (focus) fon uslubga ergashadi */
+[data-theme="glass"] body.lp-focus { background: var(--bg); }
+[data-theme="clay"]  body.lp-focus { background: var(--bg); }
+[data-theme="neu"]   body.lp-focus { background: var(--bg); }
+
+/* `.lp-body` fonga urg'u rangini yoyadi (radial-gradient). Neumorfizm
+   uchun bu noto'g'ri: uning butun ma'nosi — BITTA tekis yuza, soyalar
+   esa shakl beradi. Rangli yoyilma soyalarni yo'q qilib yuboradi. */
+[data-theme="neu"] .lp-body { background: var(--bg); }

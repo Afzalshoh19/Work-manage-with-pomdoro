@@ -10,6 +10,9 @@ from ..core.util import clamp
 _HHMM_LOOSE = re.compile(r"^\d{1,2}:\d{2}$")
 
 
+THEMES = ("glass", "clay", "skeuo", "neu", "dark", "light")
+
+
 def get_settings(ctx):
     user = ctx["user"]
     return {"settings": user_settings(user["id"]), "defaults": DEFAULT_SETTINGS}
@@ -54,7 +57,10 @@ def update_settings(ctx):
         if key in b:
             s[key] = bool(b[key])
 
-    if b.get("theme") in ("dark", "light"):
+    # Ko'rinish uslublari. `dark` va `light` — eski klassik ko'rinish;
+    # kimning sozlamasida o'sha tursa o'zgarmasin, shuning uchun qoldirildi.
+    # Ro'yxat `public/js/theme.js` dagi THEMES bilan bir xil bo'lishi shart.
+    if b.get("theme") in THEMES:
         s["theme"] = b["theme"]
 
     user["settings"] = s

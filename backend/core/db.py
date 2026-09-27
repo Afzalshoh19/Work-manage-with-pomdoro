@@ -40,7 +40,7 @@ DEFAULT_SETTINGS = {
     "lunchStart": "13:00",
     "lunchEnd": "14:00",
     "dailyGoal": 8,              # kunlik maqsad (pomodoro)
-    "theme": "dark",
+    "theme": "glass",        # ko'rinish uslubi, public/js/theme.js dagi ro'yxatdan
     "lang": "uz",
 }
 

@@ -8,6 +8,7 @@ import { load as loadWorkCard } from './workcard.js';
 import { SVG, icon } from './icons.js';
 import { initSchedule, renderDaySetup, loadWorkSchedule, maybeOnboard, closePomoModal } from './schedule.js';
 import { initWeekPlan, closeWeekPlan } from './weekplan.js';
+import { THEMES, applyTheme, themeInfo } from './theme.js';
 
 /* ══════════════════ Holat ══════════════════ */
 const S = {
@@ -407,7 +408,7 @@ function setConn(ok) {
 /* ══════════════════ Ko'rinishlar ══════════════════ */
 /* ══════════════ Profil bo'limlari ══════════════ */
 
-const PROF_SECTIONS = ['umumiy', 'jadval', 'taymer', 'xavfsizlik', 'integratsiya', 'malumot'];
+const PROF_SECTIONS = ['umumiy', 'korinish', 'jadval', 'taymer', 'xavfsizlik', 'integratsiya', 'malumot'];
 let integrationsLoaded = false;
 
 /**
@@ -1352,9 +1353,39 @@ function fillSettings() {
   setChk('setSound', s.soundEnabled);
   setVal('setVolume', Math.round(s.volume * 100));
   setChk('setNotif', s.notificationsEnabled);
-  document.documentElement.dataset.theme = s.theme;
-  $('themeToggle').textContent = s.theme === 'dark' ? '🌙' : '☀️';
+  applyTheme(s.theme);
+  renderThemeGrid(s.theme);
+  const info = themeInfo(s.theme);
+  $('themeToggle').textContent = THEME_ICON[info.id] || '🎨';
+  $('themeToggle').title = info.name + ' — bosib keyingisiga o\'tish';
   updateNotifState();
+}
+
+/* Topbar tugmasidagi belgi. Uslub nomini ko'rsatishga joy yo'q,
+   shuning uchun har biriga bitta belgi. */
+const THEME_ICON = {
+  glass: '🔮', clay: '🧱', skeuo: '📼', neu: '🧼', dark: '🌙', light: '☀️'
+};
+
+/**
+ * Sozlamalardagi uslub tanlagichni chizadi.
+ *
+ * Har bir namuna o'z uslubining ranglari bilan ko'rsatiladi (`themes.css`
+ * dagi `.tp-*`), shuning uchun tanlashdan oldin qanday ko'rinishi ma'lum.
+ */
+function renderThemeGrid(current) {
+  const box = $('themeGrid');
+  if (!box) return;
+  box.innerHTML = THEMES.map(th => `
+    <button type="button" class="theme-card" data-theme-id="${th.id}"
+            aria-pressed="${th.id === current}">
+      <span class="theme-prev ${th.preview}">
+        <i class="tp-bar"></i>
+        <span class="tp-row"><i class="tp-dial"></i><i class="tp-body"></i></span>
+      </span>
+      <span class="theme-name">${esc(th.name)}</span>
+      <span class="theme-note">${esc(th.note)}</span>
+    </button>`).join('');
 }
 
 function updateNotifState() {
@@ -1421,10 +1452,19 @@ function bindEvents() {
     }
   });
 
-  /* Mavzu */
+  /* Ko'rinish uslubi — topbar tugmasi ro'yxat bo'ylab aylantiradi */
   $('themeToggle').addEventListener('click', () => {
-    const next = S.settings.theme === 'dark' ? 'light' : 'dark';
-    saveSettings({ theme: next });
+    const i = THEMES.findIndex(th => th.id === S.settings.theme);
+    saveSettings({ theme: THEMES[(i + 1) % THEMES.length].id });
+  });
+
+  /* Sozlamalardagi tanlagich */
+  $('themeGrid').addEventListener('click', e => {
+    const card = e.target.closest('.theme-card');
+    if (!card || card.dataset.themeId === S.settings.theme) return;
+    // Bosilgan zahoti qo'llanadi: server javobini kutib turish sekin ko'rinadi
+    applyTheme(card.dataset.themeId);
+    saveSettings({ theme: card.dataset.themeId });
   });
 
   /* Rejim tanlash */

@@ -8,6 +8,7 @@
  */
 import { unlockAudio, playAlarm, notify } from './sound.js';
 import { icon } from './icons.js';
+import { THEMES, applyTheme } from './theme.js';
 
 const $ = (id) => document.getElementById(id);
 
@@ -302,6 +303,39 @@ function bogla() {
     boshla();
   });
 }
+
+/* ═══════════ Uslub aylanishi ═══════════ */
+
+/**
+ * Taqdimot sahifasida ko'rinish uslubi har daqiqada o'zi almashadi —
+ * mehmon to'rttasini ham ishlayotgan holda ko'rsin.
+ *
+ * Faqat TO'RT yangi uslub aylanadi: klassik `dark`/`light` bu yerda
+ * ko'rsatilmaydi, ular eski ko'rinish uchun qoldirilgan.
+ *
+ * Almashtirish katta oynada (focus rejimi) TO'XTAB TURADI: odam taymerga
+ * qarab o'tirganda fon o'zgarib turishi bezovta qiladi.
+ */
+const AYLANMA = THEMES.filter(th => ['glass', 'clay', 'skeuo', 'neu'].includes(th.id));
+const ALMASH_MS = 60000;
+let uslubIndeks = 0;
+
+function uslubAlmash() {
+  if (document.body.classList.contains('lp-focus')) return;
+  uslubIndeks = (uslubIndeks + 1) % AYLANMA.length;
+  applyTheme(AYLANMA[uslubIndeks].id);
+  nomniYangila();
+}
+
+/** Pastdagi kichik yozuv: hozir qaysi uslub ko'rinayotgani */
+function nomniYangila() {
+  const el = $('lpThemeName');
+  if (el) el.textContent = AYLANMA[uslubIndeks].name;
+}
+
+applyTheme(AYLANMA[0].id);
+nomniYangila();
+setInterval(uslubAlmash, ALMASH_MS);
 
 tikla();
 imkoniyatlarniChiz();
