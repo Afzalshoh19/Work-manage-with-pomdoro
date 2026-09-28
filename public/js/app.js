@@ -1620,6 +1620,26 @@ function bindEvents() {
     if (!S.timer) setActiveTask(null);     // boshqa kunga o'tganda faol vazifa tozalanadi
     loadPlan();
   };
+  /* ── Yarim tundan o'tish ──
+     `S.date` ilgari FAQAT sahifa yuklanganda hisoblanardi. Oyna kechadan
+     o'tib ochiq qolsa, ilova kechagi kunda qolib ketardi va o'sha kuni
+     qo'shilgan vazifalar o'tgan kunga yozilardi (`createdAt` bugungi,
+     `date` esa kechagi bo'lib qolardi).
+
+     Endi har yarim daqiqada tekshiriladi. Foydalanuvchi ataylab boshqa
+     kunni ochib qo'ygan bo'lsa tegilmaydi — faqat "bugun" da turganini
+     yangi kunga surib qo'yamiz. */
+  let kuzatilganKun = todayStr();
+  setInterval(() => {
+    const hozir = todayStr();
+    if (hozir === kuzatilganKun) return;
+    const avvalgi = kuzatilganKun;
+    kuzatilganKun = hozir;
+    if (S.date !== avvalgi) return;        // boshqa kunni ko'rib turibdi
+    goDate(hozir);
+    toast('Yangi kun boshlandi — «Bugun» ' + hozir + ' ga o\'tdi');
+  }, 30000);
+
   $('datePicker').addEventListener('change', () => goDate($('datePicker').value || todayStr()));
   $('datePrev').addEventListener('click', () => goDate(shiftDate(S.date, -1)));
   $('dateNext').addEventListener('click', () => goDate(shiftDate(S.date, 1)));
